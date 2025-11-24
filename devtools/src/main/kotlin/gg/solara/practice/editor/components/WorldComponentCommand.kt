@@ -323,5 +323,5 @@ object WorldComponentCommand : ScalaCommand()
                 }
                 .start(player)
         }
-    }.openMenu(player)
+    }.openMenu(player.bukkit())
 }

@@ -1,4 +1,4 @@
-package gg.tropic.practice.application.api.defaults.kit.group
+package gg.tropic.practice.application.api.defaults.defaults.kit.group
 
 /**
  * @author GrowlyX

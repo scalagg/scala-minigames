@@ -22,9 +22,10 @@ import gg.scala.store.connection.mongo.AbstractDataStoreMongoConnection
 import gg.scala.store.connection.mongo.impl.UriDataStoreMongoConnection
 import gg.scala.store.connection.mongo.impl.details.DataStoreMongoConnectionDetails
 import gg.scala.store.connection.redis.AbstractDataStoreRedisConnection
-import gg.tropic.practice.application.api.defaults.kit.KitDataSync
-import gg.tropic.practice.application.api.defaults.kit.group.KitGroupDataSync
-import gg.tropic.practice.application.api.defaults.map.MapDataSync
+import gg.tropic.practice.application.api.defaults.DPSRedisService
+import gg.tropic.practice.application.api.defaults.defaults.kit.KitDataSync
+import gg.tropic.practice.application.api.defaults.defaults.kit.group.KitGroupDataSync
+import gg.tropic.practice.application.api.defaults.defaults.map.MapDataSync
 import gg.tropic.practice.application.platform.PracticeAPIPlatform
 import gg.tropic.practice.devProvider
 import gg.tropic.practice.games.manager.GameManager
@@ -147,7 +148,7 @@ fun main(args: Array<String>) = mainBody {
     RedisShared.keyValueCache
     ServerSync.configureIndependent()
 
-    val aware = CommunicationGateway("dps")
+    val aware = DPSRedisService("dps")
         .configure { this }
 
     ScalaDataStoreShared.INSTANCE =

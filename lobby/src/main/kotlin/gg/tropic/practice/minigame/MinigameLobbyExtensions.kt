@@ -2,7 +2,6 @@ package gg.tropic.practice.minigame
 
 import gg.scala.basics.plugin.profile.BasicsProfileService
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
-import gg.scala.commons.playerstatus.isVirtuallyInvisibleToSomeExtent
 import gg.scala.staff.ScalaStaffPlugin
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.kit.KitService
@@ -31,7 +30,7 @@ fun MiniGameModeMetadata.joinGame(player: Player, configuration: MiniGameQueueCo
         return
     }
 
-    if (player.isVirtuallyInvisibleToSomeExtent())
+    if (player.hasMetadata("invisible"))
     {
         player.sendMessage("${CC.RED}You are currently in vanish! Use ${CC.B}/vanish${CC.RED} to be able to join a queue.")
         return

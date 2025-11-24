@@ -12,9 +12,9 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.queue.spigot.stream.SpigotRedisService
-import gg.tropic.game.extensions.economy.EconomyDataSync
-import gg.tropic.game.extensions.economy.EconomyProfileService
-import gg.tropic.game.extensions.profile.CorePlayerProfileService
+import gg.scala.game.extensions.economy.EconomyDataSync
+import gg.scala.game.extensions.economy.EconomyProfileService
+import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.tropic.practice.minigame.MinigameLobby
 import gg.tropic.practice.player.LobbyPlayerService
 import gg.tropic.practice.player.formattedDomain

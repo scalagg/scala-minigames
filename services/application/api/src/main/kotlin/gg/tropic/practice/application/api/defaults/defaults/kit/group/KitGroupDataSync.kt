@@ -1,9 +1,9 @@
-package gg.tropic.practice.application.api.defaults.kit.group
+package gg.tropic.practice.application.api.defaults.defaults.kit.group
 
 import gg.scala.commons.persist.datasync.DataSyncKeys
 import gg.scala.commons.persist.datasync.DataSyncService
 import gg.scala.commons.persist.datasync.DataSyncSource
-import gg.tropic.practice.application.api.defaults.kit.ImmutableKit
+import gg.tropic.practice.application.api.defaults.defaults.kit.ImmutableKit
 import gg.tropic.practice.namespace
 import gg.tropic.practice.namespaceShortened
 import gg.tropic.practice.suffixWhenDev

@@ -1,4 +1,4 @@
-package gg.tropic.practice.application.api.defaults.kit
+package gg.tropic.practice.application.api.defaults.defaults.kit
 
 import gg.scala.commons.persist.datasync.DataSyncKeys
 import gg.scala.commons.persist.datasync.DataSyncService
@@ -26,4 +26,14 @@ object KitDataSync : DataSyncService<ImmutableKitContainer>()
 
     override fun keys() = DPSMapKeys
     override fun type() = ImmutableKitContainer::class.java
+
+    private val hooks = mutableListOf<() -> Unit>()
+
+    fun onReload(hook: () -> Unit) = hooks.add(hook)
+
+    override fun postReload()
+    {
+        super.postReload()
+        hooks.forEach { it() }
+    }
 }

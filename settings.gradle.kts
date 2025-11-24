@@ -9,7 +9,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
-rootProject.name = "arch-minigames"
+rootProject.name = "scala-minigames"
 include(
     "shared", "game", "lobby",
     "main-lobby", "devtools", "sbb",

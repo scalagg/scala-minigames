@@ -17,7 +17,7 @@ if (currentBranch != "master") {
 }*/
 
 allprojects {
-    group = "lol.arch.duels"
+    group = "gg.scala.duels"
     version = "1.7.0"
 
     repositories {
@@ -51,12 +51,12 @@ subprojects {
         compileOnly("gg.scala.store:spigot:1.0.0")
         compileOnly("gg.scala.staff:scala-scstaff-plugin:1.1.1")
         compileOnly("gg.scala.friends:scala-friends:2.1.2")
-        compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.2.0")
-        compileOnly("gg.tropic.game.extensions:tropic-core-game-extensions:1.8.0")
+        compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
+        compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.2")
 
         compileOnly("gg.scala.spigot:server:1.1.3")
         compileOnly("com.lunarclient:apollo-api:1.1.8")
-        compileOnly("gg.scala.lemon:bukkit:2.2.6")
+        compileOnly("gg.scala.lemon:bukkit:2.0.1")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
     }
 

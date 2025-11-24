@@ -1,4 +1,4 @@
-package gg.tropic.practice.application.api.defaults.map
+package gg.tropic.practice.application.api.defaults.defaults.map
 
 /**
  * @author GrowlyX

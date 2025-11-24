@@ -18,5 +18,5 @@ import gg.tropic.practice.editor.menu.EditableUIViewAllMenu
 object ManageEditableUICommand : ScalaCommand()
 {
     @Default
-    fun onManage(player: ScalaPlayer) = EditableUIViewAllMenu().openMenu(player)
+    fun onManage(player: ScalaPlayer) = EditableUIViewAllMenu().openMenu(player.bukkit())
 }

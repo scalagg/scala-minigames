@@ -1,10 +1,10 @@
 package gg.tropic.practice.quests.model
 
-import gg.tropic.game.extensions.economy.Accounts
-import gg.tropic.game.extensions.economy.EconomyDataSync
-import gg.tropic.game.extensions.economy.Transaction
-import gg.tropic.game.extensions.economy.TransactionService
-import gg.tropic.game.extensions.economy.TransactionType
+import gg.scala.game.extensions.economy.Accounts
+import gg.scala.game.extensions.economy.EconomyDataSync
+import gg.scala.game.extensions.economy.Transaction
+import gg.scala.game.extensions.economy.TransactionService
+import gg.scala.game.extensions.economy.TransactionType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
 import java.util.UUID

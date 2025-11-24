@@ -1,5 +1,6 @@
 package gg.tropic.practice.replication
 
+import gg.tropic.practice.application.api.defaults.DPSRedisService
 import gg.tropic.practice.replication.generation.rpc.GenerationRequest
 import gg.tropic.practice.replication.generation.rpc.GenerationResult
 import mc.arch.commons.communications.rpc.CommunicationGateway
@@ -11,7 +12,7 @@ import mc.arch.commons.communications.rpc.createRPCService
  */
 object ReplicationRPC
 {
-    private val gateway = CommunicationGateway("replications")
+    private val gateway = DPSRedisService("replications")
     val generationService = gateway.createRPCService<GenerationRequest, GenerationResult>(
         serviceName = "generate",
         timeoutSeconds = 5L

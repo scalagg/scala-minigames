@@ -10,10 +10,10 @@ import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.commons.spatial.Box
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess.username
-import gg.tropic.game.extensions.cosmetics.CosmeticRegistry
-import gg.tropic.game.extensions.cosmetics.victorydances.VictoryDance
-import gg.tropic.game.extensions.cosmetics.victorydances.VictoryDanceCosmeticCategory
-import gg.tropic.game.extensions.profile.CorePlayerProfileService
+import gg.scala.game.extensions.cosmetics.CosmeticRegistry
+import gg.scala.game.extensions.cosmetics.victorydances.VictoryDance
+import gg.scala.game.extensions.cosmetics.victorydances.VictoryDanceCosmeticCategory
+import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.tropic.practice.expectation.ExpectationService
 import gg.tropic.practice.expectation.GameExpectation
 import gg.tropic.practice.feature.GameReportFeature

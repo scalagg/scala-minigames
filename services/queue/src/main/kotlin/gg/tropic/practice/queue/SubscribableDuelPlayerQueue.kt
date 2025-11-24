@@ -1,7 +1,7 @@
 package gg.tropic.practice.queue
 
-import gg.tropic.practice.application.api.defaults.kit.ImmutableKit
-import gg.tropic.practice.application.api.defaults.map.MapDataSync
+import gg.tropic.practice.application.api.defaults.defaults.kit.ImmutableKit
+import gg.tropic.practice.application.api.defaults.defaults.map.MapDataSync
 import gg.tropic.practice.expectation.GameExpectation
 import gg.tropic.practice.games.team.GameTeam
 import gg.tropic.practice.games.team.TeamIdentifier

@@ -15,7 +15,7 @@ import gg.scala.lemon.hotbar.entry.impl.DynamicHotbarPresetEntry
 import gg.scala.lemon.hotbar.entry.impl.StaticHotbarPresetEntry
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.lemon.util.QuickAccess.username
-import gg.tropic.game.extensions.cosmetics.CosmeticCategoryMenu
+import gg.scala.game.extensions.cosmetics.CosmeticCategoryMenu
 import gg.tropic.practice.PracticeLobby
 import gg.tropic.practice.category.visibility.SpawnPlayerVisibility
 import gg.tropic.practice.commands.*

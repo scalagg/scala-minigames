@@ -4,8 +4,8 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.hotbar.HotbarPreset
 import gg.scala.lemon.hotbar.HotbarPresetHandler
 import gg.scala.lemon.hotbar.entry.impl.DynamicHotbarPresetEntry
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCage
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCageDataSync
+import gg.scala.game.extensions.cosmetics.cages.SchemaCage
+import gg.scala.game.extensions.cosmetics.cages.SchemaCageDataSync
 import gg.solara.practice.editor.EditorGenerator
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers

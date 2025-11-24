@@ -1,7 +1,7 @@
 package gg.tropic.practice.games
 
 import dev.iiahmed.disguise.Disguise
-import dev.iiahmed.disguise.Entity
+//import dev.iiahmed.disguise.Entity
 import gg.scala.basics.plugin.disguise.DisguiseService
 import gg.tropic.practice.expectation.ExpectationService.returnToSpawnItem
 import gg.tropic.practice.expectation.ExpectationService.spectateItem
@@ -48,7 +48,7 @@ fun GameImpl.resetPlayerForFight(player: Player, noUpdateVisibility: Boolean = f
             player,
             Disguise
                 .builder()
-                .setEntity(Entity(EntityType.valueOf(type), mapOf()))
+//                .setEntity(Entity(EntityType.valueOf(type), mapOf()))
                 .build()
         )
     }

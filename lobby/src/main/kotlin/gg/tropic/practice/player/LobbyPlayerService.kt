@@ -15,7 +15,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.queue.spigot.stream.SpigotRedisService
-import gg.tropic.game.extensions.cosmetics.EquipOnLoginCosmeticService
+import gg.scala.game.extensions.cosmetics.EquipOnLoginCosmeticService
 import gg.tropic.practice.PracticeLobby
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.minigame.MinigameLobby

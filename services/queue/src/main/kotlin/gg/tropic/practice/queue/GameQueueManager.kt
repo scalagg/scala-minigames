@@ -1,13 +1,13 @@
 package gg.tropic.practice.queue
 
 import gg.scala.cache.uuid.ScalaStoreUuidCache
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.commons.agnostic.sync.server.state.ServerState
-import gg.tropic.practice.application.api.defaults.kit.KitDataSync
-import gg.tropic.practice.application.api.defaults.map.ImmutableMap
-import gg.tropic.practice.application.api.defaults.map.MapDataSync
+import gg.scala.minigame.bedwars.shared.BedWarsMode
+import gg.tropic.practice.application.api.defaults.defaults.kit.KitDataSync
+import gg.tropic.practice.application.api.defaults.defaults.map.ImmutableMap
+import gg.tropic.practice.application.api.defaults.defaults.map.MapDataSync
 import gg.tropic.practice.expectation.GameExpectation
 import gg.tropic.practice.extensions.formatPlayerPing
 import gg.tropic.practice.games.GameState
@@ -27,8 +27,6 @@ import gg.tropic.practice.persistence.RedisShared
 import gg.tropic.practice.provider.MiniProviderType
 import gg.tropic.practice.provider.MiniProviderVersion
 import gg.tropic.practice.queue.variants.BedWarsSubscribableMinigamePlayerQueue
-import gg.tropic.practice.queue.variants.EventsSubscribableMinigamePlayerQueue
-import gg.tropic.practice.queue.variants.MiniWallsSubscribableMinigamePlayerQueue
 import gg.tropic.practice.queue.variants.SkyWarsSubscribableMinigamePlayerQueue
 import gg.tropic.practice.queue.variants.robot.SubscribableDuoRobotPlayerQueue
 import gg.tropic.practice.queue.variants.robot.SubscribableSoloRobotPlayerQueue
@@ -38,11 +36,8 @@ import gg.tropic.practice.replication.generation.rpc.GenerationRequirement
 import gg.tropic.practice.replications.manager.ReplicationManager
 import gg.tropic.practice.serializable.Message
 import gg.tropic.practice.suffixWhenDev
-import mc.arch.commons.communications.rpc.CommunicationGateway
-import mc.arch.minigame.bedwars.neo.BedWarsMode
-import mc.arch.minigame.miniwalls.MiniWallsMode
-import mc.arch.minigames.microgames.events.EventType
-import mc.arch.minigames.skywars.SkyWarsMode
+import gg.scala.minigame.skywars.shared.SkyWarsMode
+import gg.tropic.practice.application.api.defaults.DPSRedisService
 import net.evilblock.cubed.serializers.Serializers
 import net.md_5.bungee.api.chat.ClickEvent
 import java.util.*
@@ -59,7 +54,7 @@ import java.util.logging.Logger
 object GameQueueManager
 {
     var forceSpecificRegionGames: Region? = null
-    private val dpsQueueRedis = CommunicationGateway("gamequeue")
+    private val dpsQueueRedis = DPSRedisService("gamequeue")
 
     private val dpsRedisCache = RedisShared.keyValueCache
     private val queueHolder = CentralSubscribablePlayerQueueHolder()
@@ -114,7 +109,7 @@ object GameQueueManager
                     .getServer<GameServer?>(it.key)
                     ?: return@filter false
 
-                game.lastHeartbeat + 5000L > System.currentTimeMillis() && game.state == ServerState.Loaded && !game.isDraining()
+                game.lastHeartbeat + 5000L > System.currentTimeMillis() && game.state == ServerState.Loaded
             }
             .flatMap {
                 it.value.status.replications.values.flatten()
@@ -197,20 +192,20 @@ object GameQueueManager
         val executor = Executors.newScheduledThreadPool(3)
         queueHolder.configure(executor)
 
-        val previouslyQueued = ScalaCommons.bundle().globals().redis()
-            .sync()
-            .hkeys("$queueV2Namespace:states")
-            .map { UUID.fromString(it) }
-
-        ScalaCommons.bundle().globals().redis()
-            .sync()
-            .del("$queueV2Namespace:states")
-
-        RedisShared.sendMessage(
-            previouslyQueued,
-            Message()
-                .withMessage("&c&lYou were removed from the queue as the system has restarted.")
-        )
+//        val previouslyQueued = ScalaCommons.bundle().globals().redis()
+//            .sync()
+//            .hkeys("$queueV2Namespace:states")
+//            .map { UUID.fromString(it) }
+//
+//        ScalaCommons.bundle().globals().redis()
+//            .sync()
+//            .del("$queueV2Namespace:states")
+//
+//        RedisShared.sendMessage(
+//            previouslyQueued,
+//            Message()
+//                .withMessage("&c&lYou were removed from the queue as the system has restarted.")
+//        )
 
         Runtime.getRuntime().addShutdownHook(Thread {
             println("Terminating all duel request invalidators before shutdown")
@@ -572,11 +567,11 @@ object GameQueueManager
         dpsQueueRedis.start()
 
         val bedwarsKitIDs = listOf(
-            "bw_mini_solo" to BedWarsMode.Solo,
-            "bw_mini_duos" to BedWarsMode.Duo,
-            "bw_mega_quads" to BedWarsMode.Quads,
-            "bw_mega_trios" to BedWarsMode.Trios,
-            "bw_special_4v4" to BedWarsMode.Special4v4,
+            "bw_mini_solo" to BedWarsMode.SOLO,
+            "bw_mini_duos" to BedWarsMode.DOUBLES,
+            "bw_mega_quads" to BedWarsMode.QUADS,
+            "bw_mega_trios" to BedWarsMode.TRIOS,
+            "bw_special_4v4" to BedWarsMode.DREAMS,
         )
 
         bedwarsKitIDs.forEach {
@@ -590,24 +585,23 @@ object GameQueueManager
             }
         }
 
-        val mappings = listOf(
-            "sumoevent" to EventType.SUMO
-        )
-
-        mappings.forEach {
-            val eventKit = KitDataSync.cached().kits[it.first]
-            if (eventKit != null)
-            {
-                queueHolder.trackPlayerQueue(EventsSubscribableMinigamePlayerQueue(eventKit, it.second))
-            } else
-            {
-                queueHolder.forgetPlayerQueue(it.first)
-            }
-        }
+//        val mappings = listOf(
+//            "sumoevent" to EventType.SUMO
+//        )
+//
+//        mappings.forEach {
+//            val eventKit = KitDataSync.cached().kits[it.first]
+//            if (eventKit != null)
+//            {
+//                queueHolder.trackPlayerQueue(EventsSubscribableMinigamePlayerQueue(eventKit, it.second))
+//            } else
+//            {
+//                queueHolder.forgetPlayerQueue(it.first)
+//            }
+//        }
 
         val skywarsKitIDs = listOf(
             SkyWarsMode.MINI to "sw_mini",
-            SkyWarsMode.MINI_MODERN to "modern_sw_mini",
             SkyWarsMode.RANKED to "sw_mini"
         )
 
@@ -622,22 +616,22 @@ object GameQueueManager
             }
         }
 
-        val kitId = listOf(
-            MiniWallsMode.MAIN to "mw_main",
-            MiniWallsMode.DM_FASTTRACK to "dm_fasttrack",
-        )
-
-        kitId.forEach { pair ->
-            val miniWallsKit = KitDataSync.cached().kits[pair.second]
-            if (miniWallsKit != null)
-            {
-                println("tracked mini walls queue")
-                queueHolder.trackPlayerQueue(MiniWallsSubscribableMinigamePlayerQueue(miniWallsKit, pair.first))
-            } else
-            {
-                queueHolder.forgetPlayerQueue(pair.second)
-            }
-        }
+//        val kitId = listOf(
+//            MiniWallsMode.MAIN to "mw_main",
+//            MiniWallsMode.DM_FASTTRACK to "dm_fasttrack",
+//        )
+//
+//        kitId.forEach { pair ->
+//            val miniWallsKit = KitDataSync.cached().kits[pair.second]
+//            if (miniWallsKit != null)
+//            {
+//                println("tracked mini walls queue")
+//                queueHolder.trackPlayerQueue(MiniWallsSubscribableMinigamePlayerQueue(miniWallsKit, pair.first))
+//            } else
+//            {
+//                queueHolder.forgetPlayerQueue(pair.second)
+//            }
+//        }
 
         // cleanup queues for kits that no longer exist
         queueHolder.playerQueues.forEach { (key, queue) ->

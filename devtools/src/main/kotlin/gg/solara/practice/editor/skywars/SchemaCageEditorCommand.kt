@@ -11,8 +11,8 @@ import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCage
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCageDataSync
+import gg.scala.game.extensions.cosmetics.cages.SchemaCage
+import gg.scala.game.extensions.cosmetics.cages.SchemaCageDataSync
 import net.evilblock.cubed.util.CC
 import org.bukkit.Material
 import org.bukkit.util.Vector

@@ -79,7 +79,7 @@ object LegacyJoinCommand : ScalaCommand()
                         }
                 )
                 override fun size(buttons: Map<Int, Button>) = 27
-            }.openMenu(player)
+            }.openMenu(player.bukkit())
             return
         }
 

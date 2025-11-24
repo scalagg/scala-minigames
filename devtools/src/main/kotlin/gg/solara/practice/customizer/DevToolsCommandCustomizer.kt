@@ -2,7 +2,7 @@ package gg.solara.practice.customizer
 
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCageCommandCustomizers
+import gg.scala.game.extensions.cosmetics.cages.SchemaCageCommandCustomizers
 
 /**
  * @author GrowlyX

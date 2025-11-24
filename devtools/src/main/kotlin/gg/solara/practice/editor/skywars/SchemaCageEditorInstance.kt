@@ -1,6 +1,6 @@
 package gg.solara.practice.editor.skywars
 
-import gg.tropic.game.extensions.cosmetics.cages.SchemaCage
+import gg.scala.game.extensions.cosmetics.cages.SchemaCage
 
 /**
  * @author GrowlyX

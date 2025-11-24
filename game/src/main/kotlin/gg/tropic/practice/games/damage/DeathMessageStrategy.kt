@@ -1,8 +1,8 @@
 package gg.tropic.practice.games.damage
 
-import gg.tropic.game.extensions.cosmetics.CosmeticRegistry
-import gg.tropic.game.extensions.cosmetics.messagebundles.KillMessageBundleCosmeticCategory
-import gg.tropic.game.extensions.cosmetics.messagebundles.cosmetics.MessageBundle
+import gg.scala.game.extensions.cosmetics.CosmeticRegistry
+import gg.scala.game.extensions.cosmetics.messagebundles.KillMessageBundleCosmeticCategory
+import gg.scala.game.extensions.cosmetics.messagebundles.cosmetics.MessageBundle
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 

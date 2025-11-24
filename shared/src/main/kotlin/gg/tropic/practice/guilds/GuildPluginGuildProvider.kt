@@ -4,7 +4,7 @@ import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
-import gg.tropic.game.extensions.guilds.GuildService
+import gg.scala.game.extensions.guilds.GuildService
 import java.util.*
 import java.util.concurrent.CompletableFuture
 

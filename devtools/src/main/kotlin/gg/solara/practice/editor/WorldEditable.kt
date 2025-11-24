@@ -1,7 +1,6 @@
 package gg.solara.practice.editor
 
 import com.cryptomorin.xseries.XMaterial
-import com.sk89q.worldedit.Vector
 import gg.solara.practice.editor.EditorGenerator.VoidWorldGenerator
 import gg.solara.practice.utilities.WorldEditUtils
 import net.evilblock.cubed.util.CC

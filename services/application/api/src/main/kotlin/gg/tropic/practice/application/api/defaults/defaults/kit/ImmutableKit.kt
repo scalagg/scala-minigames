@@ -1,4 +1,4 @@
-package gg.tropic.practice.application.api.defaults.kit
+package gg.tropic.practice.application.api.defaults.defaults.kit
 
 import gg.tropic.practice.kit.feature.FeatureFlag
 

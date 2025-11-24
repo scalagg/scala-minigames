@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.commons.configurable.editInt
 import gg.scala.commons.configurable.editListSelector
 import gg.scala.commons.configurable.editString
-import gg.tropic.game.extensions.economy.EconomyDataSync
+import gg.scala.game.extensions.economy.EconomyDataSync
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu

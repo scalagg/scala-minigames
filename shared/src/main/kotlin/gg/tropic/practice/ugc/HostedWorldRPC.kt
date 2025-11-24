@@ -1,5 +1,6 @@
 package gg.tropic.practice.ugc
 
+import gg.tropic.practice.application.api.defaults.DPSRedisService
 import gg.tropic.practice.ugc.generation.WorldLoadRequest
 import gg.tropic.practice.ugc.generation.WorldLoadResponse
 import gg.tropic.practice.ugc.generation.addplayer.AddPlayerRequest
@@ -15,7 +16,7 @@ import mc.arch.commons.communications.rpc.createRPCService
  */
 object HostedWorldRPC
 {
-    private val gateway = CommunicationGateway("ugcgateway")
+    private val gateway = DPSRedisService("ugcgateway")
 
     val worldLoadRPCService = gateway.createRPCService<WorldLoadRequest, WorldLoadResponse>("hostedworlds-load")
     val visitWorldRPCService = gateway.createRPCService<VisitWorldRequest, VisitWorldResponse>("hostedworlds-visit")

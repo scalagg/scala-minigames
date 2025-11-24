@@ -1,9 +1,9 @@
 package gg.tropic.practice.persistence
 
 import gg.scala.aware.thread.AwareThreadContext
+import gg.tropic.practice.application.api.defaults.DPSRedisService
 import gg.tropic.practice.serializable.Message
 import io.lettuce.core.api.StatefulRedisConnection
-import mc.arch.commons.communications.rpc.CommunicationGateway
 import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 
@@ -13,14 +13,14 @@ import java.util.UUID
  */
 object RedisShared
 {
-    val keyValueCache: StatefulRedisConnection<String, String> = CommunicationGateway("dpskv")
+    val keyValueCache: StatefulRedisConnection<String, String> = DPSRedisService("dpskv")
         .configure { internal().connect() }
 
-    private val lobbyBridge = CommunicationGateway("lobbies")
-        .apply(CommunicationGateway::start)
+    private val lobbyBridge = DPSRedisService("lobbies")
+        .apply(DPSRedisService::start)
 
-    val applicationBridge = CommunicationGateway("application")
-        .apply(CommunicationGateway::start)
+    val applicationBridge = DPSRedisService("application")
+        .apply(DPSRedisService::start)
 
     fun redirect(players: List<UUID>, server: String)
     {
