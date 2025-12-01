@@ -1,8 +1,7 @@
 package gg.tropic.practice.metadata
 
 import gg.tropic.practice.application.api.defaults.DPSRedisService
-import mc.arch.commons.communications.rpc.CommunicationGateway
-import mc.arch.commons.communications.rpc.createRPCService
+import gg.tropic.practice.application.api.defaults.createAwareRPCService
 
 /**
  * @author Subham
@@ -11,13 +10,13 @@ import mc.arch.commons.communications.rpc.createRPCService
 object MetadataRPC
 {
     private val gateway = DPSRedisService("games")
-    val statusService = gateway.createRPCService<ServerInstanceMetadata, Unit>(
+    val statusService = gateway.createAwareRPCService<ServerInstanceMetadata, EmptyResponse>(
         serviceName = "status",
         timeoutSeconds = 1L
     )
 
     fun updateStatus(server: String, status: InstanceMetadata)
     {
-        statusService.call(ServerInstanceMetadata(server, status))
+        statusService.call(ServerInstanceMetadata(server = server, metadata = status))
     }
 }

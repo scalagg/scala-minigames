@@ -1,25 +1,25 @@
 package gg.tropic.practice.ugc.handler
 
 import gg.scala.commons.agnostic.sync.ServerSync
+import gg.tropic.practice.application.api.defaults.AwareRPCContext
+import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import gg.tropic.practice.ugc.HostedWorldInstanceService
 import gg.tropic.practice.ugc.creator.HostedWorldInstanceCreatorRegistry
 import gg.tropic.practice.ugc.generation.WorldLoadRequest
 import gg.tropic.practice.ugc.generation.WorldLoadResponse
 import gg.tropic.practice.ugc.generation.WorldLoadStatus
 import gg.tropic.practice.ugc.instance.HostedWorldInstanceLifecycleController
-import mc.arch.commons.communications.rpc.RPCContext
-import mc.arch.commons.communications.rpc.RPCHandler
 import net.evilblock.cubed.ScalaCommonsSpigot
 
 /**
  * @author Subham
  * @since 7/20/25
  */
-class WorldLoadHandler : RPCHandler<WorldLoadRequest, WorldLoadResponse>
+class WorldLoadHandler : AwareRPCHandler<WorldLoadRequest, WorldLoadResponse>
 {
     override fun handle(
         request: WorldLoadRequest,
-        context: RPCContext<WorldLoadResponse>
+        context: AwareRPCContext<WorldLoadResponse>
     )
     {
         if (ServerSync.local.id != request.server)
@@ -30,6 +30,7 @@ class WorldLoadHandler : RPCHandler<WorldLoadRequest, WorldLoadResponse>
         if (ScalaCommonsSpigot.instance.isAgonesInstanceDraining)
         {
             context.reply(WorldLoadResponse(
+                uniqueId = request.uniqueId,
                 status = WorldLoadStatus.FAILED_SERVER_DRAINING,
                 server = ServerSync.local.id
             ))
@@ -49,6 +50,7 @@ class WorldLoadHandler : RPCHandler<WorldLoadRequest, WorldLoadResponse>
                 {
                     throwable?.printStackTrace()
                     context.reply(WorldLoadResponse(
+                        uniqueId = request.uniqueId,
                         status = WorldLoadStatus.FAILED_LOAD_WORLD,
                         server = ServerSync.local.id
                     ))
@@ -60,6 +62,7 @@ class WorldLoadHandler : RPCHandler<WorldLoadRequest, WorldLoadResponse>
                 }
 
                 context.reply(WorldLoadResponse(
+                    uniqueId = request.uniqueId,
                     status = WorldLoadStatus.LOADED,
                     server = ServerSync.local.id
                 ))

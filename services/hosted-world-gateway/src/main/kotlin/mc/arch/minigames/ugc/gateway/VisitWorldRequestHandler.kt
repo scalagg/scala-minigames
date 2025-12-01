@@ -3,8 +3,8 @@ package mc.arch.minigames.ugc.gateway
 import gg.scala.commons.consensus.Locks
 import gg.tropic.practice.games.manager.GameManager
 import gg.tropic.practice.ugc.HostedWorldRPC
-import mc.arch.commons.communications.rpc.RPCContext
-import mc.arch.commons.communications.rpc.RPCHandler
+import gg.tropic.practice.application.api.defaults.AwareRPCContext
+import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import gg.tropic.practice.ugc.generation.WorldLoadStatus
 import gg.tropic.practice.ugc.generation.addplayer.AddPlayerRequest
 import gg.tropic.practice.ugc.generation.addplayer.AddPlayerStatus
@@ -18,11 +18,11 @@ import gg.tropic.practice.ugc.generation.visits.VisitWorldStatus
  */
 class VisitWorldRequestHandler(
     private val worldLoadService: WorldLoadService
-) : RPCHandler<VisitWorldRequest, VisitWorldResponse>
+) : AwareRPCHandler<VisitWorldRequest, VisitWorldResponse>
 {
     override fun handle(
         request: VisitWorldRequest,
-        context: RPCContext<VisitWorldResponse>
+        context: AwareRPCContext<VisitWorldResponse>
     )
     {
         val response = Locks.withGlobalLock(
@@ -37,21 +37,25 @@ class VisitWorldRequestHandler(
 
             if (existingWorldMatchingSpec != null)
             {
-                val response = HostedWorldRPC.visitWorldAddPlayerRPCService.callSync(AddPlayerRequest(
-                    globalWorldId = existingWorldMatchingSpec.globalId,
-                    server = existingWorldMatchingSpec.server,
-                    visitingPlayers = request.visitingPlayers
-                ))
+                val response = HostedWorldRPC.visitWorldAddPlayerRPCService.callSync(
+                    AddPlayerRequest(
+                        globalWorldId = existingWorldMatchingSpec.globalId,
+                        server = existingWorldMatchingSpec.server,
+                        visitingPlayers = request.visitingPlayers
+                    )
+                )
 
                 if (response?.status == AddPlayerStatus.SUCCESS)
                 {
                     return@withGlobalLock VisitWorldResponse(
+                        uniqueId = request.uniqueId,
                         status = VisitWorldStatus.SUCCESS_REDIRECT,
-                        redirectToInstance = existingWorldMatchingSpec.server // Assuming this field exists
+                        redirectToInstance = existingWorldMatchingSpec.server
                     )
                 } else if (response?.status == AddPlayerStatus.FAILURE_WORLD_DRAINING)
                 {
                     return@withGlobalLock VisitWorldResponse(
+                        uniqueId = request.uniqueId,
                         status = VisitWorldStatus.FAILED_UNAVAILABLE_INSTANCE_DRAINING,
                         redirectToInstance = null
                     )
@@ -62,23 +66,27 @@ class VisitWorldRequestHandler(
                 .loadWorldInstanceOnServerSync(request)
                 .join()
                 ?: return@withGlobalLock VisitWorldResponse(
+                    uniqueId = request.uniqueId,
                     status = VisitWorldStatus.FAILED_RPC_FAILURE
                 )
 
             if (loadResponse.status == WorldLoadStatus.LOADED)
             {
                 VisitWorldResponse(
+                    uniqueId = request.uniqueId,
                     status = VisitWorldStatus.SUCCESS_REDIRECT,
-                    redirectToInstance = loadResponse.server // Assuming this field exists
+                    redirectToInstance = loadResponse.server
                 )
             } else
             {
                 VisitWorldResponse(
+                    uniqueId = request.uniqueId,
                     status = VisitWorldStatus.FAILED_WORLD_GENERATION_FAILURE,
                     redirectToInstance = null
                 )
             }
         }.join() ?: VisitWorldResponse(
+            uniqueId = request.uniqueId,
             status = VisitWorldStatus.FAILED_NO_SERVERS_AVAILABLE,
             redirectToInstance = null
         )

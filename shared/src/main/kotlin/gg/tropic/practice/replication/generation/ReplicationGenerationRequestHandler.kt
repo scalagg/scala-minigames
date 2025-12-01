@@ -8,8 +8,8 @@ import gg.tropic.practice.replication.generation.rpc.GenerationRequest
 import gg.tropic.practice.replication.generation.rpc.GenerationResult
 import gg.tropic.practice.replication.ReplicationResultStatus
 import gg.tropic.practice.replication.generation.rpc.GenerationRequirement
-import mc.arch.commons.communications.rpc.RPCContext
-import mc.arch.commons.communications.rpc.RPCHandler
+import gg.tropic.practice.application.api.defaults.AwareRPCContext
+import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -19,11 +19,11 @@ import java.util.concurrent.CompletableFuture
 class ReplicationGenerationRequestHandler(
     private val generator: () -> (Map, GameExpectation) -> CompletableFuture<GenerationResult>,
     private val allocator: () -> (Map, GameExpectation) -> CompletableFuture<GenerationResult>
-) : RPCHandler<GenerationRequest, GenerationResult>
+) : AwareRPCHandler<GenerationRequest, GenerationResult>
 {
     override fun handle(
         request: GenerationRequest,
-        context: RPCContext<GenerationResult>
+        context: AwareRPCContext<GenerationResult>
     )
     {
         if (ServerSync.local.id != request.server)
@@ -34,6 +34,7 @@ class ReplicationGenerationRequestHandler(
         val map = MapService.mapWithID(request.map)
             ?: return run {
                 context.reply(GenerationResult(
+                    uniqueId = request.uniqueId,
                     status = ReplicationResultStatus.FAILED,
                     message = "Map service did not find the map you were looking for"
                 ))
@@ -52,11 +53,13 @@ class ReplicationGenerationRequestHandler(
                     throw IllegalStateException("ReplicationManagerService expected a prepared replication, but instead received a null entry for ${request.map}")
                 }
 
-                context.reply(it)
+                // Ensure the response has the correct uniqueId
+                context.reply(it.copy(uniqueId = request.uniqueId))
             }
             .exceptionally {
                 it.printStackTrace()
                 context.reply(GenerationResult(
+                    uniqueId = request.uniqueId,
                     status = ReplicationResultStatus.FAILED,
                     message = "System could not prepare a map"
                 ))

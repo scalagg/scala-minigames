@@ -11,6 +11,7 @@ dependencies {
     api(project(":versioned:legacy"))
     api(project(":versioned:modern"))
 
+    compileOnly(project(":services:application:api"))
     compileOnly(project(":parties"))
     compileOnly(fileTree("spigot"))
 

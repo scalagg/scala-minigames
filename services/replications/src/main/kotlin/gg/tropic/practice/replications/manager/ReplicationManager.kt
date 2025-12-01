@@ -6,7 +6,8 @@ import gg.tropic.practice.replication.*
 import gg.tropic.practice.replication.generation.rpc.GenerationRequest
 import gg.tropic.practice.replication.generation.rpc.GenerationRequirement
 import gg.tropic.practice.replication.generation.rpc.GenerationResult
-import mc.arch.commons.communications.rpc.addFunctionalHandler
+import gg.tropic.practice.application.api.defaults.addFunctionalHandler
+import gg.tropic.practice.metadata.EmptyResponse
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -26,7 +27,7 @@ object ReplicationManager
     {
         ReplicationRPC.statusService.addFunctionalHandler { request, context ->
             gameInstanceCache.put(request.server, request)
-            context.reply(Unit)
+            context.reply(EmptyResponse(uniqueId = request.uniqueId))
         }
     }
 
@@ -37,23 +38,24 @@ object ReplicationManager
         expectation: GameExpectation
     ): CompletableFuture<GenerationResult>
     {
-        return ReplicationRPC.generationService.call(
-            GenerationRequest(
-                server = server,
-                map = map,
-                requirement = requirement,
-                expectation = expectation
-            )
-        ).handle { result, throwable ->
+        val request = GenerationRequest(
+            server = server,
+            map = map,
+            requirement = requirement,
+            expectation = expectation
+        )
+        return ReplicationRPC.generationService.call(request).handle { result, throwable ->
             when
             {
                 throwable != null -> GenerationResult(
+                    uniqueId = request.uniqueId,
                     status = ReplicationResultStatus.FAILED,
                     message = "Service did not get response in time: ${throwable.message}"
                 )
 
                 result != null -> result
                 else -> GenerationResult(
+                    uniqueId = request.uniqueId,
                     status = ReplicationResultStatus.FAILED,
                     message = "System is unavailable (improper backend response)"
                 )

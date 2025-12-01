@@ -5,6 +5,7 @@ repositories {
 
 dependencies {
     api(project(":services:metadata"))
+    compileOnly(project(":services:application:api"))
     compileOnly(project(":parties"))
     compileOnly(fileTree("spigot"))
 

@@ -6,8 +6,8 @@ import gg.tropic.practice.games.GameState
 import gg.tropic.practice.games.matchmaking.JoinIntoGameRequest
 import gg.tropic.practice.games.matchmaking.JoinIntoGameResult
 import gg.tropic.practice.games.matchmaking.JoinIntoGameStatus
-import mc.arch.commons.communications.rpc.RPCContext
-import mc.arch.commons.communications.rpc.RPCHandler
+import gg.tropic.practice.application.api.defaults.AwareRPCContext
+import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import okio.withLock
@@ -17,11 +17,11 @@ import org.bukkit.Bukkit
  * @author Subham
  * @since 7/20/25
  */
-class MiniGameJoinIntoGameHandler : RPCHandler<JoinIntoGameRequest, JoinIntoGameResult>
+class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinIntoGameResult>
 {
     override fun handle(
         request: JoinIntoGameRequest,
-        context: RPCContext<JoinIntoGameResult>
+        context: AwareRPCContext<JoinIntoGameResult>
     )
     {
         if (ServerSync.local.id != request.server)
@@ -33,6 +33,7 @@ class MiniGameJoinIntoGameHandler : RPCHandler<JoinIntoGameRequest, JoinIntoGame
             ?: return run {
                 context.reply(
                     JoinIntoGameResult(
+                        uniqueId = request.uniqueId,
                         status = JoinIntoGameStatus.FAILED_GAME_NOT_FOUND
                     )
                 )
@@ -185,6 +186,6 @@ class MiniGameJoinIntoGameHandler : RPCHandler<JoinIntoGameRequest, JoinIntoGame
             }
         }
 
-        context.reply(JoinIntoGameResult(status = status))
+        context.reply(JoinIntoGameResult(uniqueId = request.uniqueId, status = status))
     }
 }

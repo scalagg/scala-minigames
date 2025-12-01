@@ -1,12 +1,11 @@
 package gg.tropic.practice.minigame
 
 import gg.tropic.practice.application.api.defaults.DPSRedisService
+import gg.tropic.practice.application.api.defaults.createAwareRPCService
 import gg.tropic.practice.games.matchmaking.JoinIntoGameRequest
 import gg.tropic.practice.games.matchmaking.JoinIntoGameResult
 import gg.tropic.practice.games.spectate.SpectateRequest
 import gg.tropic.practice.games.spectate.SpectateResponse
-import mc.arch.commons.communications.rpc.CommunicationGateway
-import mc.arch.commons.communications.rpc.createRPCService
 
 /**
  * @author Subham
@@ -15,12 +14,12 @@ import mc.arch.commons.communications.rpc.createRPCService
 object MiniGameRPC
 {
     private val gateway = DPSRedisService("minigames")
-    val spectateService = gateway.createRPCService<SpectateRequest, SpectateResponse>(
+    val spectateService = gateway.createAwareRPCService<SpectateRequest, SpectateResponse>(
         serviceName = "spectate",
         timeoutSeconds = 3L
     )
 
-    val joinIntoGameService = gateway.createRPCService<JoinIntoGameRequest, JoinIntoGameResult>(
+    val joinIntoGameService = gateway.createAwareRPCService<JoinIntoGameRequest, JoinIntoGameResult>(
         serviceName = "join-into-game",
         timeoutSeconds = 3L
     )
