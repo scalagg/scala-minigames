@@ -38,7 +38,7 @@ object ServerSelectionStrategy
 
                 val serverInstance = instances[it.id]
 
-                !it.isDraining() &&
+//                !it.isDraining() &&
                     it.state == ServerState.Loaded &&
                     serverInstance != null &&
                     serverInstance.version == requiredVersion &&

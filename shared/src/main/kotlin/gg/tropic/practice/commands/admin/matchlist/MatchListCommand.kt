@@ -16,5 +16,5 @@ object MatchListCommand : ScalaCommand()
 {
     @CommandAlias("matchlist")
     @CommandPermission("practice.command.matchlist")
-    fun onMatchList(player: ScalaPlayer) = MatchListMenu().openMenu(player)
+    fun onMatchList(player: ScalaPlayer) = MatchListMenu().openMenu(player.bukkit())
 }

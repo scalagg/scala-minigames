@@ -14,7 +14,7 @@ import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.cache.uuid.impl.distribution.DistributedRedisUuidCacheTranslator
 import gg.scala.cache.uuid.resolver.impl.MojangDataResolver
 import gg.scala.commons.agnostic.sync.ServerSync
-import gg.scala.commons.consensus.Zoo
+//import gg.scala.commons.consensus.Zoo
 import gg.scala.store.ScalaDataStoreShared
 import gg.scala.store.connection.AbstractDataStoreConnection
 import gg.scala.store.connection.mongo.AbstractDataStoreMongoConnection
@@ -25,13 +25,12 @@ import gg.tropic.practice.application.api.defaults.DPSRedisService
 import gg.tropic.practice.application.api.defaults.defaults.kit.KitDataSync
 import gg.tropic.practice.application.api.defaults.defaults.kit.group.KitGroupDataSync
 import gg.tropic.practice.application.api.defaults.defaults.map.MapDataSync
-import gg.tropic.practice.application.platform.PracticeAPIPlatform
+//import gg.tropic.practice.application.platform.PracticeAPIPlatform
 import gg.tropic.practice.devProvider
 import gg.tropic.practice.games.manager.GameManager
 import gg.tropic.practice.metadata.Metadata
 import gg.tropic.practice.minigame.MiniGameSerializers
 import gg.tropic.practice.namespace
-import mc.arch.commons.communications.rpc.CommunicationGateway
 import gg.tropic.practice.persistence.RedisShared
 import gg.tropic.practice.queue.GameQueueManager
 import gg.tropic.practice.replications.manager.ReplicationManager
@@ -40,6 +39,7 @@ import gg.tropic.practice.statistics.TrackedKitStatistic
 import gg.tropic.practice.statistics.statisticIdFrom
 import gg.tropic.practice.statistics.statisticIds
 import mc.arch.minigames.ugc.gateway.HostedWorldGatewayManager
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import org.bson.Document
 import java.io.File
@@ -142,7 +142,7 @@ fun main(args: Array<String>) = mainBody {
         Serializers.gson
     }
 
-    ScalaCommons.registerBundle(PracticeAPIPlatform)
+//    ScalaCommons.registerBundle(PracticeAPIPlatform)
 
     RedisShared.keyValueCache
     ServerSync.configureIndependent()
@@ -181,13 +181,13 @@ fun main(args: Array<String>) = mainBody {
             override fun forceDisableRedisThreshold() = true
         }
 
-    Zoo.build(ScalaCommons
-        .bundle()
-        .globals()
-        .redis())
+//    Zoo.build(ScalaCommons
+//        .bundle()
+//        .globals()
+//        .redis())
 
     ScalaStoreUuidCache.configure(
-        DistributedRedisUuidCacheTranslator(),
+        DistributedRedisUuidCacheTranslator(ScalaCommonsSpigot.instance.aware),
         MojangDataResolver
     )
 

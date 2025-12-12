@@ -86,6 +86,6 @@ object TemporaryWorldCommand : ScalaCommand()
                     }
             }.withIndex()
                 .associate { it.index to it.value }
-        }.openMenu(player)
+        }.openMenu(player.bukkit())
     }
 }

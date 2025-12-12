@@ -7,7 +7,6 @@ import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.scala.commons.playerstatus.canVirtuallySee
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.tropic.practice.region.PlayerRegionFromRedisProxy
@@ -31,7 +30,7 @@ object RegionCommand : ScalaCommand()
             .online(it.uniqueId)
             .join()
 
-        if (!isPlayerOnline || !player.bukkit().canVirtuallySee(it.uniqueId))
+        if (!isPlayerOnline || !player.bukkit().canSee(it.bukkitPlayer))
         {
             throw ConditionFailedException(
                 "The player ${CC.YELLOW}${it.name}${CC.RED} is not logged onto the network."
