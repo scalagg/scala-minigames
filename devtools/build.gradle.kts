@@ -8,6 +8,6 @@ dependencies {
     api(project(":shared"))
     api(project(":minigames:skywars-shared"))
 
-    compileOnly("mc.arch.worldedit:WorldEdit:1.0.0")
+    compileOnly(fileTree("worldedit"))
     compileOnly("com.grinderwolf:slimeworldmanager-plugin:2.2.1")
 }
