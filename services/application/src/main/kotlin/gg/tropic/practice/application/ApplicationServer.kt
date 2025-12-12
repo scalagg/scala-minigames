@@ -13,7 +13,6 @@ import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.cache.uuid.impl.distribution.DistributedRedisUuidCacheTranslator
 import gg.scala.cache.uuid.resolver.impl.MojangDataResolver
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.consensus.Zoo
 import gg.scala.store.ScalaDataStoreShared

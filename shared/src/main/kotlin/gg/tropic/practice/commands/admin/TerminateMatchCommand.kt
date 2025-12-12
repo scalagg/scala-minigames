@@ -2,7 +2,6 @@ package gg.tropic.practice.commands.admin
 
 import gg.scala.aware.message.AwareMessage
 import gg.scala.aware.thread.AwareThreadContext
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandCompletion
@@ -16,6 +15,7 @@ import gg.scala.lemon.util.QuickAccess
 import gg.tropic.practice.games.GameState
 import gg.tropic.practice.metadata.SystemMetadataService
 import gg.tropic.practice.suffixWhenDev
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -36,7 +36,7 @@ object TerminateMatchCommand : ScalaCommand()
                 .online(it.uniqueId)
                 .join()
 
-            if (!online || (player is Player && !player.canVirtuallySee(it.uniqueId)))
+            if (!online || (player is Player && !player.canSee(it.bukkitPlayer)))
             {
                 throw ConditionFailedException(
                     "The player ${CC.YELLOW}${it.name} is not logged onto the network."
@@ -63,7 +63,7 @@ object TerminateMatchCommand : ScalaCommand()
                     AwareMessage
                         .of(
                             "terminate",
-                            ScalaCommons.bundle().globals().aware(),
+                            ScalaCommonsSpigot.instance.aware,
                             "server" to reference.server,
                             "matchID" to reference.uniqueId,
                             "terminator" to if (player is Player) player.uniqueId else null,

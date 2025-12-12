@@ -1,7 +1,6 @@
 package gg.tropic.practice.statistics
 
-import gg.scala.commons.ScalaCommons
-import gg.tropic.practice.namespace
+import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.UUID
 
 /**
@@ -10,10 +9,8 @@ import java.util.UUID
  */
 object StatisticRedis
 {
-    fun scoreAndPositionOf(player: UUID, id: String, reversed: Boolean) = ScalaCommons
-        .bundle()
-        .globals()
-        .redis()
+    fun scoreAndPositionOf(player: UUID, id: String, reversed: Boolean) = ScalaCommonsSpigot.instance
+        .kvConnection
         .sync()
         .let {
             if (reversed)
@@ -31,10 +28,8 @@ object StatisticRedis
             }
         }
 
-    fun save(player: UUID, id: String, value: Long) = ScalaCommons
-        .bundle()
-        .globals()
-        .redis()
+    fun save(player: UUID, id: String, value: Long) = ScalaCommonsSpigot.instance
+        .kvConnection
         .sync()
         .zadd(
             id,
@@ -42,17 +37,13 @@ object StatisticRedis
             player.toString()
         )
 
-    fun exists(id: String) = ScalaCommons
-        .bundle()
-        .globals()
-        .redis()
+    fun exists(id: String) = ScalaCommonsSpigot.instance
+        .kvConnection
         .sync()
         .exists(id)
 
-    fun incr(player: UUID, id: String, by: Long) = ScalaCommons
-        .bundle()
-        .globals()
-        .redis()
+    fun incr(player: UUID, id: String, by: Long) = ScalaCommonsSpigot.instance
+        .kvConnection
         .sync()
         .zincrby(
             id,
@@ -62,22 +53,20 @@ object StatisticRedis
 
     fun save(player: UUID, id: String, value: Long, lifetime: StatisticLifetime)
     {
-        val redis = ScalaCommons.bundle().globals().redis().sync()
+        val redis = ScalaCommonsSpigot.instance.kvConnection.sync()
         redis.zadd(id, value.toDouble(), player.toString())
         redis.expireat(id, lifetime.getTimeAtReset())
     }
 
     fun incr(player: UUID, id: String, by: Long, lifetime: StatisticLifetime)
     {
-        val redis = ScalaCommons.bundle().globals().redis().sync()
+        val redis = ScalaCommonsSpigot.instance.kvConnection.sync()
         redis.zincrby(id, by.toDouble(), player.toString())
         redis.expireat(id, lifetime.getTimeAtReset())
     }
 
-    fun getTopPlayers(id: String, limit: Int = 10, reversed: Boolean = true) = ScalaCommons
-        .bundle()
-        .globals()
-        .redis()
+    fun getTopPlayers(id: String, limit: Int = 10, reversed: Boolean = true) = ScalaCommonsSpigot.instance
+        .kvConnection
         .sync()
         .let { sync ->
             if (reversed)

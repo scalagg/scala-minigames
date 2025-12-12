@@ -58,6 +58,8 @@ subprojects {
         compileOnly("com.lunarclient:apollo-api:1.1.8")
         compileOnly("gg.scala.lemon:bukkit:2.0.1")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
+        implementation("com.squareup.retrofit2:retrofit:3.1.0-SNAPSHOT")
+        implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     }
 
     kapt {

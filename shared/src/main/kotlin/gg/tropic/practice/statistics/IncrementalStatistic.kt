@@ -1,9 +1,9 @@
 package gg.tropic.practice.statistics
 
-import gg.scala.commons.ScalaCommons
 import gg.tropic.practice.leaderboards.LeaderboardEntry
 import gg.tropic.practice.profile.PracticeProfile
 import io.lettuce.core.ScoredValue
+import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.*
 
 /**
@@ -50,7 +50,7 @@ class IncrementalStatistic(
     context(PracticeProfile)
     override fun percentile(): Float
     {
-        val redis = ScalaCommons.bundle().globals().redis().sync()
+        val redis = ScalaCommonsSpigot.instance.kvConnection.sync()
         val redisKey = id.toRedisKey()
         val playerKey = identifier.toString()
 
@@ -67,7 +67,7 @@ class IncrementalStatistic(
     context(PracticeProfile)
     override fun add(newValue: Long)
     {
-        val redis = ScalaCommons.bundle().globals().redis().sync()
+        val redis = ScalaCommonsSpigot.instance.kvConnection.sync()
         val exists = redis.zscore(id.toRedisKey(), identifier.toString()) != null
 
         if (!exists)
@@ -85,7 +85,7 @@ class IncrementalStatistic(
     context(PracticeProfile)
     override fun subtract(newValue: Long)
     {
-        val redis = ScalaCommons.bundle().globals().redis().sync()
+        val redis = ScalaCommonsSpigot.instance.kvConnection.sync()
         val exists = redis.zscore(id.toRedisKey(), identifier.toString()) != null
 
         if (!exists)

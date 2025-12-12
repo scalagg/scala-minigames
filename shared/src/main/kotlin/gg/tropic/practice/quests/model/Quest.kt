@@ -2,13 +2,13 @@ package gg.tropic.practice.quests.model
 
 import com.cryptomorin.xseries.XMaterial
 import com.cryptomorin.xseries.XSound
-import gg.scala.commons.ScalaCommons
 import gg.tropic.practice.namespace
 import gg.tropic.practice.quests.model.tracker.QuestTracker
 import gg.tropic.practice.quests.model.tracker.QuestTrackerState
 import gg.tropic.practice.statistics.StatisticLifetime
 import me.lucko.helper.Helper
 import me.lucko.helper.Schedulers
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.serializers.Serializers
@@ -43,8 +43,8 @@ data class Quest(
 )
 {
     fun toCurrentRedisNamespace() = "${namespace()}:quests:$id:${lifetime.getKeyID()}"
-    fun toPlayerTrackerOf(player: UUID) = ScalaCommons
-        .bundle().globals().redis().sync()
+    fun toPlayerTrackerOf(player: UUID) = ScalaCommonsSpigot
+        .instance.kvConnection.sync()
         .hget(
             toCurrentRedisNamespace(),
             player.toString()
@@ -71,8 +71,8 @@ data class Quest(
         val tracker = toPlayerTrackerOf(player)
         tracker.state = newState
 
-        ScalaCommons
-            .bundle().globals().redis().sync()
+        ScalaCommonsSpigot
+            .instance.kvConnection.sync()
             .apply {
                 expireat(
                     toCurrentRedisNamespace(),

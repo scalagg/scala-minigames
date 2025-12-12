@@ -1,7 +1,6 @@
 package gg.tropic.practice.messaging
 
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.commons.ScalaCommons
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -75,7 +74,7 @@ object ExternalPlayerCountApiSubmissionService
                         "symphony:instances"
                     )
                     .filter { pair ->
-                        System.currentTimeMillis() - (ScalaCommons.bundle().globals().redis()
+                        System.currentTimeMillis() - (ScalaCommonsSpigot.instance.kvConnection
                             .sync()
                             .hget("symphony:heartbeats", pair.key)
                             ?.toLongOrNull() ?: 0) < Duration

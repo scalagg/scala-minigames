@@ -1,6 +1,6 @@
 package gg.tropic.practice.metadata
 
-import gg.scala.commons.ScalaCommons
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -35,7 +35,7 @@ class MetadataReader
     fun pull()
     {
         updateLock.write {
-            ScalaCommons.bundle().globals().redis().sync()
+            ScalaCommonsSpigot.instance.kvConnection.sync()
                 .get("$namespace:metadata:bulk")
                 ?.let {
                     Serializers.gson.fromJson(it, BulkMetadata::class.java)

@@ -1,6 +1,6 @@
 package gg.tropic.practice.queue
 
-import gg.scala.commons.ScalaCommons
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.Date
 import java.util.UUID
@@ -58,7 +58,7 @@ interface SubscribablePlayerQueue
     {
         entry.players.forEach { member ->
             runCatching {
-                ScalaCommons.bundle().globals().redis()
+                ScalaCommonsSpigot.instance.kvConnection
                     .sync()
                     .hdel(
                         "$queueV2Namespace:states",
@@ -86,7 +86,7 @@ interface SubscribablePlayerQueue
 
         queueState.entry.players.forEach { member ->
             runCatching {
-                ScalaCommons.bundle().globals().redis()
+                ScalaCommonsSpigot.instance.kvConnection
                     .sync()
                     .hset(
                         "$queueV2Namespace:states",

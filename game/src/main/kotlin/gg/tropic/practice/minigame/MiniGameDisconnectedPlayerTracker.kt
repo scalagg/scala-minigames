@@ -1,6 +1,5 @@
 package gg.tropic.practice.minigame
 
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.tropic.practice.games.event.GameStartEvent
 import gg.tropic.practice.minigame.event.PlayerMiniGameRejoinTokenExpiredEvent
@@ -9,6 +8,7 @@ import gg.tropic.practice.minigame.rejoin.TrackedPlayerRejoin
 import gg.tropic.practice.namespace
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import okio.withLock
 import org.bukkit.Bukkit
@@ -58,7 +58,7 @@ class MiniGameDisconnectedPlayerTracker(private val lifecycle: MiniGameLifecycle
             team.players.remove(player.uniqueId)
         }
 
-        ScalaCommons.bundle().globals().redis().sync()
+        ScalaCommonsSpigot.instance.kvConnection.sync()
             .psetex(
                 "${namespace()}:minigames:rejoin:${player.uniqueId}",
                 lifecycle.configuration.reconnectThreshold,
@@ -79,7 +79,7 @@ class MiniGameDisconnectedPlayerTracker(private val lifecycle: MiniGameLifecycle
             }
         }
 
-        ScalaCommons.bundle().globals().redis().sync()
+        ScalaCommonsSpigot.instance.kvConnection.sync()
             .del("${namespace()}:minigames:rejoin:${uniqueId}")
     }
 

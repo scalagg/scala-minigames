@@ -3,7 +3,6 @@ package gg.tropic.practice.parkour
 import com.cryptomorin.xseries.XMaterial
 import com.cryptomorin.xseries.XSound
 import gg.scala.cache.uuid.ScalaStoreUuidCache
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.spatial.toPosition
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
@@ -99,7 +98,7 @@ object ParkourService
         Schedulers
             .async()
             .runRepeating(Runnable {
-                topTenLeaderboardPlayers = ScalaCommons.bundle().globals().redis()
+                topTenLeaderboardPlayers = ScalaCommonsSpigot.instance.kvConnection
                     .sync()
                     .zrangeWithScores(
                         redisKey(),
@@ -191,7 +190,7 @@ object ParkourService
                     if (score == null || score.toLong() > timeLasted)
                     {
                         Schedulers.async().run {
-                            ScalaCommons.bundle().globals().redis().sync()
+                            ScalaCommonsSpigot.instance.kvConnection.sync()
                                 .zadd(
                                     redisKey(),
                                     timeLasted.toDouble(),
@@ -216,7 +215,7 @@ object ParkourService
         }
     }
 
-    fun getLeaderboardPosition(player: Player) = ScalaCommons.bundle().globals().redis().sync()
+    fun getLeaderboardPosition(player: Player) = ScalaCommonsSpigot.instance.kvConnection.sync()
         .zrank(
             redisKey(),
             player.uniqueId.toString()
@@ -226,7 +225,7 @@ object ParkourService
         }
         ?: "???"
 
-    fun getScore(player: Player) = ScalaCommons.bundle().globals().redis().sync()
+    fun getScore(player: Player) = ScalaCommonsSpigot.instance.kvConnection.sync()
         .zscore(
             redisKey(),
             player.uniqueId.toString()

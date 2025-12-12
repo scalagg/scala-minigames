@@ -1,6 +1,5 @@
 package gg.tropic.practice.statistics
 
-import gg.scala.commons.ScalaCommons
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.tropic.practice.kit.KitService
@@ -8,6 +7,7 @@ import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.profile.PracticeProfile
 import gg.tropic.practice.profile.PracticeProfileService
 import gg.tropic.practice.queue.QueueType
+import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -142,7 +142,7 @@ object StatisticService
                                         null
                                     } else
                                     {
-                                        val scoreResult = ScalaCommons.bundle().globals().redis().sync()
+                                        val scoreResult = ScalaCommonsSpigot.instance.kvConnection.sync()
                                             .zrevrangeWithScores(
                                                 statistic.id.toRedisKey(),
                                                 nextPositionValue, nextPositionValue
@@ -220,7 +220,7 @@ object StatisticService
                                 null
                             } else
                             {
-                                val scoreResult = ScalaCommons.bundle().globals().redis().sync()
+                                val scoreResult = ScalaCommonsSpigot.instance.kvConnection.sync()
                                     .zrevrangeWithScores(
                                         statistic.id.toRedisKey(),
                                         nextPositionValue, nextPositionValue

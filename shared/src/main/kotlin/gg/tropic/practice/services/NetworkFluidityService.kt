@@ -1,7 +1,6 @@
 package gg.tropic.practice.services
 
 import com.google.gson.reflect.TypeToken
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
@@ -86,7 +85,7 @@ object NetworkFluidityService
                         "symphony:instances"
                     )
                     .filter { pair ->
-                        System.currentTimeMillis() - (ScalaCommons.bundle().globals().redis()
+                        System.currentTimeMillis() - (ScalaCommonsSpigot.instance.kvConnection
                             .sync()
                             .hget("symphony:heartbeats", pair.key)
                             ?.toLongOrNull() ?: 0) < Duration
@@ -126,7 +125,7 @@ object NetworkFluidityService
                         )
                     }
 
-                ScalaCommons.bundle().globals().redis().sync()
+                ScalaCommonsSpigot.instance.kvConnection.sync()
                     .setex(
                         "${namespace()}:instances:${ServerSync.local.id}",
                         1L,
@@ -135,7 +134,7 @@ object NetworkFluidityService
 
                 localModelCache = ServerContainer.getServersInGroup(practiceGroup())
                     .mapNotNull {
-                        ScalaCommons.bundle().globals().redis()
+                        ScalaCommonsSpigot.instance.kvConnection
                             .sync()
                             .get(
                                 "${namespace()}:instances:${it.id}"

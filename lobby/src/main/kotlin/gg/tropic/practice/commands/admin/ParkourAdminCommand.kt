@@ -1,6 +1,5 @@
 package gg.tropic.practice.commands.admin
 
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandCompletion
@@ -14,6 +13,7 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.tropic.practice.parkour.ParkourService
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 
 /**
@@ -39,7 +39,7 @@ object ParkourAdminCommand : ScalaCommand()
         player: ScalaPlayer,
         target: AsyncLemonPlayer
     ) = target.validatePlayers(player.bukkit(), false) {
-        ScalaCommons.bundle().globals().redis().sync()
+        ScalaCommonsSpigot.instance.kvConnection.sync()
             .zrem(
                 ParkourService.redisKey(),
                 it.uniqueId.toString()

@@ -1,8 +1,8 @@
 package mc.arch.minigames.parties.command
 
+import gg.scala.basics.plugin.commands.bukkit
 import gg.scala.basics.plugin.profile.BasicsProfile
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
@@ -10,20 +10,18 @@ import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.scala.commons.playerstatus.canVirtuallySee
-import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import mc.arch.minigames.parties.PartiesPlugin
 import mc.arch.minigames.parties.menu.PartyManageMenu
 import mc.arch.minigames.parties.model.*
 import mc.arch.minigames.parties.service.NetworkPartyService
 import mc.arch.minigames.parties.stream.PartyMessageStream
 import mc.arch.minigames.parties.toDisplayName
 import mc.arch.minigames.parties.toParty
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
@@ -296,7 +294,7 @@ object PartyCommand : ScalaCommand()
                 }
 
                 val requestKey = "parties:invites:${player.uniqueId}:$parsedUniqueId"
-                ScalaCommons.bundle().globals().redis().sync().hdel(
+                ScalaCommonsSpigot.instance.kvConnection.sync().hdel(
                     requestKey, parsedUniqueId.toString()
                 )
 
@@ -339,7 +337,7 @@ object PartyCommand : ScalaCommand()
                 return@validatePlayers
             }
 
-            if (!QuickAccess.online(player.uniqueId).join() || !player.canVirtuallySee(it.uniqueId))
+            if (!QuickAccess.online(player.uniqueId).join() || !player.canSee(it.bukkit()))
             {
                 throw ConditionFailedException(
                     "The player ${CC.YELLOW}${it.name}${CC.RED} is not online!"
@@ -572,13 +570,13 @@ object PartyCommand : ScalaCommand()
             )
 
             val requestKey = "parties:invites:$target:${party.uniqueId}"
-            ScalaCommons.bundle().globals().redis().sync().hset(
+            ScalaCommonsSpigot.instance.kvConnection.sync().hset(
                 requestKey,
                 party.uniqueId.toString(),
                 System.currentTimeMillis().toString()
             )
 
-            ScalaCommons.bundle().globals().redis().sync().expire(
+            ScalaCommonsSpigot.instance.kvConnection.sync().expire(
                 requestKey,
                 TimeUnit.MINUTES.toSeconds(5L)
             )
@@ -600,7 +598,7 @@ object PartyCommand : ScalaCommand()
         return CompletableFuture.supplyAsync {
             var exists: Boolean
 
-            ScalaCommons.bundle().globals().redis().sync().apply {
+            ScalaCommonsSpigot.instance.kvConnection.sync().apply {
                 exists = hget("parties:invites:$target:$party", party.toString()) != null
             }
 

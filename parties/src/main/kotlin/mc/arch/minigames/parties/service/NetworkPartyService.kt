@@ -4,7 +4,6 @@ import gg.scala.aware.AwareBuilder
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
 import gg.scala.aware.thread.AwareThreadContext
-import gg.scala.commons.ScalaCommonsGlobals
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.consensus.elections.LeaderElection
 import gg.scala.flavor.inject.Inject
@@ -18,6 +17,7 @@ import mc.arch.minigames.parties.model.Party
 import mc.arch.minigames.parties.model.PartyMember
 import mc.arch.minigames.parties.model.PartyRole
 import mc.arch.minigames.parties.toDisplayName
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.services.CommonsServiceExecutor
 import net.evilblock.cubed.util.CC
@@ -177,7 +177,7 @@ object NetworkPartyService : PartyService
     private fun preLoadAllParties()
     {
         partyLock.write {
-            parties = ScalaCommonsGlobals.redis()
+            parties = ScalaCommonsSpigot.instance.kvConnection
                 .sync()
                 .hgetall("minigames:parties")
                 .mapValues { entry ->
@@ -190,7 +190,7 @@ object NetworkPartyService : PartyService
         }
     }
 
-    private fun loadParty(uniqueId: UUID) = ScalaCommonsGlobals.redis()
+    private fun loadParty(uniqueId: UUID) = ScalaCommonsSpigot.instance.kvConnection
         .sync()
         .hget("minigames:parties", uniqueId.toString())
         ?.let {
@@ -220,7 +220,7 @@ object NetworkPartyService : PartyService
 
     override fun updateParty(party: Party)
     {
-        ScalaCommonsGlobals.redis()
+        ScalaCommonsSpigot.instance.kvConnection
             .sync()
             .hset(
                 "minigames:parties",
@@ -255,7 +255,7 @@ object NetworkPartyService : PartyService
 
     override fun delete(party: Party)
     {
-        ScalaCommonsGlobals.redis()
+        ScalaCommonsSpigot.instance.kvConnection
             .sync()
             .hdel(
                 "minigames:parties",

@@ -2,7 +2,6 @@ package gg.tropic.practice.minigame
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.basics.plugin.settings.SettingMenu
-import gg.scala.commons.ScalaCommons
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.flavor.inject.Inject
@@ -105,7 +104,7 @@ object MinigameLobby
                         "symphony:instances"
                     )
                     .filter { pair ->
-                        System.currentTimeMillis() - (ScalaCommons.bundle().globals().redis()
+                        System.currentTimeMillis() - (ScalaCommonsSpigot.instance.kvConnection
                             .sync()
                             .hget("symphony:heartbeats", pair.key)
                             ?.toLongOrNull() ?: 0) < Duration

@@ -1,6 +1,6 @@
 package gg.tropic.practice.queue
 
-import gg.scala.commons.ScalaCommons
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 
@@ -15,7 +15,7 @@ data class QueueState(
     val entry: QueueEntry
 )
 
-fun UUID.toQueueState() = ScalaCommons.bundle().globals().redis()
+fun UUID.toQueueState() = ScalaCommonsSpigot.instance.kvConnection
     .sync()
     .hget(
         "$queueV2Namespace:states",
@@ -23,6 +23,6 @@ fun UUID.toQueueState() = ScalaCommons.bundle().globals().redis()
     )
     ?.let { Serializers.gson.fromJson(it, QueueState::class.java) }
 
-fun totalPlayersQueued() = ScalaCommons.bundle().globals().redis()
+fun totalPlayersQueued() = ScalaCommonsSpigot.instance.kvConnection
     .sync()
     .hlen("$queueV2Namespace:states")

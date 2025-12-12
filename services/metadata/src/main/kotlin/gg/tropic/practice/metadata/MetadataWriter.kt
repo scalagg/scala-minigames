@@ -1,6 +1,6 @@
 package gg.tropic.practice.metadata
 
-import gg.scala.commons.ScalaCommons
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -42,7 +42,7 @@ class MetadataWriter
             bulk.putAll(updates)
             updates.clear()
 
-            ScalaCommons.bundle().globals().redis().sync()
+            ScalaCommonsSpigot.instance.kvConnection.sync()
                 .setex(
                     "$namespace:metadata:bulk",
                     10,

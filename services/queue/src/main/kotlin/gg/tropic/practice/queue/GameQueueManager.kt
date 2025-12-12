@@ -38,6 +38,7 @@ import gg.tropic.practice.serializable.Message
 import gg.tropic.practice.suffixWhenDev
 import gg.scala.minigame.skywars.shared.SkyWarsMode
 import gg.tropic.practice.application.api.defaults.DPSRedisService
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import net.md_5.bungee.api.chat.ClickEvent
 import java.util.*
@@ -192,20 +193,20 @@ object GameQueueManager
         val executor = Executors.newScheduledThreadPool(3)
         queueHolder.configure(executor)
 
-//        val previouslyQueued = ScalaCommons.bundle().globals().redis()
-//            .sync()
-//            .hkeys("$queueV2Namespace:states")
-//            .map { UUID.fromString(it) }
-//
-//        ScalaCommons.bundle().globals().redis()
-//            .sync()
-//            .del("$queueV2Namespace:states")
-//
-//        RedisShared.sendMessage(
-//            previouslyQueued,
-//            Message()
-//                .withMessage("&c&lYou were removed from the queue as the system has restarted.")
-//        )
+        val previouslyQueued = ScalaCommonsSpigot.instance.kvConnection
+            .sync()
+            .hkeys("$queueV2Namespace:states")
+            .map { UUID.fromString(it) }
+
+        ScalaCommonsSpigot.instance.kvConnection
+            .sync()
+            .del("$queueV2Namespace:states")
+
+        RedisShared.sendMessage(
+            previouslyQueued,
+            Message()
+                .withMessage("&c&lYou were removed from the queue as the system has restarted.")
+        )
 
         Runtime.getRuntime().addShutdownHook(Thread {
             println("Terminating all duel request invalidators before shutdown")

@@ -15,5 +15,5 @@ object ManagePartiesCommand : ScalaCommand()
 {
     @CommandAlias("listallparties")
     @CommandPermission("parties.command.listallparties")
-    fun onPartiesList(player: ScalaPlayer) = ManagePartiesMenu().openMenu(player)
+    fun onPartiesList(player: ScalaPlayer) = ManagePartiesMenu().openMenu(player.bukkit())
 }
