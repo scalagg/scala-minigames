@@ -11,10 +11,6 @@ import gg.tropic.practice.settings.DuelsSettingCategory
 import net.evilblock.cubed.util.CC
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 @AutoRegister
 object DuelRequestsCommand : ScalaCommand()
 {

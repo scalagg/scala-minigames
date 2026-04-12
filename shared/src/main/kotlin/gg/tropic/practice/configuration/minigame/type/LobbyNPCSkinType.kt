@@ -1,9 +1,5 @@
 package gg.tropic.practice.configuration.minigame.type
 
-/**
- * @author Subham
- * @since 7/7/25
- */
 enum class LobbyNPCSkinType(
     val value: String,
     val signature: String

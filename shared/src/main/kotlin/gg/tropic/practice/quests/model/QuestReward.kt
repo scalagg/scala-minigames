@@ -9,10 +9,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 data class QuestReward(
     var economyID: String = "coins",
     var amount: Long = 1000L

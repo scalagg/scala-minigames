@@ -20,10 +20,11 @@ import gg.tropic.practice.PracticeLobby
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.kit.KitService
 import gg.tropic.practice.menu.JoinQueueMenu
-import gg.tropic.practice.menu.LeaderboardsMenu
 import gg.tropic.practice.menu.PlayerMainMenu
+import gg.tropic.practice.menu.cosmetic.duels.DuelsCosmeticsMenu
 import gg.tropic.practice.menu.editor.EditorKitSelectionMenu
 import gg.tropic.practice.menu.party.PartyPlayGameSelectMenu
+
 import gg.tropic.practice.minigame.MinigameLobby
 import gg.tropic.practice.player.LobbyPlayerService
 import gg.tropic.practice.player.PlayerState
@@ -32,16 +33,19 @@ import gg.tropic.practice.queue.QueueService
 import gg.tropic.practice.queue.QueueType
 import gg.tropic.practice.statistics.TrackedKitStatistic
 import gg.tropic.practice.statistics.statisticIdFrom
+import gg.tropic.practice.versioned.MinigameModernAccess
+import mc.arch.minigames.parties.menu.PartyManageMenu
+import mc.arch.minigames.parties.service.NetworkPartyService
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
-import net.evilblock.cubed.menu.buttons.AddButton
+
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
+
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -50,8 +54,10 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Service
 object LobbyHotbarService
@@ -66,6 +72,31 @@ object LobbyHotbarService
     var buildBotSelectorMenu: (Player) -> Menu? = { null }
 
     private val hotbarCache = mutableMapOf<PlayerState, HotbarPreset>()
+
+    private fun modernName(label: String, first: String, second: String, legacy: String): String
+    {
+        return if (MinigameModernAccess.isModern()) {
+            MinigameModernAccess.gradient(label, first, second)
+        } else {
+            legacy
+        }
+    }
+
+    private fun hotbarItem(material: Material, title: String, lore: Array<out String> = emptyArray()): ItemBuilder
+    {
+        return ItemBuilder(material)
+            .name(title)
+            .addFlags(
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_POTION_EFFECTS
+            )
+            .apply {
+                if (lore.isNotEmpty()) {
+                    addToLore(*lore)
+                }
+            }
+    }
 
     fun openRankedQueueMenu(player: Player)
     {
@@ -253,44 +284,118 @@ object LobbyHotbarService
             }
             .bindWith(plugin)
 
-        val kitEditor = DynamicHotbarPresetEntry().apply {
+        val createParty = DynamicHotbarPresetEntry().apply {
             onBuild = context@{ player ->
                 if (MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby())
                 {
                     return@context ItemStack(Material.AIR)
                 }
 
-                return@context ItemBuilder(Material.BOOK)
-                    .name("${CC.D_AQUA}Kit Editor ${CC.GRAY}(Right Click)")
+                val built = hotbarItem(
+                    material = MinigameModernAccess.duelsCreatePartyMaterial(),
+                    title = modernName("Create Party", "#f7c64a", "#ffdca8", "${CC.GOLD}Create Party"),
+                    lore = arrayOf(
+                        "${CC.GRAY}Create a party with your friends",
+                        "${CC.GRAY}to queue and play together.",
+                        "",
+                        "${CC.GREEN}Right-click to create a party."
+                    )
+                )
                     .build()
+
+                return@context MinigameModernAccess.applySingGoatHorn(built)
             }
 
             onClick = context@{ player ->
-                val profile = PracticeProfileService.find(player)
-                    ?: return@context
+                MinigameModernAccess.playCreatePartySound(player)
 
-                EditorKitSelectionMenu(player, profile).openMenu(player)
-                Button.playNeutral(player)
+                CompletableFuture.supplyAsync<Boolean> {
+                    if (NetworkPartyService.findParty(player.uniqueId) != null)
+                    {
+                        return@supplyAsync false
+                    }
+
+                    NetworkPartyService.createParty(player.uniqueId)
+                    true
+                }.thenAccept {
+                    Tasks.sync {
+                        if (NetworkPartyService.findParty(player.uniqueId) == null)
+                        {
+                            player.sendMessage("${CC.RED}Your party could not be created right now.")
+                            return@sync
+                        }
+
+                        player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
+                        player.sendMessage("${CC.GREEN}You have created a new party!")
+                        player.sendMessage("${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
+                        player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
+
+                        val lobbyPlayer = LobbyPlayerService.find(player)
+                            ?: return@sync
+
+                        lobbyPlayer.maintainStateTimeout = -1L
+                        lobbyPlayer.syncQueueState()
+
+                        Tasks.delayed(2L) {
+                            LobbyPlayerService.find(player)?.syncQueueState()
+                        }
+                    }
+                }
+            }
+        }
+
+        val cosmetics = StaticHotbarPresetEntry(
+            hotbarItem(
+                material = MinigameModernAccess.duelsCosmeticsMaterial(),
+                title = modernName("Cosmetics", "#d38dff", "#ffd8f4", "${CC.GREEN}Cosmetics"),
+                lore = arrayOf(
+                    "${CC.GRAY}Customize your lobby and match",
+                    "${CC.GRAY}appearance with unlockable styles.",
+                    "",
+                    "${CC.GREEN}Right-click to browse cosmetics."
+                )
+            )
+        ).also {
+            it.onClick = { player ->
+                DuelsCosmeticsMenu().openMenu(player)
+                MinigameModernAccess.playMenuSound(player)
             }
         }
 
         val settings = StaticHotbarPresetEntry(
-            ItemBuilder(Material.REDSTONE_COMPARATOR)
-                .name("${CC.D_PURPLE}Settings ${CC.GRAY}(Right Click)")
+            hotbarItem(
+                material = MinigameModernAccess.duelsSettingsMaterial(),
+                title = modernName("Settings", "#f7d35f", "#fff2b0", "${CC.D_PURPLE}Settings"),
+                lore = arrayOf(
+                    "${CC.GRAY}Manage your preferences,",
+                    "${CC.GRAY}scoreboard, and duel settings.",
+                    "",
+                    "${CC.GREEN}Right-click to open settings."
+                )
+            )
         ).also {
             it.onClick = { player ->
                 SettingMenu(player).openMenu(player)
-                Button.playNeutral(player)
+                MinigameModernAccess.playMenuSound(player)
             }
         }
 
         idlePreset.addSlot(
             7,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.WATCH)
-                    .name("${CC.D_PURPLE}Navigator ${CC.GRAY}(Right Click)")
+                hotbarItem(
+                    material = MinigameModernAccess.duelsNavigatorMaterial(),
+                    title = modernName("Navigator", "#63d8ff", "#d2fbff", "${CC.D_PURPLE}Navigator"),
+                    lore = arrayOf(
+                        "${CC.GRAY}Browse featured menus, kit editing,",
+                        "${CC.GRAY}stats, events, and parkour.",
+                        "",
+                        "${CC.GREEN}Right-click to open the navigator."
+                    )
+                )
             ).also {
                 it.onClick = { player ->
+                    MinigameModernAccess.playMenuSound(player)
                     PlayerMainMenu().openMenu(player)
                 }
             }
@@ -299,8 +404,16 @@ object LobbyHotbarService
         idlePreset.addSlot(
             0,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.IRON_SWORD)
-                    .name("${CC.GREEN}Play Casual ${CC.GRAY}(Right Click)")
+                hotbarItem(
+                    material = MinigameModernAccess.duelsCasualQueueMaterial(),
+                    title = modernName("Casual Queue", "#6cf18d", "#d6ff9f", "${CC.GREEN}Play Casual"),
+                    lore = arrayOf(
+                        "${CC.GRAY}Jump into relaxed unranked fights",
+                        "${CC.GRAY}with fast matchmaking.",
+                        "",
+                        "${CC.GREEN}Right-click to select a queue."
+                    )
+                )
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
@@ -310,6 +423,7 @@ object LobbyHotbarService
                         return@context
                     }
 
+                    MinigameModernAccess.playQueueJoinSound(player)
                     JoinQueueMenu(player, QueueType.Casual, 1).openMenu(player)
                 }
             }
@@ -318,8 +432,16 @@ object LobbyHotbarService
         idlePreset.addSlot(
             2,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.GOLD_SWORD)
-                    .name("${CC.GOLD}Play Bot Fights ${CC.GRAY}(Right Click)")
+                hotbarItem(
+                    material = MinigameModernAccess.duelsPracticeQueueMaterial(),
+                    title = modernName("Practice Queue", "#ffb55c", "#ffe59f", "${CC.GOLD}Play Bot Fights"),
+                    lore = arrayOf(
+                        "${CC.GRAY}Warm up against bots and test",
+                        "${CC.GRAY}new modern duel loadouts.",
+                        "",
+                        "${CC.GREEN}Right-click to choose a bot fight."
+                    )
+                )
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
@@ -334,6 +456,7 @@ object LobbyHotbarService
                             player.sendMessage("${CC.RED}This feature is not available on this server!")
                         }
 
+                    MinigameModernAccess.playQueueJoinSound(player)
                     menu.openMenu(player)
                 }
             }
@@ -342,11 +465,20 @@ object LobbyHotbarService
         idlePreset.addSlot(
             1,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.DIAMOND_SWORD)
-                    .name("${CC.AQUA}Play Ranked ${CC.GRAY}(Right Click)")
+                hotbarItem(
+                    material = MinigameModernAccess.duelsCompetitiveQueueMaterial(),
+                    title = modernName("Competitive Queue", "#5db7ff", "#b9ebff", "${CC.AQUA}Play Ranked"),
+                    lore = arrayOf(
+                        "${CC.GRAY}Queue into ranked fights and climb",
+                        "${CC.GRAY}the competitive ladder.",
+                        "",
+                        "${CC.GREEN}Right-click to select a ranked queue."
+                    )
+                )
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
+                    MinigameModernAccess.playQueueJoinSound(player)
                     openRankedQueueMenu(player)
                 }
             }
@@ -354,39 +486,14 @@ object LobbyHotbarService
 
         idlePreset.addSlot(
             4,
-            StaticHotbarPresetEntry(
-                ItemBuilder(Material.NETHER_STAR)
-                    .name("${CC.PINK}Create a Party ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = scope@{ player ->
-                    player.performCommand("party create")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.InPartyAsLeader
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
-                }
-            }
+            createParty
         )
 
         idlePreset.addSlot(
             6,
-            StaticHotbarPresetEntry(
-                ItemBuilder(Material.ITEM_FRAME)
-                    .name("${CC.YELLOW}View Leaderboards ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = { player ->
-                    LeaderboardsMenu(player).openMenu(player)
-                    Button.playNeutral(player)
-                }
-            }
+            cosmetics
         )
 
-        idlePreset.addSlot(6, kitEditor)
         idlePreset.addSlot(8, settings)
 
         HotbarPresetHandler.startTrackingHotbar("idle", idlePreset)
@@ -397,11 +504,17 @@ object LobbyHotbarService
             8,
             StaticHotbarPresetEntry(
                 ItemBuilder(XMaterial.RED_DYE)
-                    .name("${CC.RED}Leave Queue ${CC.GRAY}(Right Click)")
+                    .name(
+                        if (MinigameModernAccess.isModern()) {
+                            "${CC.RED}Leave Queue ${CC.D_GRAY}(${CC.WHITE}Cancel Matchmaking${CC.D_GRAY})"
+                        } else {
+                            "${CC.RED}Leave Queue ${CC.GRAY}(Right Click)"
+                        }
+                    )
             ).also {
                 it.onClick = scope@{ player ->
                     QueueService.leaveQueue(player)
-                    Button.playNeutral(player)
+                    MinigameModernAccess.playQueueLeaveSound(player)
                     player.sendMessage(
                         "${CC.RED}You left the queue!"
                     )
@@ -409,154 +522,91 @@ object LobbyHotbarService
             }
         )
 
-        inQueuePreset.addSlot(0, kitEditor)
-
         HotbarPresetHandler.startTrackingHotbar("inQueue", inQueuePreset)
         hotbarCache[PlayerState.InQueue] = inQueuePreset
 
-        val inPartyPreset = HotbarPreset()
-        inPartyPreset.addSlot(
-            8,
-            StaticHotbarPresetEntry(
-                ItemBuilder(XMaterial.RED_DYE)
-                    .name("${CC.RED}Leave Party ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = scope@{ player ->
-                    player.performCommand("party leave")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.Idle
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
+        val leaveParty = StaticHotbarPresetEntry(
+            hotbarItem(
+                material = Material.matchMaterial("BARRIER") ?: XMaterial.RED_DYE.parseMaterial() ?: Material.INK_SACK,
+                title = modernName("Leave Party", "#ff7a7a", "#ffc3c3", "${CC.RED}Leave Party"),
+                lore = arrayOf(
+                    "${CC.GRAY}Leave your current party and",
+                    "${CC.GRAY}return to solo duels.",
+                    "",
+                    "${CC.GREEN}Right-click to leave."
+                )
+            )
+        ).also {
+            it.onClick = { player ->
+                player.performCommand("party leave")
+                MinigameModernAccess.playQueueLeaveSound(player)
+                Tasks.delayed(2L) {
+                    LobbyPlayerService.find(player)?.syncQueueState()
                 }
             }
-        )
-
-        fun playerIsLeader(player: Player): Boolean
-        {
-            val lobbyPlayer = LobbyPlayerService.find(player)
-                ?: return false
-
-            if (!lobbyPlayer.isInParty())
-            {
-                return false
-            }
-
-            return lobbyPlayer.partyOf().delegate
-                .leader.uniqueId == player.uniqueId
         }
 
-        inPartyPreset.addSlot(
-            0,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .of(Material.BEACON)
-                        .name("${CC.GOLD}Configure Party ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    if (!playerIsLeader(player))
-                    {
-                        return@scope
-                    }
-
-                    player.performCommand("party manage")
-                }
+        val inPartyLeaderPreset = HotbarPreset()
+        inPartyLeaderPreset.addSlot(0, StaticHotbarPresetEntry(
+            hotbarItem(
+                material = Material.BEACON,
+                title = modernName("Party Manager", "#7ce1ff", "#d9faff", "${CC.GOLD}Configure Party"),
+                lore = arrayOf(
+                    "${CC.GRAY}Manage visibility, invites,",
+                    "${CC.GRAY}party settings, and limits.",
+                    "",
+                    "${CC.GREEN}Right-click to manage your party."
+                )
+            )
+        ).also {
+            it.onClick = { player ->
+                player.performCommand("party manage")
+                MinigameModernAccess.playMenuSound(player)
             }
-        )
-
-        inPartyPreset.addSlot(
-            1,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .copyOf(
-                            object : AddButton()
-                            {}
-                                .getButtonItem(player)
-                        )
-                        .name("${CC.B_GREEN}Invite Player ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    if (!playerIsLeader(player))
-                    {
-                        return@scope
-                    }
-
-                    InputPrompt()
-                        .withText("${CC.B_GREEN}Type the player's username in chat to invite them!")
-                        .acceptInput { _, playerName ->
-                            player.performCommand("party invite $playerName")
-                        }
-                        .start(player)
-                }
+        })
+        inPartyLeaderPreset.addSlot(4, StaticHotbarPresetEntry(
+            hotbarItem(
+                material = if (MinigameModernAccess.isModern()) Material.matchMaterial("NETHERITE_SPEAR") ?: Material.matchMaterial("SPEAR") ?: Material.matchMaterial("TRIDENT") ?: Material.BEACON else Material.BEACON,
+                title = modernName("Party Play", "#78ffb3", "#d8ffd8", "${CC.GREEN}Game Selector"),
+                lore = arrayOf(
+                    "${CC.GRAY}Start party games and queue",
+                    "${CC.GRAY}events with your members.",
+                    "",
+                    "${CC.GREEN}Right-click to play together."
+                )
+            )
+        ).also {
+            it.onClick = { player ->
+                PartyPlayGameSelectMenu().openMenu(player)
+                MinigameModernAccess.playMenuSound(player)
             }
-        )
-
-        inPartyPreset.addSlot(
-            4,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    if (MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby())
-                    {
-                        return@scope ItemStack(Material.AIR)
-                    }
-
-                    return@scope ItemBuilder
-                        .of(XMaterial.LIME_DYE)
-                        .name("${CC.B_GREEN}Party Play ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    if (!playerIsLeader(player))
-                    {
-                        return@scope
-                    }
-
-                    PartyPlayGameSelectMenu().openMenu(player)
-                }
-            }
-        )
-
-        inPartyPreset.addSlot(7, kitEditor)
-        inPartyPreset.addSlot(6, settings)
-
-        HotbarPresetHandler.startTrackingHotbar("inPartyLeader", inPartyPreset)
-        hotbarCache[PlayerState.InPartyAsLeader] = inPartyPreset
+        })
+        inPartyLeaderPreset.addSlot(7, idlePreset.entries[7]!!)
+        inPartyLeaderPreset.addSlot(8, leaveParty)
 
         val inPartyMemberPreset = HotbarPreset()
-        inPartyMemberPreset.addSlot(
-            8,
-            StaticHotbarPresetEntry(
-                ItemBuilder(XMaterial.RED_DYE)
-                    .name("${CC.RED}Leave Party ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = scope@{ player ->
-                    player.performCommand("party leave")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.Idle
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
-                }
+        inPartyMemberPreset.addSlot(4, StaticHotbarPresetEntry(
+            hotbarItem(
+                material = Material.matchMaterial("PLAYER_HEAD") ?: Material.SKULL_ITEM,
+                title = modernName("Party Info", "#8ea7ff", "#e1e7ff", "${CC.AQUA}Party Info"),
+                lore = arrayOf(
+                    "${CC.GRAY}View your current party status",
+                    "${CC.GRAY}and available group actions.",
+                    "",
+                    "${CC.GREEN}Right-click to open party menu."
+                )
+            )
+        ).also {
+            it.onClick = { player ->
+                PartyPlayGameSelectMenu().openMenu(player)
+                MinigameModernAccess.playMenuSound(player)
             }
-        )
+        })
+        inPartyMemberPreset.addSlot(7, idlePreset.entries[7]!!)
+        inPartyMemberPreset.addSlot(8, leaveParty)
 
-        inPartyMemberPreset.addSlot(7, kitEditor)
-        inPartyMemberPreset.addSlot(6, settings)
+        HotbarPresetHandler.startTrackingHotbar("inPartyLeader", inPartyLeaderPreset)
+        hotbarCache[PlayerState.InPartyAsLeader] = inPartyLeaderPreset
 
         HotbarPresetHandler.startTrackingHotbar("inPartyMember", inPartyMemberPreset)
         hotbarCache[PlayerState.InPartyAsMember] = inPartyMemberPreset
@@ -579,210 +629,6 @@ object LobbyHotbarService
     fun set(state: PlayerState, preset: HotbarPreset)
     {
         hotbarCache[state] = preset
-    }
-
-    fun reconfigureForMinigames()
-    {
-        val settings = StaticHotbarPresetEntry(
-            ItemBuilder(Material.REDSTONE_COMPARATOR)
-                .name("${CC.D_PURPLE}Settings ${CC.GRAY}(Right Click)")
-        ).also {
-            it.onClick = { player ->
-                SettingMenu(player).openMenu(player)
-                Button.playNeutral(player)
-            }
-        }
-
-
-        val inPartyPreset = HotbarPreset()
-        inPartyPreset.addSlot(
-            8,
-            StaticHotbarPresetEntry(
-                ItemBuilder(XMaterial.RED_DYE)
-                    .name("${CC.RED}Leave Party ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = scope@{ player ->
-                    player.performCommand("party leave")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.Idle
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
-                }
-            }
-        )
-
-        fun playerIsLeader(player: Player): Boolean
-        {
-            val lobbyPlayer = LobbyPlayerService.find(player)
-                ?: return false
-
-            if (!lobbyPlayer.isInParty())
-            {
-                return false
-            }
-
-            return lobbyPlayer.partyOf().delegate
-                .leader.uniqueId == player.uniqueId
-        }
-
-        inPartyPreset.addSlot(
-            0,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .of(Material.BEACON)
-                        .name("${CC.GOLD}Configure Party ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    if (!playerIsLeader(player))
-                    {
-                        return@scope
-                    }
-
-                    player.performCommand("party manage")
-                }
-            }
-        )
-
-        inPartyPreset.addSlot(
-            3,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .of(XMaterial.CLOCK)
-                        .name("${CC.GREEN}Game Selector ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    PracticeConfigurationService.openEditableUI(player, "game_selector")
-                }
-            }
-        )
-
-        if (MinigameLobby.isMinigameLobby())
-        {
-            inPartyPreset.addSlot(
-                5,
-                DynamicHotbarPresetEntry().also {
-                    it.onBuild = scope@{ player ->
-                        return@scope ItemBuilder
-                            .of(XMaterial.LIME_DYE)
-                            .name("${CC.GREEN}Play ${CC.GRAY}(Right Click)")
-                            .build()
-                    }
-
-                    it.onClick = scope@{ player ->
-                        MinigameLobby.customizer().playProvider(player)
-                    }
-                }
-            )
-        }
-
-        inPartyPreset.addSlot(
-            1,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .copyOf(
-                            object : AddButton()
-                            {}
-                                .getButtonItem(player)
-                        )
-                        .name("${CC.B_GREEN}Invite Player ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    if (!playerIsLeader(player))
-                    {
-                        return@scope
-                    }
-
-                    InputPrompt()
-                        .withText("${CC.B_GREEN}Type the player's username in chat to invite them!")
-                        .acceptInput { _, playerName ->
-                            player.performCommand("party invite $playerName")
-                        }
-                        .start(player)
-                }
-            }
-        )
-
-        inPartyPreset.addSlot(7, settings)
-
-        HotbarPresetHandler.startTrackingHotbar("inPartyLeaderMinigames", inPartyPreset)
-        hotbarCache[PlayerState.InPartyAsLeader] = inPartyPreset
-
-        val inPartyMemberPreset = HotbarPreset()
-        inPartyMemberPreset.addSlot(
-            8,
-            StaticHotbarPresetEntry(
-                ItemBuilder(XMaterial.RED_DYE)
-                    .name("${CC.RED}Leave Party ${CC.GRAY}(Right Click)")
-            ).also {
-                it.onClick = scope@{ player ->
-                    player.performCommand("party leave")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.Idle
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
-                }
-            }
-        )
-
-        inPartyMemberPreset.addSlot(0, settings)
-
-        HotbarPresetHandler.startTrackingHotbar("inPartyMemberMinigames", inPartyMemberPreset)
-        hotbarCache[PlayerState.InPartyAsMember] = inPartyMemberPreset
-
-        if (Bukkit.getPluginManager().isPluginEnabled("ScQueue"))
-        {
-            val inNetworkQueuePreset = HotbarPreset()
-            inNetworkQueuePreset.addSlot(
-                8,
-                StaticHotbarPresetEntry(
-                    ItemBuilder(XMaterial.RED_DYE)
-                        .name("${CC.RED}Leave Queue ${CC.GRAY}(Right Click)")
-                ).also {
-                    it.onClick = scope@{ player ->
-                        runCatching {
-                            LeaveQueueCommand.onJoinQueue(player)
-                        }.onFailure { throwable ->
-                            if (throwable is ConditionFailedException)
-                            {
-                                player.sendMessage("${CC.RED}${throwable.message}")
-                            }
-                        }
-
-                        val lobbyPlayer = LobbyPlayerService.find(player)
-                            ?: return@scope
-
-                        synchronized(lobbyPlayer.stateUpdateLock) {
-                            lobbyPlayer.state = PlayerState.Idle
-                            lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                        }
-                    }
-                }
-            )
-
-            inNetworkQueuePreset.addSlot(0, settings)
-
-            HotbarPresetHandler.startTrackingHotbar("inNetworkQueue", inNetworkQueuePreset)
-            hotbarCache[PlayerState.InNetworkQueue] = inNetworkQueuePreset
-        }
     }
 
     fun reset(player: Player)

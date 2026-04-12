@@ -1,9 +1,5 @@
 package gg.tropic.practice.kit.feature
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 enum class FeatureFlag(
     val schema: MutableMap<String, String> = mutableMapOf(),
     val incompatibleWith: () -> Set<FeatureFlag> = { emptySet() },
@@ -39,7 +35,7 @@ enum class FeatureFlag(
         )
     ),
     QueueSizes(
-        // another example: 3:Ranked,2:Casual,10:Ranked+Casual
+
         schema = mutableMapOf("sizes" to "1:Casual+Ranked"),
         description = listOf(
             "Define which queue types this kit",
@@ -212,7 +208,7 @@ enum class FeatureFlag(
         incompatibleWith = { setOf(BreakAllBlocks) },
         requires = setOf(RequiresBuildMap),
         schema = mutableMapOf(
-            // Default for bridges LMAO
+
             "types" to "STAINED_CLAY:11,STAINDED_CLAY:14"
         ),
         description = listOf(
@@ -275,7 +271,6 @@ enum class FeatureFlag(
         )
     ),
 
-    // multi-round
     CountDownTimeBeforeRoundStart(
         schema = mutableMapOf("value" to "5"),
         availableLifecycles = setOf(
@@ -287,7 +282,6 @@ enum class FeatureFlag(
         )
     ),
 
-    // ImmediateRespawnOnDeath may be implied in game logic!
     ImmediateRespawnOnDeath(
         incompatibleWith = { setOf(StartNewRoundOnDeath) },
         availableLifecycles = setOf(

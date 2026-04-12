@@ -12,10 +12,6 @@ import gg.tropic.practice.minigame.MiniGameQueueConfiguration
 import gg.tropic.practice.queue.QueueService
 import gg.tropic.practice.queue.QueueType
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 @AutoRegister
 object MiniQueueCommand : ScalaCommand()
 {

@@ -9,16 +9,13 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.core.plugin.*
 import gg.tropic.practice.minigame.MiniGameSerializers
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 @Plugin(
     name = "Minigames",
     version = "%remote%/%branch%/%id%",
     description = "Lobby"
 )
 @PluginAuthor("ArchMC")
+@PluginApiVersion("1.21")
 @PluginWebsite("https://arch.mc")
 @PluginDependencyComposite(
     PluginDependency("scala-commons"),

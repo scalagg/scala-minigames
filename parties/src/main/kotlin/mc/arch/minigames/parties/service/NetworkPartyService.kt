@@ -31,10 +31,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-/**
- * @author Subham
- * @since 7/2/25
- */
 @Service
 object NetworkPartyService : PartyService
 {
@@ -67,11 +63,11 @@ object NetworkPartyService : PartyService
                 future = null
                 future = CommonsServiceExecutor.scheduleAtFixedRate({
                    runCatching {
-                       parties.values.toList().forEach { party ->
-                           val offlineMembers = party.includedMembers()
-                               .filter { member ->
-                                   QuickAccess.online(member).join() == false
-                               }
+                        partyLock.read { parties.values.toList() }.forEach { party ->
+                            val offlineMembers = party.includedMembers()
+                                .filter { member ->
+                                    Bukkit.getPlayer(member) == null && QuickAccess.online(member).join() == false
+                                }
 
                            val onlineMembers = party.includedMembers()
                                .filter { member ->
@@ -79,7 +75,7 @@ object NetworkPartyService : PartyService
                                }
 
                            offlineMembers.forEach { player ->
-                               // The leader disconnected, and there's another player to take over
+
                                if (party.leader.uniqueId == player && onlineMembers.isNotEmpty())
                                {
                                    val onlineMember = onlineMembers.first()
@@ -95,7 +91,7 @@ object NetworkPartyService : PartyService
                                    )
                                } else
                                {
-                                   // A regular member disconnected from the network
+
                                    if (party.leader.uniqueId != player)
                                    {
                                        party.members.remove(player)
@@ -109,7 +105,7 @@ object NetworkPartyService : PartyService
                                        )
                                    } else
                                    {
-                                       // The leader disconnected, and there are no other players in the party online to take over
+
                                        delete(party)
                                    }
                                }
@@ -197,22 +193,62 @@ object NetworkPartyService : PartyService
             Serializers.gson.fromJson(it, Party::class.java)
         }
 
-    override fun findParty(member: UUID) = partyLock.read { parties.values }
-        .firstOrNull {
-            it.leader.uniqueId == member ||
-                member in it.members.keys
+    private fun cacheParty(party: Party): Party
+    {
+        partyLock.write {
+            parties[party.uniqueId] = party
         }
+
+        return party
+    }
+
+    override fun findParty(member: UUID): Party?
+    {
+        val cached = partyLock.read { parties.values.toList() }
+            .firstOrNull {
+                it.leader.uniqueId == member ||
+                    member in it.members.keys
+            }
+
+        if (cached != null)
+        {
+            return cached
+        }
+
+        val loaded = ScalaCommonsSpigot.instance.kvConnection
+            .sync()
+            .hgetall("minigames:parties")
+            .values
+            .asSequence()
+            .mapNotNull { serialized ->
+                runCatching {
+                    Serializers.gson.fromJson(serialized, Party::class.java)
+                }.getOrNull()
+            }
+            .firstOrNull {
+                it.leader.uniqueId == member || member in it.members.keys
+            }
+
+        if (loaded != null)
+        {
+            return cacheParty(loaded)
+        }
+
+        return null
+    }
 
     override fun createParty(leader: UUID): Party
     {
+        findParty(leader)?.let {
+            return it
+        }
+
         val newParty = Party(leader = PartyMember(
             uniqueId = leader,
             role = PartyRole.LEADER
         ))
 
-        partyLock.write {
-            parties[newParty.uniqueId] = newParty
-        }
+        cacheParty(newParty)
 
         updateParty(newParty)
         return newParty
@@ -275,8 +311,21 @@ object NetworkPartyService : PartyService
         )
     }
 
-    override fun findPartyByID(id: UUID) = partyLock.read {
-        parties[id]
+    override fun findPartyByID(id: UUID): Party?
+    {
+        val cached = partyLock.read {
+            parties[id]
+        }
+
+        if (cached != null)
+        {
+            return cached
+        }
+
+        val loaded = loadParty(id)
+            ?: return null
+
+        return cacheParty(loaded)
     }
 
     override fun loadedParties() = partyLock.read { parties.values.toList() }

@@ -20,13 +20,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * Class created on 10/12/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 class ManageScoreboardMenu(): Menu("Managing Scoreboard")
 {
     init

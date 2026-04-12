@@ -1,14 +1,8 @@
 package gg.tropic.practice.games.ranked;
 
-import gg.scala.commons.annotations.inject.AutoBind;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Colin McDonald
- * @since 2/18/2017
- */
-@AutoBind
 public final class PotPvPEloCalculator implements EloCalculator {
 
     public static final PotPvPEloCalculator INSTANCE =
@@ -42,7 +36,6 @@ public final class PotPvPEloCalculator implements EloCalculator {
         winnerGain = Math.min(winnerGain, maxEloGain);
         winnerGain = Math.max(winnerGain, minEloGain);
 
-        // loserGain will be negative so pay close attention here
         loserGain = Math.min(loserGain, -minEloLoss);
         loserGain = Math.max(loserGain, -maxEloLoss);
 
@@ -64,7 +57,6 @@ public final class PotPvPEloCalculator implements EloCalculator {
         winnerGain = Math.min(winnerGain, maxEloGain);
         winnerGain = Math.max(winnerGain, minEloGain);
 
-        // loserGain will be negative so pay close attention here
         loserGain = Math.min(loserGain, -minEloLoss);
         loserGain = Math.max(loserGain, -maxEloLoss);
 

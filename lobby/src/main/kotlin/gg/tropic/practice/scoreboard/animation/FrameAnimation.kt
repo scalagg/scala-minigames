@@ -2,13 +2,6 @@ package gg.tropic.practice.scoreboard.animation
 
 import gg.tropic.practice.scoreboard.configuration.LobbyScoreboardConfigurationService
 
-/**
- * Class created on 10/12/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 object FrameAnimation : Runnable {
 
     private var stage: Int = 0

@@ -11,10 +11,6 @@ import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import org.bukkit.event.player.PlayerQuitEvent
 
-/**
- * @author GrowlyX
- * @since 12/29/2023
- */
 @Service
 object ScrollingLeaderboardService
 {

@@ -21,10 +21,6 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class TemporaryWorldHostedWorldInstance(
     private val request: VisitWorldRequest,
     override val loadedWorld: LoadedSlimeWorld
@@ -41,8 +37,7 @@ class TemporaryWorldHostedWorldInstance(
         val configuration = request.configuration as TemporaryWorldVisitConfiguration
         val baseBlock = XMaterial.valueOf(configuration.blockType).parseMaterial()!!
 
-        // Little programmatically generated spawn location for the players lol
-        // Disable lighting to save >90ms/tick during game starts
+        
         bukkitWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = false
 
         CompletableFuture

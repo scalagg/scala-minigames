@@ -5,16 +5,13 @@ import gg.tropic.practice.games.team.TeamIdentifier
 import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.extensions.RBTeamSide
 import gg.tropic.practice.extensions.toRBTeamSide
+import gg.tropic.practice.visuals.TeamVisuals
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
 import net.evilblock.cubed.nametag.NametagProviderRegister
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
- */
 @NametagProviderRegister
 object DuelsNametagImpl : NametagProvider("practice", Int.MAX_VALUE)
 {
@@ -26,6 +23,17 @@ object DuelsNametagImpl : NametagProvider("practice", Int.MAX_VALUE)
     private val BLUE_TEAM_NAME_TAG = createNametag("${CC.B_BLUE}B${CC.BLUE} ", "", 99999)
 
     private val SPECTATOR_NAME_TAG = createNametag("${CC.B_GRAY}S${CC.GRAY} ", "", -1)
+    private val minigameTeamTags = mutableMapOf<String, NametagInfo>()
+
+    private fun minigameTeamNametag(teamIdentifier: TeamIdentifier): NametagInfo
+    {
+        return minigameTeamTags.getOrPut(teamIdentifier.label) {
+            val color = TeamVisuals.toChatColor(teamIdentifier)
+            val readable = TeamVisuals.toReadable(color)
+            val letter = readable.first().uppercaseChar()
+            createNametag("$color[$letter] ", "", 90000 - teamIdentifier.priority())
+        }
+    }
 
     override fun fetchNametag(
         viewed: Player, viewer: Player
@@ -52,6 +60,14 @@ object DuelsNametagImpl : NametagProvider("practice", Int.MAX_VALUE)
                 if (nametag != null)
                 {
                     return nametag
+                }
+
+                if (viewedGame.miniGameLifecycle?.typeConfiguration?.internalId == "bedwars")
+                {
+                    val team = viewedGame.getNullableTeam(viewed)
+                        ?: return SPECTATOR_NAME_TAG
+
+                    return minigameTeamNametag(team.teamIdentifier)
                 }
             }
 

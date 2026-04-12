@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 data class MinigameMapSelectorMenu(
     val onReturn: (Player) -> Unit,
     val mode: MiniGameModeMetadata

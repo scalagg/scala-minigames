@@ -2,10 +2,6 @@ package gg.tropic.practice.region
 
 import lol.arch.symphony.api.model.TrackedPlayer
 
-/**
- * @author GrowlyX
- * @since 12/17/2023
- */
 enum class Region
 {
     NA, EU, Both;

@@ -4,13 +4,6 @@ import gg.scala.commons.graduation.Progressive
 import gg.tropic.practice.scoreboard.animation.AnimationFrame
 import net.evilblock.cubed.util.CC
 
-/**
- * Class created on 10/12/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 class LobbyScoreboardConfig(
     var title: String = "${CC.B_PRI}${CC.I}ARCH${CC.B_GRAY}${CC.I}.${CC.B_WHITE}${CC.I}MC",
     var titleAnimated: Boolean = true,

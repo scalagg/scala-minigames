@@ -7,10 +7,6 @@ import org.bukkit.entity.Player
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 12/17/2023
- */
 object PlayerRegionFromRedisProxy
 {
     fun of(player: Player): CompletableFuture<Region> = CompletableFuture

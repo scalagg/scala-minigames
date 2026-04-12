@@ -9,10 +9,6 @@ import org.bukkit.World
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object SlimeWorldLoadStrategy
 {
     fun loadPersistentWorld(

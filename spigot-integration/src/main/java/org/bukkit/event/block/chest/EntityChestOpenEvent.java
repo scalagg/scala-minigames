@@ -4,10 +4,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author GrowlyX
- * @since 8/26/2024
- */
 public class EntityChestOpenEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Entity entity;

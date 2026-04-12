@@ -6,10 +6,6 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 
-/**
- * @author GrowlyX
- * @since 12/24/2023
- */
 @AutoRegister
 object ManagePartiesCommand : ScalaCommand()
 {

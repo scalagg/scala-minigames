@@ -18,10 +18,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-/**
- * @author Elb1to
- * @since 10/19/2023
- */
 class StatisticsMenu(
     player: Player,
     private val profile: PracticeProfile,
@@ -294,7 +290,7 @@ class StatisticsMenu(
         }"
 
         buttons[4] = ItemBuilder
-            .of(Material.SIGN)
+            .of(Material.matchMaterial("OAK_SIGN") ?: Material.PAPER)
             .name("${CC.GREEN}Overall Statistics")
             .setLore(description)
             .toButton()
@@ -302,7 +298,7 @@ class StatisticsMenu(
         if (player.uniqueId == profile.identifier)
         {
             buttons[40] = ItemBuilder
-                .of(Material.BOOK)
+                .of(Material.matchMaterial("BOOK") ?: Material.PAPER)
                 .name("${CC.GREEN}Stat Reset Tokens")
                 .addToLore("${CC.GRAY}Unhappy with your stats?")
                 .addToLore("${CC.GRAY}Purchase a reset token")
@@ -317,5 +313,13 @@ class StatisticsMenu(
         return buttons
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "${profile.identifier.username()}'s Statistics"
+    override fun getPrePaginatedTitle(player: Player): String
+    {
+        if (MinigameLobby.isMinigameLobby() && MinigameLobby.customizer().id.equals("bedwars", ignoreCase = true))
+        {
+            return "Bed Wars Statistics"
+        }
+
+        return "${profile.identifier.username()}'s Statistics"
+    }
 }

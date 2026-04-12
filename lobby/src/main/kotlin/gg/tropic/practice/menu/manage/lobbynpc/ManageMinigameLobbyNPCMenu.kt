@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageMinigameLobbyNPCMenu(
     private val index: Int
 ) : Menu("Managing Lobby NPC #${index + 1}")

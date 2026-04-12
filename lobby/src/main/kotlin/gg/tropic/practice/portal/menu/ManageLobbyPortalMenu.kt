@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageLobbyPortalMenu(
     private val index: UUID
 ) : Menu("Managing Lobby Portal...")

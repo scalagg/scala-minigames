@@ -3,6 +3,7 @@ package gg.tropic.practice.games.manager.strategies
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.commons.agnostic.sync.server.state.ServerState
+import gg.tropic.practice.application.operator.GameServerProvisioner
 import gg.tropic.practice.gameGroup
 import gg.tropic.practice.games.manager.GameManager
 import gg.tropic.practice.provider.MiniProviderType
@@ -11,10 +12,6 @@ import gg.tropic.practice.region.Region
 import gg.tropic.practice.suffixWhenDev
 import gg.tropic.practice.ugc.WorldInstanceProviderType
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object ServerSelectionStrategy
 {
     fun select(
@@ -28,6 +25,8 @@ object ServerSelectionStrategy
     ): GameServer?
     {
         val instances = GameManager.instances()
+        val provisioner = GameServerProvisioner.instance
+
         return ServerContainer
             .getServersInGroupCasted<GameServer>(gameGroup().suffixWhenDev())
             .filter {
@@ -36,9 +35,13 @@ object ServerSelectionStrategy
                     return@filter false
                 }
 
+                if (provisioner != null && provisioner.isDraining(it.id))
+                {
+                    return@filter false
+                }
+
                 val serverInstance = instances[it.id]
 
-//                !it.isDraining() &&
                     it.state == ServerState.Loaded &&
                     serverInstance != null &&
                     serverInstance.version == requiredVersion &&
@@ -58,7 +61,7 @@ object ServerSelectionStrategy
                 }
             }
             .firstOrNull {
-                // ensure server of NEW replication is in the same region
+
                 Region.extractFrom(it.id).withinScopeOf(region)
             }
     }

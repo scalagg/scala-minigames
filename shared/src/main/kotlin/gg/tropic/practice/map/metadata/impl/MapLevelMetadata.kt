@@ -2,10 +2,6 @@ package gg.tropic.practice.map.metadata.impl
 
 import gg.tropic.practice.map.metadata.AbstractMapMetadata
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 data class MapLevelMetadata(
     val yAxis: Int,
     val below: Int = 2,

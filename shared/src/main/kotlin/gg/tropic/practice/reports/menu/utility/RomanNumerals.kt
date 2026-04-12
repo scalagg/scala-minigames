@@ -2,9 +2,6 @@ package gg.tropic.practice.reports.menu.utility
 
 import java.util.*
 
-/**
- * https://stackoverflow.com/questions/12967896/converting-integers-to-roman-numerals-java
- */
 object RomanNumerals
 {
     private val mappings = TreeMap<Int, String>()

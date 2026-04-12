@@ -14,10 +14,6 @@ import gg.tropic.practice.reports.menu.SelectPlayerMenu
 import net.evilblock.cubed.util.CC
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 10/22/2023
- */
 @AutoRegister
 object MatchInventoryCommand : ScalaCommand()
 {

@@ -8,10 +8,6 @@ import gg.scala.commons.issuer.ScalaPlayer
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.parkour.isPlayingParkour
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 @AutoRegister
 object ParkourCommand : ScalaCommand()
 {

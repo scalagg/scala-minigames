@@ -5,10 +5,6 @@ import net.evilblock.cubed.visibility.VisibilityAdapter
 import net.evilblock.cubed.visibility.VisibilityAdapterRegister
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 2/11/2023
- */
 @VisibilityAdapterRegister("levitationportals")
 object LevitationPortalVisibilityAdapter : VisibilityAdapter
 {

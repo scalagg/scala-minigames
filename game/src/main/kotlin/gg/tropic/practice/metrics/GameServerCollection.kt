@@ -7,10 +7,6 @@ import gg.tropic.practice.metrics.collectors.HostedWorldCollector
 import gg.tropic.practice.metrics.collectors.HostedWorldDistributionCollector
 import gg.tropic.practice.metrics.collectors.ReplicationCountCollector
 
-/**
- * @author GrowlyX
- * @since 3/2/2024
- */
 @Metrics
 object GameServerCollection : CollectorCollection
 {

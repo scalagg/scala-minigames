@@ -1,9 +1,5 @@
 package gg.tropic.practice.ugc.generation.visits
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 enum class VisitWorldStatus
 {
     FAILED_RPC_FAILURE,

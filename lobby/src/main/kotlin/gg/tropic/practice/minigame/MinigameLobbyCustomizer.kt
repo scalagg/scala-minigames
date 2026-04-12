@@ -2,12 +2,9 @@ package gg.tropic.practice.minigame
 
 import gg.tropic.practice.profile.PracticeProfile
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 interface MinigameLobbyCustomizer
 {
     val id: String
@@ -19,6 +16,10 @@ interface MinigameLobbyCustomizer
     fun statisticsMenuProvider(profile: PracticeProfile): Map<Int, Button>
 
     fun holographicStatsProvider(player: Player): List<String>
+
+    fun profileStatsNPCHeader(): List<String> = listOf(
+        "${CC.B_YELLOW}CLICK FOR STATS"
+    )
 
     fun scoreboard(): MinigameLobbyScoreboardProvider
 }

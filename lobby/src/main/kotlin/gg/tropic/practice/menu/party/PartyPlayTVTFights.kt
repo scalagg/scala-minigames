@@ -26,10 +26,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 2/9/2024
- */
 class PartyPlayTVTFights(private val onlinePlayerList: List<UUID>) : PaginatedMenu()
 {
     init
@@ -294,7 +290,7 @@ class PartyPlayTVTFights(private val onlinePlayerList: List<UUID>) : PaginatedMe
                         "kit" to kit.id,
                         "region" to (regionSelection ?: playerRegion).name
                     ).publish(
-                        channel = "communications-gamequeue".suffixWhenDev()
+                        channel = "minigames:gamequeue".suffixWhenDev()
                     )
 
                     Button.playSuccess(player)

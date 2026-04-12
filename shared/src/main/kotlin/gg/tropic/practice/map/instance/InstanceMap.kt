@@ -13,10 +13,6 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 9/21/2023
- */
 data class InstanceMap(
     val map: Map,
     val world: World,

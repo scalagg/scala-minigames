@@ -18,10 +18,6 @@ import gg.tropic.practice.provider.MiniProviderVersion
 import gg.tropic.practice.region.Region
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 abstract class AbstractSubscribableMinigamePlayerQueue(
     private val miniGameMode: MiniGameMode,
     private val kit: ImmutableKit,
@@ -58,7 +54,7 @@ abstract class AbstractSubscribableMinigamePlayerQueue(
                 {
                     if (targetEntry.data.miniGameQueueConfiguration!!.requiredMapID != null)
                     {
-                        // Ensure this existing game has a map
+
                         conditions = conditions &&
                             it.mapID == targetEntry.data.miniGameQueueConfiguration!!.requiredMapID
                     }
@@ -166,7 +162,7 @@ abstract class AbstractSubscribableMinigamePlayerQueue(
             .prepareGameFor(
                 map = map,
                 expectation = expectation,
-                // prefer NA servers if queuing globally
+
                 region = preferredRegion,
                 excludeInstance = targetEntry.data.miniGameQueueConfiguration?.excludeMiniInstance,
                 selectNewestInstance = selectNewestInstance,

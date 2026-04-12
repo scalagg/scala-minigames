@@ -10,13 +10,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * Class created on 4/6/2025
-
- * @author Max C.
- * @project arch-duels
- * @website https://solo.to/redis
- */
 class KitGroupEditorMenu(val kit: Kit): PaginatedMenu()
 {
     override fun getAllPagesButtons(player: Player): Map<Int, Button>

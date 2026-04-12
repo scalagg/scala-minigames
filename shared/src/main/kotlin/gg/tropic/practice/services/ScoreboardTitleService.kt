@@ -9,10 +9,6 @@ import gg.scala.flavor.service.Service
 import net.evilblock.cubed.util.CC
 import org.bukkit.ChatColor
 
-/**
- * @author GrowlyX
- * @since 1/19/2024
- */
 @Service
 object ScoreboardTitleService
 {
@@ -25,6 +21,8 @@ object ScoreboardTitleService
         )
     )
 
+    private var scheduled = false
+
     fun getCurrentTitle() = "${titleAnimator.current().text}${
         if ("mipdev" in ServerSync.getLocalGameServer().groups) " ${CC.WHITE}(dev)" else ""
     }"
@@ -33,11 +31,16 @@ object ScoreboardTitleService
     fun configure()
     {
         titleAnimator.schedule()
+        scheduled = true
     }
 
     @Close
     fun close()
     {
-        titleAnimator.dispose()
+        if (scheduled)
+        {
+            titleAnimator.dispose()
+            scheduled = false
+        }
     }
 }

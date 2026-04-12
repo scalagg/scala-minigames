@@ -5,10 +5,6 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 12/2/2021
- */
 class PartyMember(
     var uniqueId: UUID,
     var role: PartyRole

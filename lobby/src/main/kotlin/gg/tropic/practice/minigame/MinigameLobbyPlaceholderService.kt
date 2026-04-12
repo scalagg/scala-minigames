@@ -8,10 +8,6 @@ import gg.tropic.practice.configuration.PracticeConfigurationService
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/29/25
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("PlaceholderAPI")

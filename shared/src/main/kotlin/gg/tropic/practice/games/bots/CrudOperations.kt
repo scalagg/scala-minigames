@@ -5,10 +5,6 @@ import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 8/9/2024
- */
 fun String.extractBotGameMetadata() = Serializers.gson.fromJson(this, BotGameMetadata::class.java)
 
 fun getBotMetdataOfPlayer(player: UUID) = ScalaCommonsSpigot.instance.kvConnection.sync()

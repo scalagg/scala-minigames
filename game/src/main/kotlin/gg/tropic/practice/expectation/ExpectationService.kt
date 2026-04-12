@@ -21,7 +21,9 @@ import gg.tropic.practice.minigame.AbstractMiniGameGameImpl
 import gg.tropic.practice.minigame.PlayerMiniGameAttemptRejoinWithTokenEvent
 import gg.tropic.practice.minigame.event.PlayerMiniGameRejoinWithTokenEvent
 import gg.tropic.practice.minigame.event.PlayerMiniGameSpectateWithTokenEvent
+import gg.tropic.practice.minigame.menu.SpectatorSettingsMenu
 import gg.tropic.practice.minigame.menu.SpectatorMenu
+import gg.tropic.practice.minigame.spectators.SpectatorSettingsService
 import gg.tropic.practice.minigame.rejoin.RejoinToken
 import gg.tropic.practice.strategies.MarkSpectatorStrategy
 import gg.tropic.practice.ugc.HostedWorldInstanceService
@@ -43,14 +45,12 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerPreLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.scheduler.BukkitTask
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 @Service
 object ExpectationService
 {
@@ -60,8 +60,9 @@ object ExpectationService
     @Inject
     lateinit var audiences: BukkitAudiences
 
-    val returnToSpawnItem = ItemBuilder.of(XMaterial.RED_DYE)
-        .name("${CC.RED}Return to Spawn ${CC.GRAY}(Right Click)")
+    val returnToSpawnItem = ItemBuilder.of(XMaterial.RED_BED)
+        .name("${CC.RED}Return to Lobby ${CC.GRAY}(Right Click)")
+        .addToLore("${CC.GRAY}Right-click to leave to the lobby!")
         .build()
 
     val broadcastItem = ItemBuilder.of(XMaterial.CLOCK)
@@ -69,8 +70,24 @@ object ExpectationService
         .build()
 
     val spectateItem = ItemBuilder.of(XMaterial.COMPASS)
-        .name("${CC.RED}Spectate Menu ${CC.GRAY}(Right Click)")
+        .name("${CC.GREEN}Teleporter ${CC.GRAY}(Right Click)")
+        .addToLore("${CC.GRAY}Right-click to spectate players!")
         .build()
+
+    val spectatorSettingsItem = ItemBuilder.of(XMaterial.COMPARATOR)
+        .name("${CC.AQUA}Spectator Settings ${CC.GRAY}(Right Click)")
+        .addToLore("${CC.GRAY}Right-click to change your spectator settings!")
+        .build()
+
+    private val pendingLobbyTeleports = ConcurrentHashMap<UUID, BukkitTask>()
+
+    private fun clearSpectatorExpectations(uniqueId: UUID)
+    {
+        GameService.gameMappings.values.forEach { game ->
+            game.expectedSpectators -= uniqueId
+            game.expectedSpectatorTargets.remove(uniqueId)
+        }
+    }
 
     @Configure
     fun configure()
@@ -80,7 +97,8 @@ object ExpectationService
         Events
             .subscribe(PlayerExpectedToJumpEvent::class.java)
             .handler {
-                it.target.toHostedWorld()?.apply {
+                val targetPlayer = Bukkit.getPlayer(it.target)
+                targetPlayer?.toHostedWorld()?.apply {
                     HostedWorldInstanceService.trackPendingLogin(it.player, this)
                     return@handler
                 }
@@ -128,7 +146,6 @@ object ExpectationService
                             )
                         }
 
-                    // We can let them enter
                     event.allow()
                     return@handler
                 }
@@ -224,6 +241,12 @@ object ExpectationService
                 EventPriority.MONITOR
             )
             .handler {
+                pendingLobbyTeleports
+                    .remove(it.player.uniqueId)
+                    ?.cancel()
+
+                clearSpectatorExpectations(it.player.uniqueId)
+
                 GameService.spectatorToGameMappings.remove(it.player.uniqueId)
                 GameService.playerToGameMappings.remove(it.player.uniqueId)
 
@@ -239,8 +262,30 @@ object ExpectationService
                     it.getWhitelisted() == ServerSync.getLocalGameServer().getWhitelisted()
                 }
                 .minByOrNull {
-                    it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
+                    it.getPlayersCount() ?: Int.MAX_VALUE 
                 }
+        }
+
+        fun redirectToLobby(player: org.bukkit.entity.Player)
+        {
+            clearSpectatorExpectations(player.uniqueId)
+
+            player.toHostedWorld()?.apply {
+                val lobby = findBestAvailableLobby(providerType.lobbyGroup)
+                if (lobby != null)
+                {
+                    VelocityRedirectSystem.redirect(player, lobby.id)
+                }
+                return
+            }
+
+            val game = GameService
+                .byPlayerOrSpectator(player.uniqueId)
+                ?: return
+
+            game.findBestAvailableLobby()?.apply {
+                VelocityRedirectSystem.redirect(player, id)
+            }
         }
 
         Events
@@ -251,23 +296,31 @@ object ExpectationService
                     it.item.isSimilar(returnToSpawnItem)
             }
             .handler {
-                it.player.toHostedWorld()?.apply {
-                    val lobby = findBestAvailableLobby(providerType.lobbyGroup)
-                    if (lobby != null)
-                    {
-                        it.player.sendMessage("${CC.GRAY}Sending you to the lobby...")
-                        VelocityRedirectSystem.redirect(it.player, lobby.id)
-                    }
+                it.isCancelled = true
+
+                val player = it.player
+
+                val previousTask = pendingLobbyTeleports.remove(player.uniqueId)
+                if (previousTask != null)
+                {
+                    previousTask.cancel()
+                    player.sendMessage("${CC.RED}Teleport cancelled!")
                     return@handler
                 }
 
-                val game = GameService
-                    .byPlayerOrSpectator(it.player.uniqueId)
-                    ?: return@handler
+                player.sendMessage("${CC.GREEN}Teleporting you to the lobby in 3 seconds... ${CC.YELLOW}Right-click again to cancel the teleport!")
+                pendingLobbyTeleports[player.uniqueId] = Bukkit
+                    .getScheduler()
+                    .runTaskLater(plugin, Runnable {
+                        pendingLobbyTeleports.remove(player.uniqueId)
 
-                game.findBestAvailableLobby()?.apply {
-                    VelocityRedirectSystem.redirect(it.player, id)
-                }
+                        if (!player.isOnline)
+                        {
+                            return@Runnable
+                        }
+
+                        redirectToLobby(player)
+                    }, 60L)
             }
             .bindWith(plugin)
 
@@ -286,7 +339,24 @@ object ExpectationService
                     .byPlayerOrSpectator(it.player.uniqueId)
                     ?: return@handler
 
+                it.isCancelled = true
                 SpectatorMenu(it.player, game).openMenu(it.player)
+            }
+            .bindWith(plugin)
+
+        Events
+            .subscribe(PlayerInteractEvent::class.java)
+            .filter {
+                it.hasItem() &&
+                    (it.action == Action.RIGHT_CLICK_BLOCK || it.action == Action.RIGHT_CLICK_AIR) &&
+                    it.item.isSimilar(spectatorSettingsItem)
+            }
+            .filter {
+                GameService.isSpectating(it.player)
+            }
+            .handler {
+                it.isCancelled = true
+                SpectatorSettingsMenu().openMenu(it.player)
             }
             .bindWith(plugin)
 
@@ -296,7 +366,6 @@ object ExpectationService
                 val pendingHostedWorldLogin = HostedWorldInstanceService
                     .pendingLoginInstance(it.player.uniqueId)
 
-                // We only really need this on 1.8... I hope
                 if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
                 {
                     (it.player as CraftPlayer).handle.playerInteractManager
@@ -401,10 +470,43 @@ object ExpectationService
                 val isRejoiningGame = expectedRejoinWithTokens.containsKey(it.player.uniqueId)
                 if (it.player.uniqueId in game.expectedSpectators)
                 {
+                    val joiningPlayer = it.player
+
                     MarkSpectatorStrategy.markSpectator(
-                        player = it.player,
-                        world = game.arenaWorld
+                        player = joiningPlayer,
+                        world = game.arenaWorld,
+                        shouldAddSpectatorItem = true
                     )
+
+                    val requestedTarget = game.expectedSpectatorTargets.remove(joiningPlayer.uniqueId)
+                        ?.let(Bukkit::getPlayer)
+                    if (requestedTarget != null)
+                    {
+                        Schedulers
+                            .sync()
+                            .runLater({
+                                if (!joiningPlayer.isOnline || !requestedTarget.isOnline)
+                                {
+                                    return@runLater
+                                }
+
+                                val targetGame = GameService.byPlayerOrSpectator(requestedTarget.uniqueId)
+                                if (targetGame?.expectation != game.expectation)
+                                {
+                                    return@runLater
+                                }
+
+                                SpectatorSettingsService.startTracking(joiningPlayer, requestedTarget, firstPerson = false)
+                            }, 8L)
+                    }
+
+                    game.toBukkitPlayers()
+                        .filterNotNull()
+                        .filter { player -> player.uniqueId != joiningPlayer.uniqueId }
+                        .forEach { participant ->
+                            participant.hidePlayer(joiningPlayer)
+                            joiningPlayer.showPlayer(participant)
+                        }
 
                     if (isRejoiningGame)
                     {
@@ -416,6 +518,10 @@ object ExpectationService
                     }
                 } else
                 {
+                    val joiningPlayer = it.player
+
+                    game.expectedSpectatorTargets.remove(it.player.uniqueId)
+
                     if (isRejoiningGame)
                     {
                         if (game.miniGameLifecycle != null)
@@ -432,10 +538,19 @@ object ExpectationService
                         }
                     }
 
-                    Bukkit.getPluginManager().callEvent(PlayerJoinGameEvent(game, it.player))
+                    Bukkit.getPluginManager().callEvent(PlayerJoinGameEvent(game, joiningPlayer))
+
+                    game.expectedSpectators
+                        .mapNotNull(Bukkit::getPlayer)
+                        .filter { spectator -> spectator.uniqueId != joiningPlayer.uniqueId }
+                        .forEach { spectator ->
+                            joiningPlayer.hidePlayer(spectator)
+                            spectator.showPlayer(joiningPlayer)
+                        }
+
                     if (!isRejoiningGame)
                     {
-                        GameService.spectatorPlayers -= it.player.uniqueId
+                        GameService.spectatorPlayers -= joiningPlayer.uniqueId
                     }
                 }
             }

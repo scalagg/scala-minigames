@@ -3,10 +3,6 @@ package gg.tropic.practice.statistics
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 12/21/2023
- */
 data class LocalAccumulator(
     private val owner: UUID,
     private val mappings: ConcurrentHashMap<String, Double> = ConcurrentHashMap()
@@ -25,10 +21,8 @@ data class LocalAccumulator(
     {
         mappings.compute(id) { _, value ->
             val old = (value ?: 0.0)
-            // TODO: Debug
-            /*Bukkit.getPlayer(owner)?.apply {
-                sendMessage("$id: $old -> ${old + amount}")
-            }*/
+
+            
             old + amount
         }
     }

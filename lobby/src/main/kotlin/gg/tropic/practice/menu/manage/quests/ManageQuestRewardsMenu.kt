@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageQuestRewardsMenu(
     private val questId: String
 ) : PaginatedMenu()

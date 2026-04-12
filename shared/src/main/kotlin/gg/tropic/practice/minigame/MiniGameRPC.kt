@@ -7,10 +7,6 @@ import gg.tropic.practice.games.matchmaking.JoinIntoGameResult
 import gg.tropic.practice.games.spectate.SpectateRequest
 import gg.tropic.practice.games.spectate.SpectateResponse
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object MiniGameRPC
 {
     private val gateway = DPSRedisService("minigames")

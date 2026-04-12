@@ -18,13 +18,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * Class created on 1/12/2024
-
- * @author 98ping
- * @project tropic-practice
- * @website https://solo.to/redis
- */
 @Service
 object MapRatingService
 {

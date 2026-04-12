@@ -36,16 +36,13 @@ public class SchematicUtil {
 
         BlockOffset offset = schematic.getOffset();
 
-        // Apply offset
         Location pasteLocation = loc.clone();
         pasteLocation.setX(pasteLocation.getX() + offset.getX());
         pasteLocation.setY(pasteLocation.getY() + offset.getY());
         pasteLocation.setZ(pasteLocation.getZ() + offset.getZ());
 
-        // Create set of block snapshots for BlockChanger
         Set<BlockChanger.BlockSnapshot> blockSnapshots = new HashSet<>();
 
-        // Convert schematic data to BlockChanger format
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 for (int z = 0; z < length; z++) {
@@ -56,7 +53,6 @@ public class SchematicUtil {
                     short blockId = blocks[index];
                     byte data = blockData[index];
 
-                    // Skip air blocks (optional)
                     if (blockId == 0) continue;
 
                     Location blockLocation = new Location(
@@ -74,7 +70,6 @@ public class SchematicUtil {
             }
         }
 
-        // Paste blocks using BlockChanger
         BlockChanger.setBlocks(pasteLocation.getWorld(), blockSnapshots);
         handleTileEntities(pasteLocation, schematic);
     }
@@ -85,7 +80,7 @@ public class SchematicUtil {
             return Objects.requireNonNullElse(Material.getMaterial(blockId), XMaterial.STONE.parseMaterial());
         } catch (Exception e) {
             Bukkit.getLogger().warning("Error getting material for block ID " + blockId + ": " + e.getMessage());
-            return XMaterial.STONE.parseMaterial(); // Fallback
+            return XMaterial.STONE.parseMaterial(); 
         }
     }
 
@@ -96,16 +91,13 @@ public class SchematicUtil {
 
         BlockOffset offset = schematic.getOffset();
 
-        // Apply offset
         Location pasteLocation = loc.clone();
         pasteLocation.setX(pasteLocation.getX() + offset.getX());
         pasteLocation.setY(pasteLocation.getY() + offset.getY());
         pasteLocation.setZ(pasteLocation.getZ() + offset.getZ());
 
-        // Create set of block snapshots for BlockChanger
         Set<BlockChanger.BlockSnapshot> blockSnapshots = new HashSet<>();
 
-        // Convert schematic data to BlockChanger format
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 for (int z = 0; z < length; z++) {
@@ -120,18 +112,10 @@ public class SchematicUtil {
             }
         }
 
-        // Paste blocks using BlockChanger
         BlockChanger.setBlocks(pasteLocation.getWorld(), blockSnapshots);
         handleTileEntities(pasteLocation, schematic);
     }
 
-    /**
-     * Paste a schematic from GridFS storage by name
-     *
-     * @param location      The location to paste at
-     * @param schematicName The name of the schematic in storage
-     * @return CompletableFuture<Boolean> indicating success
-     */
     public static CompletableFuture<Boolean> pasteSchematicFromStorage(Location location, String schematicName) {
         return SCHEMATIC_PROVIDER.loadSchematic(schematicName)
                 .thenComposeAsync(schematic -> {
@@ -140,15 +124,12 @@ public class SchematicUtil {
                         return CompletableFuture.completedFuture(false);
                     }
 
-                    // Schedule pasting on main thread
                     return CompletableFuture.supplyAsync(() -> {
                         pasteSchematic(location, schematic);
                         return true;
                     });
                 });
     }
-
-    // ========== LOADING METHODS ==========
 
     public static Schematic loadSchematicFromInputStream(InputStream inputStream) {
         try {
@@ -205,7 +186,6 @@ public class SchematicUtil {
         }
         return null;
     }
-
 
     public static Schematic loadSchematic(File file) {
         try {
@@ -264,83 +244,33 @@ public class SchematicUtil {
         return null;
     }
 
-    /**
-     * Load a schematic from GridFS storage
-     *
-     * @param schematicName The name of the schematic
-     * @return CompletableFuture<Schematic>
-     */
     public static CompletableFuture<Schematic> loadSchematicFromStorage(String schematicName) {
         return SCHEMATIC_PROVIDER.loadSchematic(schematicName);
     }
 
-    // ========== SAVING METHODS ==========
-
-    /**
-     * Save a schematic file to GridFS storage
-     *
-     * @param schematicName The name to store it as
-     * @param schematicFile The schematic file
-     * @return CompletableFuture<Boolean> indicating success
-     */
     public static CompletableFuture<?> saveSchematicToStorage(String schematicName, File schematicFile) {
         return SCHEMATIC_PROVIDER.saveSchematic(schematicName, schematicFile);
     }
 
-    /**
-     * Save schematic data to GridFS storage
-     *
-     * @param schematicName The name to store it as
-     * @param schematicData The raw schematic bytes
-     * @return CompletableFuture<Boolean> indicating success
-     */
     public static CompletableFuture<?> saveSchematicToStorage(String schematicName, byte[] schematicData) {
         return SCHEMATIC_PROVIDER.saveSchematic(schematicName, schematicData);
     }
 
-    /**
-     * Save player's current WorldEdit clipboard as a schematic
-     *
-     * @param player        The player whose clipboard to save
-     * @param schematicName The name for the schematic
-     * @return CompletableFuture<Boolean> indicating success
-     */
     public static CompletableFuture<?> saveClipboardToStorage(Player player, String schematicName) {
         return SCHEMATIC_PROVIDER.saveFromClipboard(player, schematicName);
     }
 
-    // ========== MANAGEMENT METHODS ==========
-
-    /**
-     * Check if a schematic exists in storage
-     *
-     * @param schematicName The name of the schematic
-     * @return CompletableFuture<Boolean>
-     */
     public static CompletableFuture<Boolean> schematicExistsInStorage(String schematicName) {
         return SCHEMATIC_PROVIDER.schematicExists(schematicName);
     }
 
-    /**
-     * Delete a schematic from storage
-     *
-     * @param schematicName The name of the schematic
-     * @return CompletableFuture<Boolean> indicating success
-     */
     public static CompletableFuture<Boolean> deleteSchematicFromStorage(String schematicName) {
         return SCHEMATIC_PROVIDER.deleteSchematic(schematicName);
     }
 
-    /**
-     * List all available schematics in storage
-     *
-     * @return CompletableFuture<List < String>>
-     */
     public static CompletableFuture<List<String>> listStoredSchematics() {
         return SCHEMATIC_PROVIDER.listSchematics();
     }
-
-    // ========== HELPER METHODS ==========
 
     private static void handleTileEntities(Location loc, Schematic schematic) {
         Schedulers
@@ -356,7 +286,6 @@ public class SchematicUtil {
 
                         Location tileLocation = new Location(loc.getWorld(), x, y, z);
 
-                        // Apply tile entity data using Bukkit API for better compatibility
                         applyTileEntityData(tileLocation, tiledata);
                     }
                 }, 5L)
@@ -364,23 +293,23 @@ public class SchematicUtil {
     }
 
     private static void applyTileEntityData(Location location, Map<String, Tag> tiledata) {
-        // This method can be expanded based on your needs
-        // For now, it's a placeholder that handles basic tile entity types
+
+        
         try {
             String id = getChildTag(tiledata, "id", StringTag.class).getValue();
 
             switch (id.toLowerCase()) {
                 case "sign":
                 case "minecraft:sign":
-                    // Handle signs
+
                     handleSign(location, tiledata);
                     break;
                 case "chest":
                 case "minecraft:chest":
-                    // Handle chests
+
                     handleChest(location, tiledata);
                     break;
-                // Add more tile entity types as needed
+
                 default:
                     Bukkit.getLogger().info("Unhandled tile entity type: " + id + " at " + location);
                     break;
@@ -391,12 +320,11 @@ public class SchematicUtil {
     }
 
     private static void handleSign(Location location, Map<String, Tag> tiledata) {
-        // Basic sign handling - can be expanded
+
         try {
             if (location.getBlock().getState() instanceof org.bukkit.block.Sign) {
                 org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
 
-                // Try to get text lines
                 for (int i = 1; i <= 4; i++) {
                     String lineKey = "Text" + i;
                     if (tiledata.containsKey(lineKey)) {
@@ -405,7 +333,6 @@ public class SchematicUtil {
                             continue;
                         }
 
-                        // Clean up JSON formatting if present
                         text = text.replace("{\"extra\":[\"", "");
                         text = text.replace("\"],\"text\":\"\"}", "");
                         sign.setLine(i - 1, text);
@@ -419,17 +346,16 @@ public class SchematicUtil {
     }
 
     private static void handleChest(Location location, Map<String, Tag> tiledata) {
-        // Basic chest handling - can be expanded
+
         try {
             if (location.getBlock().getState() instanceof org.bukkit.block.Chest) {
-                // Chest inventory handling can be implemented here
-                // This would require parsing the Items list from the NBT data
+
+                
             }
         } catch (Exception e) {
             Bukkit.getLogger().warning("Error handling chest: " + e.getMessage());
         }
     }
-
 
     private static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected)
             throws IllegalArgumentException {

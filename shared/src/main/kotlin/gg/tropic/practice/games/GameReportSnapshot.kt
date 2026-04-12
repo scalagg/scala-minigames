@@ -7,10 +7,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
- */
 class GameReportSnapshot(player: Player, counter: LocalAccumulator, kit: Kit)
 {
     val playerUniqueId = player.uniqueId

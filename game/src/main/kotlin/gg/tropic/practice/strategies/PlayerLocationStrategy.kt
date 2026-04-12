@@ -5,10 +5,6 @@ import gg.tropic.practice.ugc.toHostedWorld
 import org.bukkit.World
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 8/3/25
- */
 object PlayerLocationStrategy
 {
     fun findPlayerExpectedWorld(player: Player): World?

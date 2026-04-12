@@ -19,10 +19,6 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.util.CC
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/17/2024
- */
 @AutoRegister
 object PlayCommand : ScalaCommand()
 {

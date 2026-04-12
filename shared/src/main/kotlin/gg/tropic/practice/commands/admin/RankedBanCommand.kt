@@ -16,10 +16,6 @@ import net.evilblock.cubed.util.time.Duration
 import net.evilblock.cubed.util.time.TimeUtil
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 1/1/2024
- */
 @AutoRegister
 object RankedBanCommand : ScalaCommand()
 {

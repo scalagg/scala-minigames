@@ -19,10 +19,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 5/28/2024
- */
 @AutoRegister
 object RateCommand : ScalaCommand()
 {

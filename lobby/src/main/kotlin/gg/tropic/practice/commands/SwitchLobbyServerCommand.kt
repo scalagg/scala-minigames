@@ -15,16 +15,11 @@ import gg.tropic.practice.suffixWhenDev
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.ColorUtil.toWoolData
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 4/2/2023
- */
 @AutoRegister
 object SwitchLobbyServerCommand : ScalaCommand()
 {
@@ -58,19 +53,23 @@ object SwitchLobbyServerCommand : ScalaCommand()
                 }
                 .filterIsInstance<GameServer>()
                 .forEachIndexed { index, gameServer ->
-                    buttons[buttons.size] = ItemBuilder.of(Material.WOOL)
-                        .data(
-                            toWoolData(
-                                if (gameServer.getWhitelisted()!!)
-                                    ChatColor.RED
-                                else
-                                    if (gameServer.getPlayersCount()!! >= gameServer.getMaxPlayers()!!)
-                                        ChatColor.GRAY
-                                    else
-                                        if (gameServer.id == ServerSync.local.id)
-                                            ChatColor.LIGHT_PURPLE else ChatColor.GREEN
-                            ).toShort()
-                        )
+                    val color = if (gameServer.getWhitelisted()!!)
+                        ChatColor.RED
+                    else if (gameServer.getPlayersCount()!! >= gameServer.getMaxPlayers()!!)
+                        ChatColor.GRAY
+                    else if (gameServer.id == ServerSync.local.id)
+                        ChatColor.LIGHT_PURPLE
+                    else ChatColor.GREEN
+
+                    val material = when (color)
+                    {
+                        ChatColor.RED -> Material.matchMaterial("RED_WOOL") ?: Material.PAPER
+                        ChatColor.GRAY -> Material.matchMaterial("GRAY_WOOL") ?: Material.PAPER
+                        ChatColor.LIGHT_PURPLE -> Material.matchMaterial("MAGENTA_WOOL") ?: Material.PAPER
+                        else -> Material.matchMaterial("LIME_WOOL") ?: Material.PAPER
+                    }
+
+                    buttons[buttons.size] = ItemBuilder.of(material)
                         .name("${CC.GREEN}$lobbyDisplayName Lobby #${index + 1}")
                         .addToLore(
                             CC.GRAY + gameServer.getPlayersCount() + "/" + gameServer.getMaxPlayers() + " online...",

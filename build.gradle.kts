@@ -11,16 +11,31 @@ plugins {
     id("com.gradleup.shadow") version "9.0.0-beta6"
 }
 
-var currentBranch: String = "master"/*grgit.branch.current().name
-if (currentBranch != "master") {
-    println("Starting in development mode")
-}*/
+var currentBranch: String = "master"
+val userHome = System.getProperty("user.home")
 
 allprojects {
     group = "gg.scala.duels"
     version = "1.7.0"
 
     repositories {
+        mavenLocal {
+            content {
+                includeModule("gg.scala.commons", "bukkit")
+                includeModule("gg.scala.commons", "modern-access")
+                includeModule("gg.scala.commons", "core")
+                includeModule("gg.scala.commons", "commons")
+                includeModule("gg.scala.commons", "store")
+                includeModule("gg.scala.commons", "serversync")
+                includeModule("gg.scala.commons", "serializers")
+                includeModule("gg.scala.basics.plugin", "scala-basics-plugin")
+                includeModule("lol.arch.symphony", "api")
+                includeModule("gg.scala.staff", "scala-scstaff-plugin")
+                includeModule("gg.scala.friends", "scala-friends")
+                includeModule("gg.scala.game.extensions", "scala-core-game-extensions")
+                includeModule("gg.scala.lemon", "bukkit")
+            }
+        }
         configureScalaRepository()
         configureScalaRepository(dev = true)
 
@@ -50,16 +65,17 @@ subprojects {
 
         compileOnly("gg.scala.store:spigot:1.0.0")
         compileOnly("gg.scala.staff:scala-scstaff-plugin:1.1.1")
-        compileOnly("gg.scala.friends:scala-friends:2.1.2")
+        compileOnly("gg.scala.friends:scala-friends:2.1.1")
         compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
-        compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.2")
+        compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.3")
 
         compileOnly("gg.scala.spigot:server:1.1.3")
-        compileOnly("com.lunarclient:apollo-api:1.1.8")
+        compileOnly(files("$userHome/.gradle/caches/modules-2/files-2.1/com.github.retrooper/packetevents-spigot/2.11.2/69fbb3310cca52004d4b9a5af607cd80f379f7bc/packetevents-spigot-2.11.2.jar"))
+        compileOnly(files("$userHome/.gradle/caches/modules-2/files-2.1/com.github.retrooper/packetevents-api/2.11.2/acb60a83fa6eb26746fabc7efe58fcfafe27eec5/packetevents-api-2.11.2.jar"))
         compileOnly("gg.scala.lemon:bukkit:2.0.1")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
-        implementation("com.squareup.retrofit2:retrofit:3.1.0-SNAPSHOT")
-        implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+        implementation("com.squareup.retrofit2:retrofit:2.9.0")
+        implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     }
 
     kapt {

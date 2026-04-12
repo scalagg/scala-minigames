@@ -8,10 +8,6 @@ import gg.tropic.practice.games.spectate.SpectateRequest
 import gg.tropic.practice.games.spectate.SpectateResponse
 import gg.tropic.practice.games.spectate.SpectateResponseStatus
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class MiniGameSpectateHandler : AwareRPCHandler<SpectateRequest, SpectateResponse>
 {
     override fun handle(
@@ -35,6 +31,7 @@ class MiniGameSpectateHandler : AwareRPCHandler<SpectateRequest, SpectateRespons
             }
 
         gameImpl.expectedSpectators += request.player
+        gameImpl.expectedSpectatorTargets[request.player] = request.target
         context.reply(
             SpectateResponse(
                 uniqueId = request.uniqueId,

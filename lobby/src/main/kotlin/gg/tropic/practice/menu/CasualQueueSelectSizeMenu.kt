@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 10/15/2023
- */
 class CasualQueueSelectSizeMenu : Menu("Casual Queue")
 {
     init

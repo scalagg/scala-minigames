@@ -23,10 +23,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 @AutoRegister
 @CommandPermission("practice.command.temporaryworld")
 object TemporaryWorldCommand : ScalaCommand()

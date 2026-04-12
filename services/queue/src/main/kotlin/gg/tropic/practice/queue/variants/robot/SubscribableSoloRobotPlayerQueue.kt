@@ -15,10 +15,6 @@ import gg.tropic.practice.queue.queueId
 import gg.tropic.practice.region.Region
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 class SubscribableSoloRobotPlayerQueue(
     private val kit: ImmutableKit,
     private val teamSize: Int,
@@ -44,7 +40,7 @@ class SubscribableSoloRobotPlayerQueue(
         if (metadata == null)
         {
             RedisShared.sendMessage(
-                // don't unnecessarily send message targeting the robot
+
                 first.data.players,
                 listOf(
                     "&cYou did not select a kit to play properly!"
@@ -54,7 +50,6 @@ class SubscribableSoloRobotPlayerQueue(
             return listOf(first.data)
         }
 
-        // a bot is playing w/ the player lol
         val users = first.data.players + metadata.botInstances
         val map = MapDataSync
             .selectMapIfCompatible(
@@ -62,7 +57,7 @@ class SubscribableSoloRobotPlayerQueue(
             )
             ?: return run {
                 RedisShared.sendMessage(
-                    // don't unnecessarily send message targeting the robot
+
                     first.data.players,
                     listOf(
                         "&cWe found no map compatible with the kit you are queueing for!"
@@ -89,7 +84,7 @@ class SubscribableSoloRobotPlayerQueue(
         GameQueueManager.prepareGameFor(
             map = map,
             expectation = expectation,
-            // prefer NA servers if queuing globally
+
             region = if (region == Region.Both) Region.NA else region
         ).exceptionally {
             it.printStackTrace()

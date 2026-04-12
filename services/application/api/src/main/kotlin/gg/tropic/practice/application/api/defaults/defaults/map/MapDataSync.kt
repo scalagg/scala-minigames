@@ -1,8 +1,8 @@
 package gg.tropic.practice.application.api.defaults.defaults.map
 
-import gg.scala.commons.persist.datasync.DataSyncKeys
-import gg.scala.commons.persist.datasync.DataSyncService
-import gg.scala.commons.persist.datasync.DataSyncSource
+import gg.tropic.practice.application.api.defaults.DPSDataSync
+import gg.tropic.practice.application.api.defaults.DPSDataSyncKeys
+import gg.tropic.practice.application.api.defaults.DPSDataSyncSource
 import gg.tropic.practice.application.api.defaults.defaults.kit.ImmutableKit
 import gg.tropic.practice.application.api.defaults.defaults.kit.group.ImmutableKitGroup
 import gg.tropic.practice.application.api.defaults.defaults.kit.group.KitGroupDataSync
@@ -11,13 +11,9 @@ import gg.tropic.practice.namespaceShortened
 import gg.tropic.practice.suffixWhenDev
 import net.kyori.adventure.key.Key
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
-object MapDataSync : DataSyncService<ImmutableMapContainer>()
+object MapDataSync : DPSDataSync<ImmutableMapContainer>()
 {
-    object DPSMapKeys : DataSyncKeys
+    object DPSMapKeys : DPSDataSyncKeys
     {
         override fun newStore() = "mi-practice-maps"
 
@@ -25,7 +21,7 @@ object MapDataSync : DataSyncService<ImmutableMapContainer>()
         override fun sync() = Key.key(namespaceShortened().suffixWhenDev(), "msync")
     }
 
-    override fun locatedIn() = DataSyncSource.Mongo
+    override fun locatedIn() = DPSDataSyncSource.Mongo
 
     override fun keys() = DPSMapKeys
     override fun type() = ImmutableMapContainer::class.java

@@ -8,21 +8,89 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.tropic.practice.kit.Kit
+import gg.tropic.practice.kit.KitService
+import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.profile.PracticeProfile
 import gg.tropic.practice.statistics.TrackedKitStatistic
 import gg.tropic.practice.statistics.StatisticService
+import gg.tropic.practice.statistics.StatisticID
 import gg.tropic.practice.statistics.statisticWrite
 import gg.tropic.practice.statistics.statisticIds
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 
-/**
- * @author GrowlyX
- * @since 12/23/2023
- */
 @AutoRegister
 object ResetStatsCommand : ScalaCommand()
 {
+    private fun minigameTypeFor(kit: Kit): String? = if (kit.features(FeatureFlag.MiniGameType))
+    {
+        kit.featureConfig(FeatureFlag.MiniGameType, "id")
+    }
+    else
+    {
+        null
+    }
+
+    private fun minigameStatisticIDs(kit: Kit?): List<StatisticID>
+    {
+        val minigameTypeIDs = if (kit == null)
+        {
+            KitService.cached().kits.values
+                .mapNotNull(::minigameTypeFor)
+                .toSet()
+        }
+        else
+        {
+            minigameTypeFor(kit)
+                ?.let(::setOf)
+                ?: emptySet()
+        }
+
+        val minigameKitIDs = if (kit == null)
+        {
+            KitService.cached().kits.values
+                .asSequence()
+                .filter { it.features(FeatureFlag.MiniGameType) }
+                .map(Kit::id)
+                .toSet()
+        }
+        else
+        {
+            if (kit.features(FeatureFlag.MiniGameType)) setOf(kit.id)
+            else emptySet()
+        }
+
+        if (minigameTypeIDs.isEmpty() && minigameKitIDs.isEmpty())
+        {
+            return emptyList()
+        }
+
+        return StatisticService
+            .trackedStatistics()
+            .asSequence()
+            .map { statistic -> statistic.id }
+            .filter { id ->
+                if (id.isCustom())
+                {
+                    val custom = id.custom
+                        ?: return@filter false
+
+                    minigameTypeIDs.any { typeID ->
+                        custom == typeID || custom.startsWith("$typeID:")
+                    }
+                }
+                else
+                {
+                    val trackedKitID = id.kit
+                        ?: return@filter false
+
+                    trackedKitID in minigameKitIDs || trackedKitID in minigameTypeIDs
+                }
+            }
+            .distinctBy(StatisticID::toId)
+            .toList()
+    }
+
     enum class StatReset(
         val resetFor: PracticeProfile.(Kit?) -> Unit
     )
@@ -96,10 +164,20 @@ object ResetStatsCommand : ScalaCommand()
                 update(defaultValue)
             }
         }),
+        MinigameStats({ kit ->
+            val minigameStatisticIDs = minigameStatisticIDs(kit)
+            if (minigameStatisticIDs.isNotEmpty())
+            {
+                statisticWrite(minigameStatisticIDs) {
+                    update(defaultValue)
+                }
+            }
+        }),
         AllStats({ kit ->
             RankedStats.resetFor(this, kit)
             GlobalStats.resetFor(this, kit)
             CasualStats.resetFor(this, kit)
+            MinigameStats.resetFor(this, kit)
         })
     }
 

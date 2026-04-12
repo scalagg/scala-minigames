@@ -16,16 +16,13 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 data class PracticeProfile(
     override val identifier: UUID,
     override var matured: Set<String>? = setOf()
 ) : IDataStoreObject, Progressive
 {
     private var rankedBan: RankedBan? = null
+    var favoriteKits: MutableList<String> = mutableListOf()
 
     @Transient
     var immutableMode: Boolean? = null
@@ -76,8 +73,80 @@ data class PracticeProfile(
     }
 
     val customLoadouts = ConcurrentHashMap<String, MutableList<Loadout>>()
+    private var selectedDuelsCosmetics: ConcurrentHashMap<String, String>? = ConcurrentHashMap()
+    private var ownedDuelsCosmetics: ConcurrentHashMap<String, MutableSet<String>>? = ConcurrentHashMap()
+
+    private var spectatorPreferences: ConcurrentHashMap<String, Boolean>? = ConcurrentHashMap()
+
+    private fun spectatorPreferences(): ConcurrentHashMap<String, Boolean>
+    {
+        if (spectatorPreferences == null)
+        {
+            spectatorPreferences = ConcurrentHashMap()
+        }
+
+        return spectatorPreferences!!
+    }
+
+    fun spectatorPreference(key: String, defaultValue: Boolean) = spectatorPreferences()[key] ?: defaultValue
+
+    fun setSpectatorPreference(key: String, value: Boolean)
+    {
+        spectatorPreferences()[key] = value
+    }
+
+    private var leaderboardPreferences: ConcurrentHashMap<String, String>? = ConcurrentHashMap()
+
+    private fun leaderboardPreferences(): ConcurrentHashMap<String, String>
+    {
+        if (leaderboardPreferences == null)
+        {
+            leaderboardPreferences = ConcurrentHashMap()
+        }
+
+        return leaderboardPreferences!!
+    }
+
+    fun leaderboardPreference(key: String, defaultValue: String) = leaderboardPreferences()[key] ?: defaultValue
+
+    fun setLeaderboardPreference(key: String, value: String)
+    {
+        leaderboardPreferences()[key] = value
+    }
 
     fun getLoadoutsFromKit(kit: Kit) = customLoadouts[kit.id] ?: mutableListOf()
+
+    fun selectedDuelsCosmetic(groupId: String) = selectedDuelsCosmetics()[groupId] ?: "none"
+
+    fun selectDuelsCosmetic(groupId: String, id: String)
+    {
+        selectedDuelsCosmetics()[groupId] = id
+    }
+
+    fun unlockedDuelsCosmetics(groupId: String): MutableSet<String>
+    {
+        return ownedDuelsCosmetics().getOrPut(groupId) { mutableSetOf("none") }
+    }
+
+    private fun selectedDuelsCosmetics(): ConcurrentHashMap<String, String>
+    {
+        if (selectedDuelsCosmetics == null)
+        {
+            selectedDuelsCosmetics = ConcurrentHashMap()
+        }
+
+        return selectedDuelsCosmetics!!
+    }
+
+    private fun ownedDuelsCosmetics(): ConcurrentHashMap<String, MutableSet<String>>
+    {
+        if (ownedDuelsCosmetics == null)
+        {
+            ownedDuelsCosmetics = ConcurrentHashMap()
+        }
+
+        return ownedDuelsCosmetics!!
+    }
 
     fun hasActiveRankedBan() = rankedBan != null && rankedBan!!.isEffective()
     fun applyRankedBan(duration: Duration)

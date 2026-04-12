@@ -29,10 +29,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 10/21/2023
- */
 object DuelRequestPipeline
 {
     private fun stage2ASendDuelRequestRandomMap(
@@ -111,7 +107,7 @@ object DuelRequestPipeline
             "request-duel",
             "request" to request
         ).publish(
-            channel = "communications-gamequeue".suffixWhenDev(),
+            channel = "minigames:gamequeue".suffixWhenDev(),
             context = AwareThreadContext.SYNC
         )
     }
@@ -224,7 +220,7 @@ object DuelRequestPipeline
         target: UUID,
         kit: Kit,
         previous: Menu?,
-        // weird initialization issues from parent/super class requires us to pass this through
+
         kitGroups: Set<String> = KitGroupService.groupsOf(kit)
             .map(KitGroup::id)
             .toSet(),

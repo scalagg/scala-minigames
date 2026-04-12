@@ -39,7 +39,7 @@ class FireballFeature : Listener
     @EventHandler
     fun interact(event: PlayerInteractEvent)
     {
-        //check hand
+
         val inHand = event.item ?: return
         val game = GameService.byPlayer(event.player)
             ?: return
@@ -203,18 +203,4 @@ class FireballFeature : Listener
             }
     }
 
-    /*@EventHandler
-    fun ExplosionPrimeEvent.onPrime()
-    {
-        if (entity !is Fireball) return
-        val shooter = (entity as Fireball).shooter ?: return
-        if (shooter !is Player) return
-
-        val game = GameService.byPlayer(shooter)
-            ?: return run {
-                fire = false
-            }
-
-        fire = game.miniGameLifecycle != null
-    }*/
 }

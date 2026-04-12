@@ -5,10 +5,6 @@ import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 7/12/2023
- */
 object StatResetTokens
 {
     fun of(user: UUID) = CompletableFuture

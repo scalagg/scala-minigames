@@ -8,10 +8,6 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.tropic.practice.editor.menu.EditableUIViewAllMenu
 
-/**
- * @author Subham
- * @since 7/5/25
- */
 @AutoRegister
 @CommandAlias("manageeditableuis")
 @CommandPermission("practice.command.manageeditableuis")

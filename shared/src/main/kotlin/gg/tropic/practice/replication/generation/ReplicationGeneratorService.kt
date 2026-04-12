@@ -13,10 +13,6 @@ import gg.tropic.practice.replication.ServerAvailableReplicationState
 import me.lucko.helper.Schedulers
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 @Service(priority = 1600)
 object ReplicationGeneratorService
 {

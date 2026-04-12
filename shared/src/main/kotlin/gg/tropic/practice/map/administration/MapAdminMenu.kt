@@ -9,10 +9,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-/**
- * @author GrowlyX
- * @since 7/28/2024
- */
 class MapAdminMenu : TemplateMapMenu()
 {
     override fun filterDisplayOfMap(map: Map) = true

@@ -11,10 +11,6 @@ import gg.tropic.practice.namespaceShortened
 import gg.tropic.practice.suffixWhenDev
 import net.kyori.adventure.key.Key
 
-/**
- * @author GrowlyX
- * @since 10/16/2022
- */
 @Service
 object KitGroupService : DataSyncService<KitGroupContainer>()
 {

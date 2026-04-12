@@ -1,9 +1,5 @@
 package gg.tropic.practice.games.ranked
 
-/**
- * @author GrowlyX
- * @since 12/23/2023
- */
 data class CalculationResult(
     val winnerOld: Int,
     val winnerGain: Int,

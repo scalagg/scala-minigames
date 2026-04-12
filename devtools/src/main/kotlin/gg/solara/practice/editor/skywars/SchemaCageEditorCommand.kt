@@ -11,16 +11,12 @@ import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.scala.game.extensions.cosmetics.cages.SchemaCage
-import gg.scala.game.extensions.cosmetics.cages.SchemaCageDataSync
+import gg.scala.minigame.skywars.shared.cages.SchemaCage
+import gg.scala.minigame.skywars.shared.cages.SchemaCageDataSync
 import net.evilblock.cubed.util.CC
 import org.bukkit.Material
 import org.bukkit.util.Vector
 
-/**
- * @author GrowlyX
- * @since 8/25/2024
- */
 @AutoRegister
 @CommandAlias("schemacage")
 @CommandPermission("op")

@@ -1,18 +1,9 @@
 package gg.solara.practice.editor
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 import gg.scala.commons.spatial.Bounds
 import gg.scala.commons.spatial.Position
 import org.bukkit.Chunk
 
-/**
- * Finds the northeast and southwest most locations from a List of world
- * Chunks. Allows us to find the bounds in which we will scan map
- * entities without the user having to manually fly around and mark them.
- */
 fun List<Chunk>.toBounds(): Bounds
 {
     if (isEmpty())

@@ -11,10 +11,6 @@ import gg.tropic.practice.parkour.ParkourConfiguration
 import gg.tropic.practice.quests.model.Quest
 import net.evilblock.cubed.util.CC
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 data class MinigameLobbyConfiguration(
     var spawnLocation: Position = Position(
         0.0, 100.0, 0.0, 180.0F, 0.0F
@@ -22,6 +18,7 @@ data class MinigameLobbyConfiguration(
     var coreHolographicStatsPosition: Position = Position(
         0.0, 100.0, 0.0, 180.0F, 0.0F
     ),
+    var bedwarsProfileNPCPosition: Position? = null,
     var loginMOTD: MutableList<String> = mutableListOf(
         "",
         "${CC.B_PRI}Welcome to Tropic Practice",

@@ -2,7 +2,6 @@ package gg.tropic.practice.strategies
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.basics.plugin.profile.BasicsProfileService
-import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.playerstatus.canVirtuallySee
 import gg.scala.commons.playerstatus.isVirtuallyInvisibleToSomeExtent
 import gg.scala.flavor.service.Configure
@@ -11,10 +10,12 @@ import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.lemon.util.QuickAccess
 import gg.tropic.practice.expectation.ExpectationService.plugin
 import gg.tropic.practice.expectation.ExpectationService.returnToSpawnItem
+import gg.tropic.practice.expectation.ExpectationService.spectatorSettingsItem
 import gg.tropic.practice.expectation.ExpectationService.spectateItem
 import gg.tropic.practice.games.GameService
 import gg.tropic.practice.extensions.resetAttributes
 import gg.tropic.practice.games.GameState
+import gg.tropic.practice.minigame.spectators.SpectatorSettingsService
 import gg.tropic.practice.minigame.MiniGameQueueConfiguration
 import gg.tropic.practice.queue.QueueCommunications
 import gg.tropic.practice.queue.QueueIDParser
@@ -36,16 +37,16 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.metadata.FixedMetadataValue
 
-/**
- * @author Subham
- * @since 7/26/25
- */
 @Service
 object MarkSpectatorStrategy
 {
+    private const val PLAY_AGAIN_METADATA = "play-again-confirmed"
+    private const val PLAY_AGAIN_LOCK_TICKS = 120L
+
     val playAgainItem = ItemBuilder
         .of(XMaterial.PAPER)
-        .name("${CC.GREEN}Play Again ${CC.GRAY}(Right-Click)")
+        .name("${CC.AQUA}Play Again ${CC.GRAY}(Right Click)")
+        .addToLore("${CC.GRAY}Right-click to play another game!")
         .build()
 
     @Configure
@@ -92,10 +93,27 @@ object MarkSpectatorStrategy
             return
         }
 
-        if (player.hasMetadata("play-again-confirmed"))
+        val playAgainLocked = player
+            .getMetadata(PLAY_AGAIN_METADATA)
+            .firstOrNull()
+            ?.value() as? Long
+            ?: run {
+                if (player.hasMetadata(PLAY_AGAIN_METADATA))
+                {
+                    player.removeMetadata(PLAY_AGAIN_METADATA, Helper.hostPlugin())
+                }
+                null
+            }
+
+        if (playAgainLocked != null && System.currentTimeMillis() - playAgainLocked < PLAY_AGAIN_LOCK_TICKS * 50L)
         {
             player.sendMessage("${CC.RED}We are trying to find a game for you! Please wait...")
             return
+        }
+
+        if (player.hasMetadata(PLAY_AGAIN_METADATA))
+        {
+            player.removeMetadata(PLAY_AGAIN_METADATA, Helper.hostPlugin())
         }
 
         if (game.miniGameLifecycle != null && game.expectationModel.queueType != null)
@@ -103,7 +121,16 @@ object MarkSpectatorStrategy
             Button.playNeutral(player)
 
             player.sendMessage("${CC.GREEN}Playing again! ${CC.GRAY}We are trying to find a game for you to join...")
-            player.setMetadata("play-again-confirmed", FixedMetadataValue(Helper.hostPlugin(), true))
+            player.setMetadata(PLAY_AGAIN_METADATA, FixedMetadataValue(Helper.hostPlugin(), System.currentTimeMillis()))
+
+            Schedulers
+                .sync()
+                .runLater({
+                    if (player.isOnline)
+                    {
+                        player.removeMetadata(PLAY_AGAIN_METADATA, Helper.hostPlugin())
+                    }
+                }, PLAY_AGAIN_LOCK_TICKS)
 
             val bracket = game.expectationModel.matchmakingMetadataAPIV2?.bracket
             QueueCommunications.joinQueue(
@@ -113,7 +140,7 @@ object MarkSpectatorStrategy
                 player = player,
                 miniGameQueueConfiguration = MiniGameQueueConfiguration(
                     bracket = if (bracket == "") null else bracket,
-                    excludeMiniInstance = ServerSync.local.id,
+                    excludeMiniInstance = null,
                     requiredMapID = null
                 )
             )
@@ -133,6 +160,33 @@ object MarkSpectatorStrategy
 
         player.allowFlight = true
         player.isFlying = true
+
+        SpectatorSettingsService.clearTrackedTarget(player.uniqueId, clearActionBar = false)
+        SpectatorSettingsService.applySpectatorEffects(player)
+
+        val activeGame = GameService.byPlayerOrSpectator(player.uniqueId)
+        val isGameParticipant = activeGame != null && player.uniqueId in activeGame.expectationModel.players
+
+        if (activeGame != null)
+        {
+            activeGame.toBukkitPlayers()
+                .filterNotNull()
+                .forEach { other ->
+                    VisibilityHandler.update(other)
+                    NametagHandler.reloadPlayer(player, other)
+
+                    val otherIsSpectator = GameService.isSpectating(other)
+                    if (!otherIsSpectator)
+                    {
+                        other.hidePlayer(player)
+                    } else
+                    {
+                        other.showPlayer(player)
+                    }
+
+                    player.showPlayer(other)
+                }
+        }
 
         val basicsProfile = BasicsProfileService.find(player)
         if (basicsProfile != null && shouldAnnounce)
@@ -163,8 +217,7 @@ object MarkSpectatorStrategy
             }
         }
 
-        val activeGame = GameService.byPlayerOrSpectator(player.uniqueId)
-        if (activeGame != null)
+        if (isGameParticipant)
         {
             FancyMessage()
                 .withMessage(
@@ -188,7 +241,9 @@ object MarkSpectatorStrategy
                 if (shouldAddSpectatorItem)
                 {
                     player.inventory.setItem(0, spectateItem)
-                    if (activeGame != null)
+                    player.inventory.setItem(4, spectatorSettingsItem)
+
+                    if (isGameParticipant)
                     {
                         player.inventory.setItem(7, playAgainItem)
                     }

@@ -5,10 +5,6 @@ import gg.tropic.practice.kit.KitService
 import gg.tropic.practice.namespace
 import gg.tropic.practice.queue.QueueType
 
-/**
- * @author Subham
- * @since 6/22/25
- */
 data class StatisticID(
     val type: String,
     val kit: String? = null,
@@ -37,6 +33,7 @@ data class StatisticID(
                     {
                         id.contains("daily") -> StatisticLifetime.Daily
                         id.contains("weekly") -> StatisticLifetime.Weekly
+                        id.contains("monthly") -> StatisticLifetime.Monthly
                         else -> null
                     }
                 )
@@ -143,6 +140,7 @@ class StatisticReferenceDSL(
 
     fun daily() = lifetime(StatisticLifetime.Daily)
     fun weekly() = lifetime(StatisticLifetime.Weekly)
+    fun monthly() = lifetime(StatisticLifetime.Monthly)
 
     fun lifetime(lifetime: StatisticLifetime?)
     {
@@ -198,7 +196,7 @@ class StatisticCompositionDSL
     fun allKits(availableKits: List<Kit>)
     {
         this.kits.addAll(availableKits.map { it.id })
-        this.kits.add(null) // Add global kit option
+        this.kits.add(null) 
     }
 
     fun globalKit()
@@ -214,7 +212,7 @@ class StatisticCompositionDSL
     fun allQueueTypes()
     {
         this.queueTypes.addAll(QueueType.entries)
-        this.queueTypes.add(null) // Add global queue type option
+        this.queueTypes.add(null) 
     }
 
     fun globalQueueType()
@@ -255,7 +253,7 @@ class StatisticCompositionDSL
     fun allLifetimes()
     {
         this.lifetimes.addAll(StatisticLifetime.entries)
-        this.lifetimes.add(null) // Add lifetime option
+        this.lifetimes.add(null) 
     }
 
     fun daily()
@@ -268,6 +266,11 @@ class StatisticCompositionDSL
         this.lifetimes.add(StatisticLifetime.Weekly)
     }
 
+    fun monthly()
+    {
+        this.lifetimes.add(StatisticLifetime.Monthly)
+    }
+
     fun lifetime()
     {
         this.lifetimes.add(null)
@@ -277,16 +280,12 @@ class StatisticCompositionDSL
     {
         val result = mutableListOf<StatisticID>()
 
-        // If no kits specified, use global
         val kitList = if (kits.isEmpty()) listOf(null) else kits
 
-        // If no queue types specified, use global
         val queueTypeList = if (queueTypes.isEmpty()) listOf(null) else queueTypes
 
-        // If no lifetimes specified, use lifetime (null)
         val lifetimeList = if (lifetimes.isEmpty()) listOf(null) else lifetimes
 
-        // Generate all combinations
         for (type in types)
         {
             for (kit in kitList)

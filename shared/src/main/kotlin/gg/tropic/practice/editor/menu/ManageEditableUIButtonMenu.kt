@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageEditableUIButtonMenu(
     private val uiId: String,
     private val buttonSlot: Int

@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 6/17/25
- */
 @AutoRegister
 object RejoinCommand : ScalaCommand()
 {

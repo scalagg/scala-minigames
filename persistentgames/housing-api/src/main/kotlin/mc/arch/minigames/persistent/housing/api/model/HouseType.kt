@@ -1,9 +1,5 @@
 package mc.arch.minigames.persistent.housing.api.model
 
-/**
- * @author Subham
- * @since 9/8/25
- */
 enum class HouseType
 {
     HOUSE_FULL,

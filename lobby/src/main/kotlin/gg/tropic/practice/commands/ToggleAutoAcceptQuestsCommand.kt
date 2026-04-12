@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Elb1to
- * @since 10/19/2023
- */
 object ToggleAutoAcceptQuestsCommand : ScalaCommand()
 {
     @CommandAlias("toggleautoacceptquests|taaq")

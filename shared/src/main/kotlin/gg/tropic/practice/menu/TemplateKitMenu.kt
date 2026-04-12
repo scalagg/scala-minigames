@@ -2,6 +2,7 @@ package gg.tropic.practice.menu
 
 import gg.tropic.practice.kit.Kit
 import gg.tropic.practice.kit.KitService
+import gg.tropic.practice.kit.category.KitCategory
 import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.kit.feature.GameLifecycle
 import net.evilblock.cubed.menu.Button
@@ -13,13 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemFlag
 import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.min
 
-/**
- * @author GrowlyX
- * @since 9/23/2023
- */
 abstract class TemplateKitMenu(private val viewer: Player, private val dynamic: Boolean = false) : PaginatedMenu()
 {
     init
@@ -52,13 +47,14 @@ abstract class TemplateKitMenu(private val viewer: Player, private val dynamic: 
             .filter {
                 if (it.lifecycleType == GameLifecycle.MiniGame)
                 {
-                    // Don't show minigame kits, as they are internal
+
                     return@filter false
                 }
 
                 val developmentFilter =
                     viewer.hasPermission("practice.development-kits") || !it.features(FeatureFlag.Development)
-                it.enabled && filterDisplayOfKit(viewer, it) && developmentFilter
+                val categoryFilter = category == null || category!!.kits.contains(it.id)
+                it.enabled && filterDisplayOfKit(viewer, it) && developmentFilter && categoryFilter
             }
     }
 
@@ -123,3 +119,4 @@ abstract class TemplateKitMenu(private val viewer: Player, private val dynamic: 
         return buttons
     }
 }
+    var category: KitCategory? = null

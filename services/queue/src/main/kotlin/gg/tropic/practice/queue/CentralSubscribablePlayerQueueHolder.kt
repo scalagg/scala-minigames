@@ -14,10 +14,6 @@ import kotlin.concurrent.thread
 import kotlin.math.max
 import kotlin.math.min
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 class CentralSubscribablePlayerQueueHolder : Runnable
 {
     val playerQueues = ConcurrentHashMap<String, SubscribablePlayerQueue>()
@@ -131,7 +127,7 @@ class CentralSubscribablePlayerQueueHolder : Runnable
                     if (rangeExpansionUpdates(entry.lastELORangeExpansion))
                     {
                         entry.leaderRangedELO.diffsBy = min(
-                            2_000, // TODO is 2000 going to be the max ELO?
+                            2_000, 
                             (entry.leaderRangedELO.diffsBy * 1.5).toInt()
                         )
                         entry.lastELORangeExpansion = System.currentTimeMillis()

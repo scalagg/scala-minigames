@@ -9,10 +9,6 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object WorldEvictionStrategy
 {
     fun evictWorld(world: World,

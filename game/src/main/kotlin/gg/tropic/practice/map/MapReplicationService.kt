@@ -45,10 +45,6 @@ import kotlin.concurrent.thread
 import kotlin.concurrent.write
 import kotlin.math.max
 
-/**
- * @author GrowlyX
- * @since 9/21/2023
- */
 @Service(priority = 20)
 object MapReplicationService
 {
@@ -81,7 +77,7 @@ object MapReplicationService
                     {
                         return@thenApply GenerationResult(
                             status = ReplicationResultStatus.FAILED,
-                            "Failed to generate map replication"
+                            message = "Failed to generate map replication"
                         )
                     }
 
@@ -139,13 +135,12 @@ object MapReplicationService
         MapService.onPostReload = ::populateSlimeCache
         startWorldRequestThread()
 
-//        ReplicationAutoScaleTask.start()
     }
 
     @Close
     fun close()
     {
-//        ReplicationAutoScaleTask.interrupt()
+
     }
 
     fun findScheduledReplication(expectation: UUID) = readReplications()
@@ -212,7 +207,7 @@ object MapReplicationService
             .kits[expectation.kitId]
             ?: return GenerationResult(
                 status = ReplicationResultStatus.FAILED,
-                "System could not find the kit for your match"
+                message = "System could not find the kit for your match"
             )
 
         fun flagMetaData(flag: FeatureFlag, key: String): String?
@@ -238,14 +233,14 @@ object MapReplicationService
         val scheduledMap = findScheduledReplication(expectation.identifier)
             ?: return GenerationResult(
                 status = ReplicationResultStatus.FAILED,
-                "System was unable to find the respective map replication"
+                message = "System was unable to find the respective map replication"
             )
 
         if (scheduledMap.world == null)
         {
             return GenerationResult(
                 status = ReplicationResultStatus.FAILED,
-                "System created your match improperly"
+                message = "System created your match improperly"
             )
         }
 
@@ -261,7 +256,7 @@ object MapReplicationService
             miniGameOrchestrator?.construct(scheduledMap.world, kit, expectation)
                 ?: return GenerationResult(
                     status = ReplicationResultStatus.FAILED,
-                    "Minigame system was unable to construct a game"
+                    message = "Minigame system was unable to construct a game"
                 )
         }
 
@@ -276,14 +271,21 @@ object MapReplicationService
 
         scheduledMap.inUse = true
 
-        if (!newGame.buildResources())
+        val buildSuccess = Schedulers
+            .sync()
+            .supply {
+                newGame.buildResources()
+            }
+            .join()
+
+        if (!buildSuccess)
         {
             newGame.state = GameState.Completed
             newGame.closeAndCleanup()
 
             return GenerationResult(
                 status = ReplicationResultStatus.FAILED,
-                "System was unable to build game resources"
+                message = "System was unable to build game resources"
             )
         }
 
@@ -328,7 +330,7 @@ object MapReplicationService
 
                 return GenerationResult(
                     status = ReplicationResultStatus.FAILED,
-                    "Robot system was unable to create a rboot"
+                    message = "Robot system was unable to create a rboot"
                 )
             }
 
@@ -339,7 +341,7 @@ object MapReplicationService
 
                 return GenerationResult(
                     status = ReplicationResultStatus.FAILED,
-                    "Robot system expected robots, but none were created"
+                    message = "Robot system expected robots, but none were created"
                 )
             }
         }
@@ -536,11 +538,15 @@ object MapReplicationService
                     .sync()
                     .run {
                         it.setGameRuleValue("doDaylightCycle", "false")
+                        it.setStorm(false)
+                        it.setThundering(false)
                     }
                     .join()
             } else
             {
                 it.setGameRuleValue("doDaylightCycle", "false")
+                it.setStorm(false)
+                it.setThundering(false)
             }
 
             BuiltMapReplication(arena, it)

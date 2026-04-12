@@ -8,19 +8,13 @@ import gg.tropic.practice.minigame.MiniGameConfiguration
 import gg.tropic.practice.provider.MiniProviderVersion
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 data class GameExpectation(
     val identifier: UUID,
     val players: MutableSet<UUID>,
     val teams: Set<GameTeam>,
     val kitId: String,
     val mapId: String,
-    /**
-     * Null queue types mean it is a private duel.
-     */
+
     val queueType: QueueType? = null,
     val queueId: String? = null,
     val configuration: PvPConfiguration? = null,

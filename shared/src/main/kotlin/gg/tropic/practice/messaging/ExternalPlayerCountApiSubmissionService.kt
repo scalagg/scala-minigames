@@ -12,10 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author Subham
- * @since 7/29/25
- */
 @Service
 object ExternalPlayerCountApiSubmissionService
 {

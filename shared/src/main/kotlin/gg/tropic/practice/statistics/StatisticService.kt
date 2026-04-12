@@ -12,10 +12,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 @Service
 object StatisticService
 {
@@ -87,10 +83,7 @@ object StatisticService
         {
             if (local.inImmutableMode())
             {
-                /**
-                 * TODO: potentially go through and compute the
-                 *  changes but return empty sets
-                 */
+
                 return CompletableFuture.completedFuture(listOf())
             }
 
@@ -121,7 +114,7 @@ object StatisticService
                 }
                 .thenCompose {
                     local.save().thenApply {
-                        // Convert tracked statistic changes to StatisticChange objects
+
                         local.trackedStatisticChangeSet.toSet().mapNotNull { statisticId ->
                             val statistic = statistics[statisticId]
                             val oldPosition = oldPositions[statisticId]
@@ -179,7 +172,6 @@ object StatisticService
                 it.trackedStatisticChangeSet = mutableSetOf()
                 it.trackedStatisticChangeMutations = mutableMapOf()
 
-                // Capture old positions before changes
                 val oldPositions = ConcurrentHashMap<String, LeaderboardPosition>()
                 it.closure()
                 it.trackedStatisticChangeSet.toSet().forEach { statisticId ->

@@ -2,10 +2,6 @@ package gg.tropic.practice.commands.admin.matchlist
 
 import gg.tropic.practice.games.GameReference
 
-/**
- * @author GrowlyX
- * @since 3/24/2025
- */
 enum class MatchListSort(val sort: List<GameReference>.() -> List<GameReference>)
 {
     Kit({

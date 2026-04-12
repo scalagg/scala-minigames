@@ -5,10 +5,6 @@ import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/16/25
- */
 fun UUID.toRejoinToken() = ScalaCommonsSpigot.instance
         .kvConnection
         .sync()

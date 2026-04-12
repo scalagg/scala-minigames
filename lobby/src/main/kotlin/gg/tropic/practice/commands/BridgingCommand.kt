@@ -17,10 +17,6 @@ import net.evilblock.cubed.util.CC
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/23/25
- */
 @AutoRegister
 object BridgingCommand : ScalaCommand()
 {

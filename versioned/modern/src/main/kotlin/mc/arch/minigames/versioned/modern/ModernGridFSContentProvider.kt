@@ -8,10 +8,6 @@ import com.mongodb.client.model.Indexes
 import gg.scala.commons.consensus.Locks
 import gg.scala.store.ScalaDataStoreShared
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 object ModernGridFSContentProvider : SlimeLoader
 {
     private val database = ScalaDataStoreShared.Companion.INSTANCE

@@ -3,10 +3,6 @@ package gg.tropic.practice.configuration.minigame
 import gg.scala.commons.spatial.Bounds
 import gg.scala.commons.spatial.Position
 
-/**
- * @author Subham
- * @since 7/15/25
- */
 data class MinigameBezierTeleporter(
     var start: Bounds = Bounds(
         Position(0.0, 0.0, 0.0),

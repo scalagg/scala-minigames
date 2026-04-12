@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.bukkit.Constants
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/15/25
- */
 class CoreHolographicStatsHologramEntity(
     position: Position
 ) : PersonalizedHologramEntity(
@@ -23,23 +19,32 @@ class CoreHolographicStatsHologramEntity(
         persistent = false
     }
 
-    override fun getNewLines(player: Player) = listOf(
-        "${CC.B_WHITE}PERSONAL STATS",
-        "",
-        *MinigameLobby.customizer()
-            .holographicStatsProvider(player)
-            .map { text ->
-                if (text.isBlank())
-                {
-                    return@map ""
-                }
+    override fun getNewLines(player: Player): List<String>
+    {
+        val customizer = MinigameLobby.customizer()
+        if (customizer.id.equals("bedwars", ignoreCase = true))
+        {
+            return customizer.holographicStatsProvider(player)
+        }
 
-                return@map "${CC.PRI}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}$text"
-            }
-            .toTypedArray(),
-        "",
-        "${CC.WHITE}Use /stats to view more!"
-    )
+        return listOf(
+            "${CC.B_WHITE}PERSONAL STATS",
+            "",
+            *customizer
+                .holographicStatsProvider(player)
+                .map { text ->
+                    if (text.isBlank())
+                    {
+                        return@map ""
+                    }
+
+                    return@map "${CC.PRI}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}$text"
+                }
+                .toTypedArray(),
+            "",
+            "${CC.WHITE}Use /stats to view more!"
+        )
+    }
 
     override fun getUpdateInterval() = 1000L
 }

@@ -50,7 +50,6 @@ public class SpigotStoreMongoLoader extends UpdatableLoader {
     public void update() {
         MongoDatabase mongoDatabase = client.getDatabase(database);
 
-        // Old GridFS importing
         for (String collectionName : mongoDatabase.listCollectionNames()) {
             if (collectionName.equals(collection + "_files.files") || collectionName.equals(collection + "_files.chunks")) {
                 LOGGER.info("Updating MongoDB database...");
@@ -65,7 +64,6 @@ public class SpigotStoreMongoLoader extends UpdatableLoader {
 
         MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(collection);
 
-        // Old world lock importing
         try (MongoCursor<Document> documents = mongoCollection.find(Filters.or(Filters.eq("locked", true),
                 Filters.eq("locked", false))).cursor()) {
             if (documents.hasNext()) {
@@ -180,7 +178,6 @@ public class SpigotStoreMongoLoader extends UpdatableLoader {
 
             bucket.delete(file.getObjectId());
 
-            // Delete backup file
             for (GridFSFile backupFile : bucket.find(Filters.eq("filename", worldName + "_backup"))) {
                 bucket.delete(backupFile.getObjectId());
             }

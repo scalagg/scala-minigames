@@ -8,10 +8,6 @@ import org.bukkit.World
 import org.bukkit.block.Sign
 import org.bukkit.util.Vector
 
-/**
- * @author GrowlyX
- * @since 9/21/2023
- */
 object MapMetadataScanUtilities
 {
     fun buildMetadataFor(world: World, usedSynthetically: Boolean = false): MapMetadata

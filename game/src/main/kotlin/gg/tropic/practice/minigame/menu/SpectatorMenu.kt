@@ -5,6 +5,7 @@ import gg.scala.staff.reports.ReportMenu
 import gg.tropic.practice.games.GameImpl
 import gg.tropic.practice.games.GameService
 import gg.tropic.practice.games.event.SpectatorViewParticipantsEvent
+import gg.tropic.practice.minigame.spectators.SpectatorSettingsService
 import gg.tropic.practice.minigame.spectators.PlayerParticipant
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -14,10 +15,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/1/25
- */
 class SpectatorMenu(
     private val player: Player,
     minigame: GameImpl
@@ -33,15 +30,11 @@ class SpectatorMenu(
                     displayName = "${CC.GREEN}${player.name}",
                     description = listOf(
                         "${CC.GRAY}Health: ${CC.YELLOW}${
-                            "%.2f".format(
-                                (player.health / player.maxHealth).toFloat() * 100.0f
-                            )
+                            ((player.health / player.maxHealth) * 100.0)
+                                .coerceIn(0.0, 100.0)
+                                .toInt()
                         }",
-                        "${CC.GRAY}Hunger: ${CC.YELLOW}${
-                            "%.2f".format(
-                                (player.foodLevel / 20).toFloat() * 100.0f
-                            )
-                        }",
+                        "${CC.GRAY}Food: ${CC.YELLOW}${((player.foodLevel / 20.0) * 100.0).toInt()}",
                         ""
                     )
                 )
@@ -59,7 +52,7 @@ class SpectatorMenu(
 
     override fun getAllPagesButtonSlots() = (10..16) + (19..25) + (28..34)
 
-    override fun getPrePaginatedTitle(player: Player) = "Spectate a player..."
+    override fun getPrePaginatedTitle(player: Player) = "Teleporter"
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
@@ -67,29 +60,52 @@ class SpectatorMenu(
         event.players.forEach { other ->
             buttons[buttons.size] = ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .owner(other.player.name)
-                .name("${CC.GREEN}${other.displayName}")
+                .name(other.displayName)
                 .setLore(other.description)
                 .addToLore(
-                    "${CC.GREEN}Click to teleport.",
-                    "${CC.RED}Shift-click to report.",
+                    "${CC.GREEN}Left-click to track target info!",
+                    "${CC.AQUA}Right-click for first person!",
+                    "${CC.RED}Shift-right-click to report!",
                 )
                 .data(3)
                 .toButton { _, type ->
                     Button.playNeutral(player)
                     if (!GameService.isSpectating(player))
                     {
-                        player.sendMessage("${CC.RED}You must a spectator to be able to spectate another player!")
+                        player.sendMessage("${CC.RED}You must be a spectator to use the teleporter!")
                         return@toButton
                     }
 
-                    if (type!!.isShiftClick)
+                    if (!other.player.isOnline)
+                    {
+                        player.sendMessage("${CC.RED}That player is no longer available to spectate.")
+                        return@toButton
+                    }
+
+                    if (type?.isRightClick == true && type.isShiftClick)
                     {
                         ReportMenu(other.player.uniqueId).openMenu(player)
                         return@toButton
                     }
 
+                    val firstPerson = type?.isRightClick == true
+                    val started = SpectatorSettingsService.startTracking(player, other.player, firstPerson)
+                    if (!started)
+                    {
+                        return@toButton
+                    }
+
                     player.closeInventory()
+
+                    if (firstPerson)
+                    {
+                        player.teleport(SpectatorSettingsService.firstPersonLocation(player, other.player))
+                        player.sendMessage("${CC.GREEN}Now spectating ${CC.WHITE}${other.player.name}${CC.GREEN} in first person.")
+                        return@toButton
+                    }
+
                     player.teleport(other.player.location)
+                    player.sendMessage("${CC.GREEN}Now tracking ${CC.WHITE}${other.player.name}${CC.GREEN}.")
                 }
         }
         return buttons

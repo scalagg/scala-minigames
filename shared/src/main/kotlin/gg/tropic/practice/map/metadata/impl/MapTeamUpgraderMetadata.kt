@@ -4,10 +4,6 @@ import gg.tropic.practice.games.team.TeamIdentifier
 import gg.tropic.practice.map.metadata.AbstractMapMetadata
 import gg.scala.commons.spatial.Position
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 data class MapTeamUpgraderMetadata(
     override val id: String,
     var locations: Map<String, List<Position>>

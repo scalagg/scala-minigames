@@ -8,10 +8,6 @@ import gg.tropic.practice.editor.EditableUI
 import gg.tropic.practice.parkour.ParkourConfiguration
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 10/13/2023
- */
 data class PracticeConfiguration(
     var rankedQueueEnabled: Boolean = true,
     @Deprecated("Use current()")

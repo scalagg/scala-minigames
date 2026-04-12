@@ -3,10 +3,6 @@ package gg.tropic.practice.ugc
 import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.util.bukkit.ItemUtils
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 enum class WorldInstanceProviderType(
     val playerHeadValue: String,
     val lobbyGroup: String

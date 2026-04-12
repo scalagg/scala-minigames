@@ -10,10 +10,6 @@ import gg.tropic.practice.games.GameService
 import net.evilblock.cubed.util.CC
 import org.bukkit.potion.PotionEffectType
 
-/**
- * @author GrowlyX
- * @since 10/28/2023
- */
 @AutoRegister
 object NoSpeedCommand : ScalaCommand()
 {

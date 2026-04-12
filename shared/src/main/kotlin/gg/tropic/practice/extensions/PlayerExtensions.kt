@@ -11,10 +11,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
-/**
- * @author Subham
- * @since 7/23/25
- */
 fun Player.mountImmovable()
 {
     val craftPlayer = player as CraftPlayer
@@ -48,7 +44,7 @@ fun Player.mountImmovable(location: Location)
     player.setMetadata("seated", FixedMetadataValue(Helper.hostPlugin(), bat.id))
 
     val sitPacket = PacketPlayOutAttachEntity(0, craftPlayer.handle, bat)
-//    player.teleport(location)
+
     craftPlayer.handle.playerConnection.sendPacket(sitPacket)
 }
 

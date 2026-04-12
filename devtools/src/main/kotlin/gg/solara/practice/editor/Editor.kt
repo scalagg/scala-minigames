@@ -39,10 +39,6 @@ import java.io.File
 import java.util.LinkedList
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 class Editor(private val player: Player) : SyntheticsEditor
 {
     companion object
@@ -117,65 +113,52 @@ class Editor(private val player: Player) : SyntheticsEditor
         )
     }
 
-    /**
-     * Converts a yaw value to a rotation in degrees (0, 90, 180, 270)
-     * Uses BlockFace mappings for consistent yaw handling
-     */
     private fun yawToRotation(yaw: Float): Int
     {
-        // Convert yaw to BlockFace using MapBlockFaceUtilities
-        val blockFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(yaw, false)
-            ?: return 0 // Default to 0 if null
 
-        // Get the standardized yaw from SignParserUtilities.manualMappings
+        val blockFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(yaw, false)
+            ?: return 0 
+
         val standardizedYaw = gg.tropic.practice.map.metadata.sign.manualMappings[blockFace] ?: 0f
 
-        // Convert standardized yaw to rotation value (0, 90, 180, 270)
         return when (blockFace)
         {
-            BlockFace.SOUTH -> 0    // 0 degrees
-            BlockFace.WEST -> 90    // 90 degrees
-            BlockFace.NORTH -> 180  // 180 degrees
-            BlockFace.EAST -> 270   // 270 degrees
-            else -> 0               // Default to 0 for other faces
+            BlockFace.SOUTH -> 0    
+            BlockFace.WEST -> 90    
+            BlockFace.NORTH -> 180  
+            BlockFace.EAST -> 270   
+            else -> 0               
         }
     }
 
-    /**
-     * Calculates the rotation needed to go from originalYaw to targetYaw
-     * Returns the relative rotation in degrees (0, 90, 180, 270)
-     */
     private fun yawToRotation(originalYaw: Float, targetYaw: Float): Int
     {
-        // Convert yaws to BlockFaces
-        val originalFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(originalYaw, false)
-            ?: return 0 // Default to 0 if null
-        val targetFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(targetYaw, false)
-            ?: return 0 // Default to 0 if null
 
-        // Get rotation values for both faces
+        val originalFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(originalYaw, false)
+            ?: return 0 
+        val targetFace = gg.tropic.practice.map.utilities.MapBlockFaceUtilities.yawToFace(targetYaw, false)
+            ?: return 0 
+
         val originalRotation = when (originalFace)
         {
-            BlockFace.SOUTH -> 0    // 0 degrees
-            BlockFace.WEST -> 90    // 90 degrees
-            BlockFace.NORTH -> 180  // 180 degrees
-            BlockFace.EAST -> 270   // 270 degrees
-            else -> 0               // Default to 0 for other faces
+            BlockFace.SOUTH -> 0    
+            BlockFace.WEST -> 90    
+            BlockFace.NORTH -> 180  
+            BlockFace.EAST -> 270   
+            else -> 0               
         }
 
         val targetRotation = when (targetFace)
         {
-            BlockFace.SOUTH -> 0    // 0 degrees
-            BlockFace.WEST -> 90    // 90 degrees
-            BlockFace.NORTH -> 180  // 180 degrees
-            BlockFace.EAST -> 270   // 270 degrees
-            else -> 0               // Default to 0 for other faces
+            BlockFace.SOUTH -> 0    
+            BlockFace.WEST -> 90    
+            BlockFace.NORTH -> 180  
+            BlockFace.EAST -> 270   
+            else -> 0               
         }
 
-        // Calculate relative rotation (how much to rotate from original to target)
         val relativeRotation = (targetRotation - originalRotation + 360) % 360
 
-        // Normalize to 0, 90, 180, 270
         return when
         {
             relativeRotation < 45 -> 0
@@ -186,18 +169,15 @@ class Editor(private val player: Player) : SyntheticsEditor
         }
     }
 
-    /**
-     * Rotates a position by the given rotation in degrees
-     */
     private fun rotatePosition(position: Position, rotation: Int): Position
     {
         return when (rotation)
         {
-            0 -> position // No rotation
-            90 -> Position(position.z, position.y, -position.x, position.yaw, position.pitch) // 90 degrees
-            180 -> Position(-position.x, position.y, -position.z, position.yaw, position.pitch) // 180 degrees
-            270 -> Position(-position.z, position.y, position.x, position.yaw, position.pitch) // 270 degrees
-            else -> position // Default no rotation
+            0 -> position 
+            90 -> Position(position.z, position.y, -position.x, position.yaw, position.pitch) 
+            180 -> Position(-position.x, position.y, -position.z, position.yaw, position.pitch) 
+            270 -> Position(-position.z, position.y, position.x, position.yaw, position.pitch) 
+            else -> position 
         }
     }
 
@@ -208,7 +188,7 @@ class Editor(private val player: Player) : SyntheticsEditor
         rotation: Int = 0
     )
     {
-        // Rotate the model's location based on the rotation parameter
+
         val rotatedLocation = rotatePosition(model.location, rotation)
         val absolute = spawn + rotatedLocation
         val hologram = SyntheticSignHologram(
@@ -232,7 +212,7 @@ class Editor(private val player: Player) : SyntheticsEditor
                 metaType = model.metaType,
                 location = absolute,
                 id = spawnID,
-                extraMetadata = listOf() // doesn't support it, just set to nil
+                extraMetadata = listOf() 
             ),
             refID = hologram.refID
         )
@@ -245,10 +225,9 @@ class Editor(private val player: Player) : SyntheticsEditor
         playerYaw: Float
     )
     {
-        // Calculate rotation from player's yaw
+
         val rotation = yawToRotation(playerYaw)
 
-        // Call the original method with the calculated rotation
         prepareSyntheticMetaBasedOnModelTemplate(spawn, spawnID, model, rotation)
     }
 
@@ -260,10 +239,9 @@ class Editor(private val player: Player) : SyntheticsEditor
         targetYaw: Float
     )
     {
-        // Calculate relative rotation from original yaw to target yaw
+
         val rotation = yawToRotation(originalYaw, targetYaw)
 
-        // Call the original method with the calculated rotation
         prepareSyntheticMetaBasedOnModelTemplate(spawn, spawnID, model, rotation)
     }
 
@@ -326,62 +304,6 @@ class Editor(private val player: Player) : SyntheticsEditor
                 }
             }
             .bindWith(terminable)
-
-        /*Events
-            .subscribe(PlayerToggleSneakEvent::class.java)
-            .handler {
-                if (it.player.uniqueId == player.uniqueId)
-                {
-                    if (it.isSneaking)
-                    {
-                        if (sneakTerminable != null)
-                        {
-                            return@handler
-                        }
-
-                        sneakTerminable = CompositeTerminable.create()
-
-                        Schedulers
-                            .sync()
-                            .runRepeating({ _ ->
-                                player.playSound(player.location, Sound.NOTE_PLING, 1.0f, 0.5f)
-                            }, 0L, 5L)
-                            .bindWith(sneakTerminable!!)
-
-                        Schedulers
-                            .sync()
-                            .runLater({
-                                val menu = object : Menu("Editor ${CC.GOLD}(EXPERIMENTS)")
-                                {
-                                    init
-                                    {
-                                        placeholder = true
-                                    }
-
-                                    override fun getButtons(player: Player) = mapOf(
-                                        4 to ItemBuilder
-                                            .of(Material.GLOWSTONE_DUST)
-                                            .name("${CC.GOLD}(EXPERIMENT) ${CC.YELLOW}K-Means Island Clustering")
-                                            .addToLore("${CC.GREEN}Click to start experiment.")
-                                            .toButton { _, _ ->
-
-                                            }
-                                    )
-                                }
-
-                                menu.openMenu(player)
-
-                                sneakTerminable?.closeAndReportException()
-                                sneakTerminable = null
-                            }, 20L)
-                            .bindWith(sneakTerminable!!)
-                    } else
-                    {
-                        sneakTerminable?.closeAndReportException()
-                    }
-                }
-            }
-            .bindWith(terminable)*/
 
         Events
             .subscribe(BlockBreakEvent::class.java)
@@ -675,12 +597,6 @@ class Editor(private val player: Player) : SyntheticsEditor
             onClick = context@{
                 player.chat("//thru")
 
-                /*InputPrompt()
-                    .withText("${CC.B_GOLD}Enter the map ID! ${CC.GRAY}(do not prefix with Map!)")
-                    .acceptInput { _, newWorldName ->
-                        prepareSlimeWorld(newWorldName)
-                    }
-                    .start(player)*/
             }
         })
 

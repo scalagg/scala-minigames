@@ -34,6 +34,7 @@ import gg.tropic.practice.minigame.event.PlayerMiniGameDisconnectMidGameEvent
 import gg.tropic.practice.minigame.event.PlayerMiniGameQuitWhileStartingEvent
 import gg.tropic.practice.minigame.event.functionality.MiniGameDestroyBedEvent
 import gg.tropic.practice.minigame.event.functionality.MiniGamePlayerDeathEvent
+import gg.tropic.practice.minigame.spectators.SpectatorSettingsService
 import gg.tropic.practice.extensions.ownedBy
 import gg.tropic.practice.statistics.StatisticService
 import gg.tropic.practice.statistics.TrackedKitStatistic
@@ -103,10 +104,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 @Service
 object GameService
 {
@@ -295,7 +292,6 @@ object GameService
                 }
         }
 
-        // Use the damage tracking system to determine elimination cause and context
         val (eliminationCause, eliminatedBy) = getEliminationDetails(cause)
         val killerPlayer = if (game.robot()) null else (event.killerPlayerOverride ?: killedBy())
         val killer = if (game.robot())
@@ -303,7 +299,7 @@ object GameService
             game.robotSide()
         } else
         {
-            // If we have context from damage tracker, try to find that player
+
             val contextPlayer = if (eliminatedBy != null)
             {
                 Bukkit.getPlayer(eliminatedBy)
@@ -319,7 +315,6 @@ object GameService
             }
         }
 
-        // Determine the final killer player for statistics (prefer context player)
         val finalKillerPlayer = if (!game.robot())
         {
             if (eliminatedBy != null)
@@ -331,7 +326,6 @@ object GameService
             }
         } else null
 
-        // Format team names based on red/blue teams flag
         val killerName = if (game.flag(FeatureFlag.RedBlueTeams))
             killer?.teamIdentifier?.toRBTeamSide()
                 ?.format(finalKillerPlayer?.name ?: eliminatedBy?.let { Bukkit.getPlayer(it)?.name } ?: "???")
@@ -342,7 +336,6 @@ object GameService
             team.teamIdentifier.toRBTeamSide().format(name)
         else "${CC.RED}$name"
 
-        // Generate death message using the elimination cause system
         val deathMessage = DeathMessageStrategy.generate(
             killedBy = finalKillerPlayer as? Player,
             killedDisplayName = killedName,
@@ -351,7 +344,6 @@ object GameService
             alternativeDeath = event.alternativeDeath
         )
 
-        // Handle killer effects and statistics
         if (finalKillerPlayer is Player && !game.robot())
         {
             if (game.expectationModel.queueType != null)
@@ -403,7 +395,6 @@ object GameService
             }
         }
 
-        // Handle victim death statistics
         if (!game.robot() && game.expectationModel.queueType != null)
         {
             StatisticService
@@ -428,10 +419,8 @@ object GameService
                 }
         }
 
-        // Clean up damage tracking data for the eliminated player
         PlayerDamageTracker.clearPlayer(this.uniqueId)
 
-        // Handle different game lifecycles
         when (game.lifecycle())
         {
             GameLifecycle.MiniGame ->
@@ -528,6 +517,19 @@ object GameService
                     }
 
                     game.sendMessage("$deathMessage ${CC.B_AQUA}FINAL KILL!")
+                    Schedulers
+                        .sync()
+                        .runLater({
+                            if (this.isOnline)
+                            {
+                                game.enterSpectatorAfterLifeEnd(this, final = true)
+
+                                if (finalKillerPlayer is Player && finalKillerPlayer.uniqueId != this.uniqueId)
+                                {
+                                    SpectatorSettingsService.startTracking(this, finalKillerPlayer, firstPerson = false)
+                                }
+                            }
+                        }, 2L)
 
                     if (noAlive)
                     {
@@ -553,8 +555,6 @@ object GameService
     {
         CosmeticLocalConfig.enableCosmeticResources = false
         SpectatingPlayerProvider.spectating = ::isSpectating
-
-//        plugin.registerListener(FireballFeature())
 
         Events
             .subscribe(EntityDamageByEntityEvent::class.java)
@@ -926,7 +926,7 @@ object GameService
         Events
             .subscribe(PlayerTeleportEvent::class.java)
             .filter {
-                it.from.world != it.to.world/* && it.cause != PlayerTeleportEvent.TeleportCause.PLUGIN*/
+                it.from.world != it.to.world
             }
             .handler {
                 val expectedWorld = PlayerLocationStrategy
@@ -1124,7 +1124,6 @@ object GameService
                             return@handler
                         }
 
-                        // TODO: this might be a bit odd
                         val opponent = game.getOpponent(it.player)
                         val firstPlayer = opponent.toBukkitPlayers().firstOrNull()
                             ?: return@handler
@@ -1416,6 +1415,7 @@ object GameService
                     ?: return@handler
 
                 spectator.expectedSpectators -= it.player.uniqueId
+                spectator.expectedSpectatorTargets.remove(it.player.uniqueId)
             }
 
         Events
@@ -1437,7 +1437,7 @@ object GameService
                 val spectating = isSpectating(player)
                 if (spectating)
                 {
-                    // Cancel straight up. We'll fix void teleportation later on.
+
                     it.isCancelled = true
                 }
 
@@ -1895,18 +1895,17 @@ object GameService
                     return@handler
                 }
 
-                val isFireball = it.entityType == EntityType.FIREBALL // Fireball explosion size
-                val isTNT = it.entityType == EntityType.PRIMED_TNT // TNT or other explosions
+                val isFireball = it.entityType == EntityType.FIREBALL 
+                val isTNT = it.entityType == EntityType.PRIMED_TNT 
 
                 it.blockList()
                     .removeIf { block ->
-                        // Always protect beds and non-placed blocks from explosions
+
                         if (block.type.name.contains("BED"))
                         {
                             return@removeIf true
                         }
 
-                        // Handle other explosion types or fallback to original logic
                         if (game.miniGameLifecycle != null)
                         {
                             if (!block.hasMetadata("placed"))
@@ -1914,14 +1913,12 @@ object GameService
                                 return@removeIf true
                             }
 
-                            // Use BlastProtectionUtil to check if block is protected by blast-proof glass
                             if (BlastProtectionUtil.isProtected(it.location, block, 0.3))
                             {
                                 return@removeIf true
                             }
                         }
 
-                        // Fireball-specific rules (3.0 explosion size)
                         if (isFireball)
                         {
                             if (game.miniGameLifecycle != null)
@@ -1935,13 +1932,13 @@ object GameService
                                     Material.JUNGLE_WOOD_STAIRS, Material.ACACIA_STAIRS,
                                     Material.DARK_OAK_STAIRS, Material.WOOL ->
                                     {
-                                        // Allow fireballs to break wood and wool
+
                                         return@removeIf false
                                     }
 
                                     else ->
                                     {
-                                        // Fireballs cannot break other blocks
+
                                         return@removeIf true
                                     }
                                 }
@@ -1951,22 +1948,20 @@ object GameService
                                 {
                                     Material.WOOD, Material.WOOL ->
                                     {
-                                        // Allow fireballs to break wood and wool
+
                                         return@removeIf false
                                     }
 
                                     else ->
                                     {
-                                        // Fireballs cannot break other blocks
+
                                         return@removeIf true
                                     }
                                 }
                             }
 
-
                         }
 
-                        // TNT-specific rules
                         if (isTNT)
                         {
                             if (game.miniGameLifecycle != null)
@@ -1982,13 +1977,13 @@ object GameService
                                     Material.DARK_OAK_STAIRS,
                                     Material.CLAY, Material.STAINED_CLAY, Material.HARD_CLAY ->
                                     {
-                                        // Allow TNT to break endstone, wool, wood, and clay
+
                                         return@removeIf false
                                     }
 
                                     else ->
                                     {
-                                        // TNT cannot break other blocks
+
                                         return@removeIf true
                                     }
                                 }
@@ -1999,13 +1994,13 @@ object GameService
                                     Material.ENDER_STONE, Material.WOOL,
                                     Material.WOOD ->
                                     {
-                                        // Allow TNT to break endstone, wool, wood, and clay
+
                                         return@removeIf false
                                     }
 
                                     else ->
                                     {
-                                        // TNT cannot break other blocks
+
                                         return@removeIf true
                                     }
                                 }
@@ -2121,7 +2116,8 @@ object GameService
                 if (
                     it.block.type.name.contains("BED") &&
                     (game.lifecycle() == GameLifecycle.ObjectivePlusSoulBound ||
-                        game.deathDecisionLifecycle() == GameLifecycle.ObjectivePlusSoulBound)
+                        game.deathDecisionLifecycle() == GameLifecycle.ObjectivePlusSoulBound ||
+                        game.lifecycle() == GameLifecycle.MiniGame)
                 )
                 {
                     var tropicBedSide: TeamIdentifier? = null
@@ -2477,9 +2473,13 @@ object GameService
             ?: spectatorToGameMappings[player]
 
     fun iterativeByPlayerOrSpectator(player: UUID) = gameMappings.values
-        .find {
-            player in it.toPlayers() || player in it.expectedSpectators
+        .firstOrNull {
+            player in it.toPlayers()
         }
+        ?: gameMappings.values
+            .firstOrNull {
+                player in it.expectedSpectators
+            }
 
     fun setSource(tnt: TNTPrimed, owner: Player)
     {

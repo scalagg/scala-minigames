@@ -15,10 +15,6 @@ import org.bukkit.entity.Player
 import java.util.UUID
 import kotlin.collections.listOf
 
-/**
- * @author Subham
- * @since 6/29/25
- */
 class MinigamePlayNPCEntity(
     val configuration: MinigamePlayNPC,
     val isAutoJoin: Boolean = configuration.associatedGameMode == "autojoin",
@@ -36,7 +32,7 @@ class MinigamePlayNPCEntity(
                 .provide()
                 .totalPlayersPlaying()
                 .let { players ->
-                    "${CC.B_YELLOW}$players player${
+                    "${CC.B_YELLOW}$players Player${
                         if (players == 1) "" else "s"
                     }"
                 }
@@ -97,7 +93,7 @@ class MinigamePlayNPCEntity(
     fun generateNonExistentLines() = listOf(
         "${CC.B_YELLOW}CLICK TO PLAY",
         "${CC.RED}???",
-        "${CC.B_YELLOW}0 players"
+        "${CC.B_YELLOW}0 Players"
     )
 
     fun generateAutoJoinLines() = listOf(

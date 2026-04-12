@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 9/16/2022
- */
 class SelectPlayerMenu(
     private val game: GameReport,
     private val gamesMenu: Menu? = null

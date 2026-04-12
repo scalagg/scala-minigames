@@ -1,15 +1,9 @@
 package gg.tropic.practice.queue
 
-import net.evilblock.cubed.ScalaCommonsSpigot
+import gg.tropic.practice.persistence.RedisShared
 import net.evilblock.cubed.serializers.Serializers
-import java.util.Date
-import java.util.UUID
-import kotlin.system.measureTimeMillis
+import java.util.*
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 interface SubscribablePlayerQueue
 {
     val id: String
@@ -17,9 +11,6 @@ interface SubscribablePlayerQueue
 
     fun toQueueIDComponents() = id.toQueueIDComponents()
 
-    /**
-     * Returns a list of players that have been polled and processed.
-     */
     fun onProcess(): List<QueueEntry>
 
     fun processAndDestroy()
@@ -58,7 +49,7 @@ interface SubscribablePlayerQueue
     {
         entry.players.forEach { member ->
             runCatching {
-                ScalaCommonsSpigot.instance.kvConnection
+                RedisShared.keyValueCache
                     .sync()
                     .hdel(
                         "$queueV2Namespace:states",
@@ -86,7 +77,7 @@ interface SubscribablePlayerQueue
 
         queueState.entry.players.forEach { member ->
             runCatching {
-                ScalaCommonsSpigot.instance.kvConnection
+                RedisShared.keyValueCache
                     .sync()
                     .hset(
                         "$queueV2Namespace:states",

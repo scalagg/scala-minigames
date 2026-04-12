@@ -3,10 +3,6 @@ package gg.tropic.practice.friendship
 import gg.scala.basics.plugin.settings.SettingValue
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 1/19/2024
- */
 enum class FriendshipStateSetting(newDisplayName: String? = null) : SettingValue
 {
     Enabled,

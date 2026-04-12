@@ -8,10 +8,6 @@ import gg.tropic.practice.map.metadata.sign.manualMappings
 import org.bukkit.World
 import org.bukkit.material.Sign
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 object MapSpawnMetadataScanner : AbstractMapMetadataScanner<MapSpawnMetadata>()
 {
     override val type = "spawn"

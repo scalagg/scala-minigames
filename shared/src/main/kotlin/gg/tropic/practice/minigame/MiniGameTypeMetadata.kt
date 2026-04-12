@@ -8,10 +8,6 @@ import gg.tropic.practice.games.GameState
 import gg.tropic.practice.metadata.SystemMetadataService
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 open class MiniGameTypeMetadata(
     val internalId: String,
     val displayName: String,

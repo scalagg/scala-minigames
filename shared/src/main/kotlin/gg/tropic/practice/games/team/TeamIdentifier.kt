@@ -1,9 +1,5 @@
 package gg.tropic.practice.games.team
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
- */
 data class TeamIdentifier(val label: String)
 {
     companion object

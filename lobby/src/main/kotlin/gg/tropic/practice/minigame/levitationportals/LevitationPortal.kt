@@ -15,10 +15,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
 
-/**
- * @author GrowlyX
- * @since 7/26/2022
- */
 class LevitationPortal(
     private val spec: LevitationPortalSpec,
     private val portalEnter: (Player) -> Unit = {},

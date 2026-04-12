@@ -7,10 +7,6 @@ import gg.tropic.practice.statistics.Statistic
 import gg.tropic.practice.statistics.StatisticService
 import net.evilblock.cubed.util.CC
 
-/**
- * @author Subham
- * @since 7/24/25
- */
 object StatisticCommandCustomizers
 {
     @CommandManagerCustomizer

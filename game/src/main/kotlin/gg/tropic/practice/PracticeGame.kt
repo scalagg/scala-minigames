@@ -17,16 +17,13 @@ import gg.tropic.practice.schematics.manipulation.BlockChanger
 import gg.tropic.practice.ugc.toHostedWorld
 import org.bukkit.Bukkit
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 @Plugin(
     name = "Minigames",
     version = "%remote%/%branch%/%id%",
     description = "Game"
 )
 @PluginAuthor("ArchMC")
+@PluginApiVersion("1.21")
 @PluginWebsite("https://arch.mc")
 @PluginDependencyComposite(
     PluginDependency("scala-commons"),
@@ -34,9 +31,9 @@ import org.bukkit.Bukkit
     PluginDependency("CoreGameExtensions"),
     PluginDependency("ScBasics"),
     PluginDependency("Parties"),
-    // Legacy
+
     PluginDependency("SlimeWorldManager", soft = true),
-    // Modern
+
     PluginDependency("SlimeWorldPlugin", soft = true),
     PluginDependency("ASPaperPlugin", soft = true),
     PluginDependency("cloudsync", soft = true),

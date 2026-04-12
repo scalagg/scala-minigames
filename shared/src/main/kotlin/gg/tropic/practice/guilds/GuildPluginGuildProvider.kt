@@ -8,10 +8,6 @@ import gg.scala.game.extensions.guilds.GuildService
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 2/3/2024
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("CoreGameExtensions")

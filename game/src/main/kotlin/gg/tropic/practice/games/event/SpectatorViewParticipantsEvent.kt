@@ -6,10 +6,6 @@ import gg.tropic.practice.minigame.AbstractMiniGameGameImpl
 import gg.tropic.practice.minigame.spectators.PlayerParticipant
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 data class SpectatorViewParticipantsEvent(
     val game: GameImpl,
     val viewer: Player,

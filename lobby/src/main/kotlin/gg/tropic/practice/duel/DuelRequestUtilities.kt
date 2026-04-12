@@ -9,10 +9,6 @@ import net.evilblock.cubed.serializers.Serializers
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 10/21/2023
- */
 object DuelRequestUtilities
 {
     fun duelRequestExists(sender: UUID, target: UUID, kit: Kit) = CompletableFuture

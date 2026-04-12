@@ -37,10 +37,6 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 @Service
 object ParkourService
 {

@@ -9,10 +9,6 @@ import me.lucko.helper.Schedulers
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 @Service
 object PracticeProfileService : ProfileOrchestrator<PracticeProfile>()
 {
@@ -27,7 +23,7 @@ object PracticeProfileService : ProfileOrchestrator<PracticeProfile>()
 
     init
     {
-        // We eagerly save the profile when needed, so this is no longer needed.
+
         enableReadOnlyProfile()
     }
 

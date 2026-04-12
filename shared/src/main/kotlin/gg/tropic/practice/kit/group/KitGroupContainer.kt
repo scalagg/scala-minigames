@@ -1,9 +1,5 @@
 package gg.tropic.practice.kit.group
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 class KitGroupContainer
 {
     companion object

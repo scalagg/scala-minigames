@@ -4,10 +4,6 @@ import me.lucko.helper.terminable.composite.CompositeTerminable
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 7/20/2024
- */
 abstract class RobotInstance
 {
     val terminable = CompositeTerminable.create()

@@ -1,13 +1,16 @@
 package gg.tropic.practice.games
 
 import dev.iiahmed.disguise.Disguise
-//import dev.iiahmed.disguise.Entity
+
 import gg.scala.basics.plugin.disguise.DisguiseService
 import gg.tropic.practice.expectation.ExpectationService.returnToSpawnItem
+import gg.tropic.practice.expectation.ExpectationService.spectatorSettingsItem
 import gg.tropic.practice.expectation.ExpectationService.spectateItem
 import gg.tropic.practice.games.GameService.plugin
 import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.extensions.resetAttributes
+import gg.tropic.practice.minigame.spectators.SpectatorSettingsService
+import gg.tropic.practice.strategies.MarkSpectatorStrategy.playAgainItem
 import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.nametag.NametagHandler
@@ -21,16 +24,49 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.scoreboard.DisplaySlot
 
-/**
- * @author GrowlyX
- * @since 10/25/2023
- */
+private fun GameImpl.syncSpectatorVisibilityFor(player: Player)
+{
+    val playerIsSpectator = GameService.isSpectating(player)
+
+    this.toBukkitPlayers()
+        .filterNotNull()
+        .filter { it.uniqueId != player.uniqueId }
+        .forEach { other ->
+            val otherIsSpectator = GameService.isSpectating(other)
+
+            if (playerIsSpectator && !otherIsSpectator)
+            {
+                other.hidePlayer(player)
+            } else
+            {
+                other.showPlayer(player)
+            }
+
+            if (otherIsSpectator && !playerIsSpectator)
+            {
+                player.hidePlayer(other)
+            } else
+            {
+                player.showPlayer(other)
+            }
+        }
+}
+
 fun GameImpl.resetPlayerForFight(player: Player, noUpdateVisibility: Boolean = false)
 {
     if (!noUpdateVisibility)
     {
         VisibilityHandler.update(player)
         NametagHandler.reloadPlayer(player)
+
+        this.toBukkitPlayers()
+            .filterNotNull()
+            .forEach { other ->
+                VisibilityHandler.update(other)
+                NametagHandler.reloadPlayer(player, other)
+            }
+
+        syncSpectatorVisibilityFor(player)
     }
 
     player.apply {
@@ -48,7 +84,7 @@ fun GameImpl.resetPlayerForFight(player: Player, noUpdateVisibility: Boolean = f
             player,
             Disguise
                 .builder()
-//                .setEntity(Entity(EntityType.valueOf(type), mapOf()))
+
                 .build()
         )
     }
@@ -64,9 +100,16 @@ fun GameImpl.enterSpectatorAfterLifeEnd(player: Player, final: Boolean = false)
 
         resetAttributes(editFlightAttributes = false)
 
+        player.allowFlight = true
+        player.isFlying = true
+        SpectatorSettingsService.clearTrackedTarget(player.uniqueId)
+        SpectatorSettingsService.applySpectatorEffects(player)
+
         if (final)
         {
             player.inventory.setItem(0, spectateItem)
+            player.inventory.setItem(4, spectatorSettingsItem)
+            player.inventory.setItem(7, playAgainItem)
             player.inventory.setItem(8, returnToSpawnItem)
             player.updateInventory()
         }
@@ -76,6 +119,15 @@ fun GameImpl.enterSpectatorAfterLifeEnd(player: Player, final: Boolean = false)
             DisguiseService.provider().undisguise(player)
         }
     }
+
+    this.toBukkitPlayers()
+        .filterNotNull()
+        .forEach { other ->
+            VisibilityHandler.update(other)
+            NametagHandler.reloadPlayer(player, other)
+        }
+
+    syncSpectatorVisibilityFor(player)
 }
 
 fun GameImpl.prepareForNewLife(player: Player, volatile: Boolean, noUpdateVisibility: Boolean = false): Boolean

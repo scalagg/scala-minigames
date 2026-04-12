@@ -17,10 +17,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageEditableUIMenu(
     private val id: String
 ) : Menu("Managing Editable UI: $id")

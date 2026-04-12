@@ -13,10 +13,6 @@ import java.lang.AutoCloseable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 abstract class BaseHostedWorldInstance<R : HostedWorldInstancePlayerResources>(
     override val ownerPlayerId: UUID,
     override val loadedWorld: LoadedSlimeWorld,

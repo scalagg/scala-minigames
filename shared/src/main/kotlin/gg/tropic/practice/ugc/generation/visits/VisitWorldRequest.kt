@@ -4,10 +4,6 @@ import gg.tropic.practice.application.api.defaults.AwareConversationMessage
 import gg.tropic.practice.ugc.WorldInstanceProviderType
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 data class VisitWorldRequest(
     override val uniqueId: UUID = UUID.randomUUID(),
     val ownerPlayerId: UUID,

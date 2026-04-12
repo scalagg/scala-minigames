@@ -31,10 +31,6 @@ import gg.tropic.practice.suffixWhenDev
 import net.evilblock.cubed.util.CC
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 10/14/2023
- */
 @AutoRegister
 @HighPriority
 object DuelCommands : ScalaCommand()
@@ -101,7 +97,7 @@ object DuelCommands : ScalaCommand()
             "accept-duel",
             "request" to duelRequest
         ).publish(
-            channel = "communications-gamequeue".suffixWhenDev()
+            channel = "minigames:gamequeue".suffixWhenDev()
         )
 
         player.sendMessage("${CC.GREEN}Attempting to accept the duel...")

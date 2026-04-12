@@ -2,10 +2,6 @@ package gg.tropic.practice.configuration.minigame
 
 import gg.scala.commons.spatial.Position
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 data class MinigameTopPlayerNPCSet(
     var statisticID: String = "replace",
     var statisticDisplayName: String = "kill",

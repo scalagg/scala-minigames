@@ -31,10 +31,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 12/17/2021
- */
 @AutoRegister
 @CommandAlias("party|p|parties")
 object PartyCommand : ScalaCommand()
@@ -327,17 +323,17 @@ object PartyCommand : ScalaCommand()
 
             if (existing == null)
             {
-                // we'll automatically create a party for them and then invite
+
                 onCreate(player)
                     .thenRun {
-                        // some recursive error stuff
+
                         player.performCommand("party invite ${it.uniqueId.toString()}")
                     }
                     .join()
                 return@validatePlayers
             }
 
-            if (!QuickAccess.online(player.uniqueId).join() || !player.canSee(it.bukkit()))
+            if (!QuickAccess.online(it.uniqueId).join())
             {
                 throw ConditionFailedException(
                     "The player ${CC.YELLOW}${it.name}${CC.RED} is not online!"
@@ -680,11 +676,13 @@ object PartyCommand : ScalaCommand()
 
         return CompletableFuture.runAsync {
             NetworkPartyService.createParty(player.uniqueId)
-
-            player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
-            player.sendMessage("${CC.GREEN}You have created a new party!")
-            player.sendMessage("${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
-            player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
+        }.thenRun {
+            Bukkit.getScheduler().runTask(ScalaCommonsSpigot.instance, Runnable {
+                player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
+                player.sendMessage("${CC.GREEN}You have created a new party!")
+                player.sendMessage("${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
+                player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${" ".repeat(53)}")
+            })
         }
     }
 }

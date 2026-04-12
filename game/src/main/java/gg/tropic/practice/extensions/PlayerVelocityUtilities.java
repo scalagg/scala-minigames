@@ -3,10 +3,6 @@ package gg.tropic.practice.extensions;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-/**
- * @author GrowlyX
- * @since 3/21/2025
- */
 public class PlayerVelocityUtilities {
     public static void pushAway(Player player, Location location, double vertical, double horizontal) {
         final Location loc = player.getLocation();

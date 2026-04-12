@@ -11,10 +11,6 @@ import gg.tropic.practice.settings.DuelsSettingCategory
 import net.evilblock.cubed.util.CC
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Elb1to
- * @since 10/19/2023
- */
 @AutoRegister
 object ToggleSpectatorsCommand : ScalaCommand()
 {

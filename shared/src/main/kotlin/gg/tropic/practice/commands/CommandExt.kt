@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 10/20/2023
- */
 val UUID.offlineProfile: PracticeProfile
     get() = PracticeProfileService.find(this)
         ?: DataStoreObjectControllerCache

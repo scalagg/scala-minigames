@@ -28,16 +28,12 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.logging.Logger
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 @Service
 object QueueService
 {
     private val aware by lazy {
         AwareBuilder
-            .of<AwareMessage>("communications-gamequeue".suffixWhenDev())
+            .of<AwareMessage>("minigames:gamequeue".suffixWhenDev())
             .codec(AwareMessageCodec)
             .logger(Logger.getAnonymousLogger())
             .build()
@@ -72,7 +68,6 @@ object QueueService
             return
         }
 
-        // set Idle and wait until the queue server syncs
         synchronized(lobbyPlayer.stateUpdateLock) {
             lobbyPlayer.state = PlayerState.Idle
             lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
@@ -110,7 +105,6 @@ object QueueService
             miniGameQueueConfiguration = miniGameQueueConfiguration
         )
 
-        // set InQueue and wait until the queue server syncs
         synchronized(lobbyPlayer.stateUpdateLock) {
             lobbyPlayer.state = PlayerState.InQueue
             lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L

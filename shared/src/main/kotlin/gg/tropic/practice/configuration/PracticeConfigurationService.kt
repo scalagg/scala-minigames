@@ -14,10 +14,6 @@ import gg.tropic.practice.suffixWhenDev
 import net.kyori.adventure.key.Key
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 10/13/2023
- */
 @Service
 object PracticeConfigurationService : DataSyncService<PracticeConfiguration>()
 {

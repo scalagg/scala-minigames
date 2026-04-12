@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 class ManageParkourMenu : Menu("Manage Parkour Configuration")
 {
     init

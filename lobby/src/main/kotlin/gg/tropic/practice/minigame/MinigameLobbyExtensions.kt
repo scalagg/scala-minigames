@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/28/25
- */
 fun MiniGameModeMetadata.joinGame(player: Player, configuration: MiniGameQueueConfiguration? = null)
 {
     val lobbyPlayer = LobbyPlayerService

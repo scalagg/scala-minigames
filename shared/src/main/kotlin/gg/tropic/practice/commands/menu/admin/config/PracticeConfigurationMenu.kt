@@ -10,13 +10,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.entity.Player
 
-/**
- * Class created on 1/17/2025
-
- * @author Max C.
- * @project esta-practice
- * @website https://solo.to/redis
- */
 class PracticeConfigurationMenu : Menu()
 {
     init

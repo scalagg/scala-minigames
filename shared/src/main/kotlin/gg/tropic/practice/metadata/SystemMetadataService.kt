@@ -8,10 +8,10 @@ import gg.scala.flavor.service.Service
 import gg.tropic.practice.games.SystemBulkMetadata
 import gg.tropic.practice.games.GameReference
 import gg.tropic.practice.namespace
+import gg.tropic.practice.persistence.RedisShared
 import gg.tropic.practice.suffixWhenDev
 import gg.tropic.practice.ugc.HostedWorldInstanceReference
 import me.lucko.helper.Schedulers
-import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.services.CommonsServiceExecutor
 import java.util.concurrent.CompletableFuture
@@ -20,10 +20,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-/**
- * @author GrowlyX
- * @since 9/25/2023
- */
 @Service(priority = 1600)
 object SystemMetadataService
 {
@@ -54,7 +50,7 @@ object SystemMetadataService
 
     private fun computeAllGameStatuses() = CompletableFuture
         .supplyAsync {
-            ScalaCommonsSpigot.Companion.instance.kvConnection
+            RedisShared.keyValueCache
                 .sync()
                 .get("${namespace().suffixWhenDev()}:gamemanager:bulk-statuses")
                 ?.let {
@@ -78,6 +74,7 @@ object SystemMetadataService
     {
         Metadata.reader()
             .withNamespace(namespace())
+            .withConnection(RedisShared.keyValueCache)
             .enableAutomatedPull(CommonsServiceExecutor)
 
         CommonsServiceExecutor.scheduleAtFixedRate({

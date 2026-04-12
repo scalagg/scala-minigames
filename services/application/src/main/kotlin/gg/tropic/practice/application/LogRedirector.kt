@@ -10,21 +10,18 @@ class LogRedirector {
 
     fun startLogging(logFileName: String = "app.log") {
         try {
-            // Create file output stream
-            val fileOutputStream = FileOutputStream(logFileName, true) // append mode
+
+            val fileOutputStream = FileOutputStream(logFileName, true) 
             val printStream = PrintStream(fileOutputStream)
 
-            // Create a custom PrintStream that writes to both file and console
             val dualPrintStream = object : PrintStream(fileOutputStream) {
                 override fun println(x: String?) {
                     val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
                     val logEntry = "[$timestamp] $x"
 
-                    // Write to file
                     super.println(logEntry)
                     super.flush()
 
-                    // Also write to original console
                     originalOut.println(logEntry)
                 }
 
@@ -35,7 +32,6 @@ class LogRedirector {
                 }
             }
 
-            // Redirect System.out and System.err
             System.setOut(dualPrintStream)
             System.setErr(dualPrintStream)
 

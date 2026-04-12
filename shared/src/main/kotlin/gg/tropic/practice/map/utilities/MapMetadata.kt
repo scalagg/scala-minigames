@@ -11,10 +11,6 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.util.Vector
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 data class MapMetadata(
     val metadataSignLocations: List<Vector>,
     val metadata: List<AbstractMapMetadata>,

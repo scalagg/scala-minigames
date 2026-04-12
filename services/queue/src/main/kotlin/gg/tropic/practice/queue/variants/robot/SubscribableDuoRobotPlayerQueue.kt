@@ -16,10 +16,6 @@ import gg.tropic.practice.queue.queueId
 import gg.tropic.practice.region.Region
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 class SubscribableDuoRobotPlayerQueue(
     private val kit: ImmutableKit,
     private val teamSize: Int,
@@ -49,7 +45,7 @@ class SubscribableDuoRobotPlayerQueue(
                     .filter { otherEntry ->
                         val otherMetadata = getBotMetadataOfPlayer(otherEntry.data.leader)
                         entry != otherEntry &&
-                            // ensure queueing same difficulty
+
                             otherMetadata?.botNamespace == metadata?.botNamespace
                     }
 
@@ -66,7 +62,6 @@ class SubscribableDuoRobotPlayerQueue(
 
         val group = potentialGroups.random().map { it.data }
 
-        // Expecting a symmetric list here, lets hope it doesn't break?
         first = group.firstOrNull()
             ?: return group
 
@@ -81,7 +76,6 @@ class SubscribableDuoRobotPlayerQueue(
             Globals.POSSIBLE_PLAYER_BOT_UNIQUE_IDS[1]
         )
 
-        // a bot is playing w/ the player lol
         val users = first.players + second.players + robotPlayers
         val map = MapDataSync
             .selectMapIfCompatible(
@@ -89,7 +83,7 @@ class SubscribableDuoRobotPlayerQueue(
             )
             ?: return run {
                 RedisShared.sendMessage(
-                    // don't unnecessarily send message targeting the robot
+
                     first.players,
                     listOf(
                         "&cWe found no map compatible with the kit you are queueing for!"
@@ -123,7 +117,7 @@ class SubscribableDuoRobotPlayerQueue(
             .prepareGameFor(
                 map = map,
                 expectation = expectation,
-                // prefer NA servers if queuing globally
+
                 region = if (region == Region.Both) Region.NA else region
             )
             .exceptionally {

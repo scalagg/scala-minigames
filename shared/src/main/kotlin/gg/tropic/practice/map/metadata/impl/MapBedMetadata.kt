@@ -4,10 +4,6 @@ import gg.tropic.practice.map.metadata.AbstractMapMetadata
 import gg.scala.commons.spatial.Orientation
 import gg.scala.commons.spatial.Position
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 data class MapBedMetadata(
     val position: Position,
     val orientation: Orientation,

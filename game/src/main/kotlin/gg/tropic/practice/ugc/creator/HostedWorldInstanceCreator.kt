@@ -6,14 +6,6 @@ import gg.tropic.practice.ugc.generation.visits.VisitWorldRequest
 import gg.tropic.practice.ugc.resources.HostedWorldInstancePlayerResources
 import java.util.concurrent.CompletableFuture
 
-/**
- * Provided by the provider of the hosted world instance
- * creator provider that creates a new hosted world
- * instance that providers players with a world to join.
- *
- * @author Subham
- * @since 7/20/25
- */
 interface HostedWorldInstanceCreator<R : HostedWorldInstancePlayerResources>
 {
     val type: WorldInstanceProviderType

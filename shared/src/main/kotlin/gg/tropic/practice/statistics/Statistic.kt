@@ -4,10 +4,6 @@ import gg.tropic.practice.leaderboards.LeaderboardEntry
 import gg.tropic.practice.profile.PracticeProfile
 import io.lettuce.core.ScoredValue
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 interface Statistic
 {
     val id: StatisticID

@@ -7,10 +7,6 @@ import mc.arch.minigames.versioned.generics.SlimeProvider
 import mc.arch.minigames.versioned.generics.SlimeWorldGeneric
 import org.bukkit.Bukkit
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 object LegacySlimeProvider : SlimeProvider
 {
     private val slimePlugin = Bukkit.getServer().pluginManager

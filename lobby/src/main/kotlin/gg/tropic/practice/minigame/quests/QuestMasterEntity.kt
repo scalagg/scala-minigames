@@ -6,15 +6,11 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 5/27/2022
- */
 class QuestMasterEntity(
     location: Location
 ) : VillagerEntity(
     listOf(
-        "${CC.RED}Quest Master",
+        "${CC.AQUA}Quest Master",
         "${CC.B_YELLOW}RIGHT CLICK"
     ),
     location

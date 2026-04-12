@@ -8,7 +8,6 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.schematic.SchematicFormat;
 
-
 import org.bukkit.World;
 
 import java.io.File;
@@ -26,10 +25,9 @@ public final class WorldEditUtils {
         var editSession = primeWorldEditApi(world);
         CuboidClipboard clipboard = SchematicFormat.MCEDIT.load(schematic);
 
-        // systems like the ArenaGrid assume that pastes will 'begin' directly at the Vector
-        // provided. to ensure we can do this, we manually clear any offset (distance from
-        // corner of schematic to player) to ensure our pastes aren't dependant on the
-        // location of the player when copied
+        
+
+        
         clipboard.setOffset(new Vector(0, 0, 0));
         clipboard.paste(editSession, pasteAt, true);
 

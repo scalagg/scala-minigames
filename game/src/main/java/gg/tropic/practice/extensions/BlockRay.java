@@ -21,7 +21,6 @@ public class BlockRay implements Iterator<Block> {
     public BlockRay(World world, Vector src, Vector dst, double stepSize) {
         this.world = world;
 
-        // Calculate delta once
         this.deltaX = dst.getX() - src.getX();
         this.deltaY = dst.getY() - src.getY();
         this.deltaZ = dst.getZ() - src.getZ();
@@ -34,12 +33,10 @@ public class BlockRay implements Iterator<Block> {
         this.maxSteps = (int) Math.ceil(length / stepSize);
         double normalizedStep = 1.0 / maxSteps;
 
-        // Pre-calculate step increments
         this.stepX = deltaX * normalizedStep;
         this.stepY = deltaY * normalizedStep;
         this.stepZ = deltaZ * normalizedStep;
 
-        // Start at source
         this.currentX = src.getX();
         this.currentY = src.getY();
         this.currentZ = src.getZ();
@@ -57,7 +54,6 @@ public class BlockRay implements Iterator<Block> {
             throw new NoSuchElementException("No more blocks");
         }
 
-        // Skip duplicate blocks
         int blockX, blockY, blockZ;
         do {
             blockX = NumberConversions.floor(currentX);

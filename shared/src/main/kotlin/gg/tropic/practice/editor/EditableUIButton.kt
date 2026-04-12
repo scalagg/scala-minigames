@@ -4,10 +4,6 @@ import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.util.CC
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author Subham
- * @since 7/5/25
- */
 data class EditableUIButton(
     var displayName: String = "${CC.B_GREEN}TEST UI ITEM",
     var icon: ItemStack = XMaterial.COMPASS.parseItem()!!,

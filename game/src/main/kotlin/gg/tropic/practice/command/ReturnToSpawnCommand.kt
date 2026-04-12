@@ -10,10 +10,6 @@ import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.tropic.practice.games.GameService
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 10/28/2023
- */
 @AutoRegister
 object ReturnToSpawnCommand : ScalaCommand()
 {

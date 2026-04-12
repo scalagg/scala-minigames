@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.kyori.adventure.text.Component
 
-/**
- * @author Subham
- * @since 7/2/25
- */
 @Service
 object NetworkPartyChatService
 {

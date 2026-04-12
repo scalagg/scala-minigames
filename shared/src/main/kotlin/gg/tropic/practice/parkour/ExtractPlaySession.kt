@@ -8,10 +8,6 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 private val metadata = mutableMapOf<UUID, ParkourPlaySession>()
 fun Player.extractPlaySession() = metadata[uniqueId]!!
 fun Player.startPlaySession()

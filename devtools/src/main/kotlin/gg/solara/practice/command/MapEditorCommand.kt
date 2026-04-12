@@ -12,10 +12,6 @@ import gg.solara.practice.editor.mapeditor.MapEditor
 import gg.solara.practice.map.MapManageServices
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 @AutoRegister
 @CommandPermission("op")
 @CommandAlias("mapeditor")

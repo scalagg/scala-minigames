@@ -4,10 +4,6 @@ import gg.tropic.practice.strategies.WorldEvictionStrategy
 import gg.tropic.practice.ugc.HostedWorldInstance
 import gg.tropic.practice.versioned.Versioned
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object HostedWorldInstanceLifecycleController
 {
     fun load(instance: HostedWorldInstance<*>)

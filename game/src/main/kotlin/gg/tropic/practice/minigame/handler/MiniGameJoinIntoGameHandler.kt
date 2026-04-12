@@ -10,13 +10,9 @@ import gg.tropic.practice.application.api.defaults.AwareRPCContext
 import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
-import okio.withLock
+import kotlin.concurrent.withLock
 import org.bukkit.Bukkit
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinIntoGameResult>
 {
     override fun handle(
@@ -62,7 +58,6 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                     team.players -= player
                 }
 
-                // Check if party needs to be split across multiple teams
                 if (partySize > maxPlayersPerTeam)
                 {
                     val availableTeams = gameImpl.teams
@@ -77,11 +72,11 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
 
                     if (totalAvailableSlots < partySize)
                     {
-                        // Not enough total capacity across all teams
+
                         status = JoinIntoGameStatus.FAILED_NON_EMPTY_TEAMS
                     } else
                     {
-                        // Distribute players across available teams
+
                         val playersToPlace = request.players.toMutableList()
 
                         for (team in availableTeams)
@@ -102,7 +97,7 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
 
                         if (playersToPlace.isNotEmpty())
                         {
-                            // Couldn't place all players - rollback all placed players
+
                             request.players.forEach { player ->
                                 val team = gameImpl.getTeamOf(player)
                                 team?.players?.remove(player)
@@ -112,8 +107,8 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                     }
                 } else
                 {
-                    // Original logic for parties that fit in one team
-                    // Step 1: Check if there are empty teams that can fit the party
+
+                    
                     val emptyTeams = gameImpl.teams.filter { it.players.isEmpty() }
                     if (emptyTeams.isNotEmpty())
                     {
@@ -121,10 +116,10 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                         gameImpl.preWaitAdd(request.players.toList(), targetTeam.teamIdentifier)
                     } else
                     {
-                        // Step 2: Check if there are non-empty teams that can fit the party
+
                         val nonEmptyTeamsWithSpace = gameImpl.teams
                             .filter { it.players.isNotEmpty() && it.players.size + partySize <= maxPlayersPerTeam }
-                            .sortedBy { it.players.size } // Prefer teams with fewer players for better balance
+                            .sortedBy { it.players.size } 
 
                         if (nonEmptyTeamsWithSpace.isNotEmpty())
                         {
@@ -132,7 +127,7 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                             gameImpl.preWaitAdd(request.players.toList(), targetTeam.teamIdentifier)
                         } else
                         {
-                            // Step 3: Try to merge two non-empty teams to make space
+
                             val nonEmptyTeams = gameImpl.teams
                                 .filter { it.players.isNotEmpty() && it.players.size < maxPlayersPerTeam }
                                 .sortedBy { it.players.size }
@@ -142,11 +137,10 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                                 val firstTeam = nonEmptyTeams[0]
                                 val secondTeam = nonEmptyTeams[1]
 
-                                // Check if we can merge the smaller team into the larger one
-                                // and still have space for the party in the now-empty team
+                                
                                 if (secondTeam.players.size + firstTeam.players.size <= maxPlayersPerTeam)
                                 {
-                                    // Move all players from first team to second team
+
                                     firstTeam.players.forEach { player ->
                                         secondTeam.players += player
 
@@ -158,19 +152,17 @@ class MiniGameJoinIntoGameHandler : AwareRPCHandler<JoinIntoGameRequest, JoinInt
                                         }
                                     }
 
-                                    // Clear the first team and add the party there
                                     firstTeam.players.clear()
 
-                                    // Verify the party can still fit in the now-empty team
                                     gameImpl.preWaitAdd(request.players.toList(), firstTeam.teamIdentifier)
                                 } else
                                 {
-                                    // Can't merge teams - not enough space
+
                                     status = JoinIntoGameStatus.FAILED_NON_EMPTY_TEAMS
                                 }
                             } else
                             {
-                                // Not enough non-empty teams to perform merge
+
                                 status = JoinIntoGameStatus.FAILED_NON_EMPTY_TEAMS
                             }
                         }

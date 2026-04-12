@@ -9,13 +9,6 @@ import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * Class created on 1/12/2024
-
- * @author 98ping
- * @project tropic-practice
- * @website https://solo.to/redis
- */
 class MapRatingOverviewMenu : PaginatedMenu()
 {
     override fun getAllPagesButtons(player: Player): Map<Int, Button>

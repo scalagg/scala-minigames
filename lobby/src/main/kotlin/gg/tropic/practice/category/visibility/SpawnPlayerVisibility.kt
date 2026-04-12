@@ -8,10 +8,6 @@ import net.evilblock.cubed.visibility.VisibilityAdapter
 import net.evilblock.cubed.visibility.VisibilityAdapterRegister
 import org.bukkit.entity.Player
 
-/**
- * @author Elb1to
- * @since 10/18/2023
- */
 @VisibilityAdapterRegister("duels-visibility-adapter")
 object SpawnPlayerVisibility : VisibilityAdapter
 {

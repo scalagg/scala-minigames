@@ -8,10 +8,6 @@ import com.mongodb.client.model.Indexes
 import gg.scala.commons.consensus.Locks
 import gg.scala.store.ScalaDataStoreShared
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 object LegacyGridFSContentProvider : SlimeLoader
 {
     private val database = ScalaDataStoreShared.Companion.INSTANCE
@@ -60,7 +56,7 @@ object LegacyGridFSContentProvider : SlimeLoader
 
     override fun unlockWorld(p0: String?)
     {
-        // Locked worlds don't matter, as world systems are managed by us
+
     }
 
     override fun isWorldLocked(p0: String?) = false

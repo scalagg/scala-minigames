@@ -22,10 +22,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.scoreboard.DisplaySlot
 
-/**
- * @author GrowlyX
- * @since 10/16/2022
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("ScBasics")

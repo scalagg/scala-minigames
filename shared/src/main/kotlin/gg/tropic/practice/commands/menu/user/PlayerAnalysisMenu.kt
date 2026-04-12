@@ -36,13 +36,6 @@ import java.time.*
 import java.time.temporal.TemporalAdjusters
 import java.util.*
 
-/**
- * Class created on 7/11/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 class PlayerAnalysisMenu(private val container: AnalyzePlayerCommand.PlayerAnalysisContainer) :
     Menu(container.profile.name)
 {
@@ -350,7 +343,6 @@ class PlayerAnalysisMenu(private val container: AnalyzePlayerCommand.PlayerAnaly
                     }
                 }.toButton()
 
-            // shoutout match list button
             val reference = container.currentMatch
             map[33] = if (reference == null) ItemBuilder.of(XMaterial.CHEST).name("${CC.B_AQUA}Current Match")
                 .addToLore("${CC.RED}Player is not currently in a match!").toButton() else

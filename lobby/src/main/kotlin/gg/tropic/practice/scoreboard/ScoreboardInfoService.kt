@@ -13,10 +13,6 @@ import gg.tropic.practice.metadata.SystemMetadataService
 import gg.tropic.practice.suffixWhenDev
 import me.lucko.helper.Schedulers
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 @Service
 object ScoreboardInfoService
 {

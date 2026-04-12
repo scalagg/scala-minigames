@@ -3,7 +3,6 @@ package gg.tropic.practice.extensions
 import net.evilblock.cubed.util.CC
 
 /**
- * @author TastyCake
  * @date 8/18/2024
  */
 object BotMessages

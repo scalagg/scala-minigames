@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 4/4/25
- */
 class ViewTop3LeaderboardsMenu : PaginatedMenu()
 {
     init

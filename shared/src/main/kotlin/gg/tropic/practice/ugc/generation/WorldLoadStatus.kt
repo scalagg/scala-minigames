@@ -1,9 +1,5 @@
 package gg.tropic.practice.ugc.generation
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 enum class WorldLoadStatus
 {
     LOADED,

@@ -6,10 +6,6 @@ import gg.tropic.practice.minigame.MiniGameLifecycle
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 data class PlayerMiniGameRejoinWithTokenEvent(
     val game: MiniGameLifecycle<*>,
     val player: Player

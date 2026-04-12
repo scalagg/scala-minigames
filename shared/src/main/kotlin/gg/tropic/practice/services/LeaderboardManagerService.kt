@@ -6,6 +6,7 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.QuickAccess
+import gg.tropic.practice.statistics.StatisticRedis
 import gg.tropic.practice.guilds.Guilds
 import gg.tropic.practice.leaderboards.LeaderboardEntry
 import gg.tropic.practice.leaderboards.StatisticLeaderboard
@@ -16,15 +17,17 @@ import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.entity.Player
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 12/16/2023
- */
 @Service
 object LeaderboardManagerService
 {
+    data class LeaderboardWindow(
+        val startRank: Int,
+        val entries: List<LeaderboardEntry>
+    )
+
     @Inject
     lateinit var plugin: ExtendedScalaPlugin
 
@@ -59,18 +62,46 @@ object LeaderboardManagerService
         return personalScore + getCachedFormattedLeaderboards(statisticID.toId())
     }
 
-    fun mapToFancy(entries: List<LeaderboardEntry>) = entries.mapIndexed { index, entry ->
+    fun mapToFancy(entries: List<LeaderboardEntry>, startRank: Int = 1) = entries.mapIndexed { index, entry ->
         val guildName = Guilds.guildProvider
             .provideGuildNameFor(entry.uniqueId)
             .join()
 
-        "${CC.PRI}#${index + 1}. ${CC.WHITE}${
+        "${CC.PRI}#${startRank + index}. ${CC.WHITE}${
             entry.uniqueId.toDisplayName()
         }${
             if (guildName != null) " ${CC.GRAY}[$guildName${CC.GRAY}]${CC.RESET}" else ""
         } ${CC.GRAY}- ${CC.WHITE}${
             Numbers.format(entry.value)
         }"
+    }
+
+    fun getAroundPlayer(leaderboardID: String, player: UUID, radius: Int = 4): LeaderboardWindow?
+    {
+        val rank = StatisticRedis
+            .scoreAndPositionOf(player, leaderboardID, true)
+            ?.value
+            ?.toInt()
+            ?: return null
+
+        val start = (rank - radius)
+            .coerceAtLeast(0)
+
+        val end = rank + radius
+
+        val entries = StatisticRedis
+            .getPlayersByRankRange(leaderboardID, start, end)
+            .map { scoredValue ->
+                LeaderboardEntry(
+                    uniqueId = UUID.fromString(scoredValue.value),
+                    value = scoredValue.score.toLong()
+                )
+            }
+
+        return LeaderboardWindow(
+            startRank = start + 1,
+            entries = entries
+        )
     }
 
     fun rebuildLeaderboardCaches()

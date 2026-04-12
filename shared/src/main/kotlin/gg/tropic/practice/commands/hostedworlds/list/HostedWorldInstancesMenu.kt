@@ -16,10 +16,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 1/13/2024
- */
 class HostedWorldInstancesMenu : PaginatedMenu()
 {
     private var sort = HostedWorldInstanceSort.Type

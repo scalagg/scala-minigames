@@ -16,7 +16,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 
 /**
- * @author Topu
  * @date 11/30/2024
  */
 @AutoRegister

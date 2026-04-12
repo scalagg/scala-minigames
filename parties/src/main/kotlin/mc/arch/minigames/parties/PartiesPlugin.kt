@@ -7,10 +7,6 @@ import gg.scala.commons.core.plugin.PluginDependency
 import gg.scala.commons.core.plugin.PluginDependencyComposite
 import gg.scala.commons.core.plugin.PluginWebsite
 
-/**
- * @author GrowlyX
- * @since 12/2/2021
- */
 @Plugin(
     name = "Parties",
     version = "%remote%/%branch%/%id%"

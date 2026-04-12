@@ -16,10 +16,6 @@ import gg.tropic.practice.statistics.statisticIdFrom
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 
-/**
- * @author GrowlyX
- * @since 12/23/2023
- */
 @AutoRegister
 @CommandAlias("eloupdates")
 @CommandPermission("practice.command.eloupdates")

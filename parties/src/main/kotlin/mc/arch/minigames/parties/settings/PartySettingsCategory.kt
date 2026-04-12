@@ -20,10 +20,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 2/27/2022
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("ScBasics")

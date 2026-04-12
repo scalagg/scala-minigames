@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-/**
- * @author GrowlyX
- * @since 7/28/2024
- */
 class KitAdminMenu(player: Player) : TemplateKitMenu(player)
 {
     override fun filterDisplayOfKit(player: Player, kit: Kit) = true

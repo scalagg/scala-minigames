@@ -10,10 +10,6 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.command.CommandSender
 
-/**
- * @author GrowlyX
- * @since 3/8/2024
- */
 @AutoRegister
 object ReplicationHealthCommand : ScalaCommand()
 {

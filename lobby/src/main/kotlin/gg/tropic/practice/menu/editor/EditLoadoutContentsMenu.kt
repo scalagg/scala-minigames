@@ -66,13 +66,12 @@ class EditLoadoutContentsMenu(
                 "${CC.YELLOW}Click to reset loadout!"
             )
             .toButton { _, _ ->
-                // handle player inventory reset first
+
                 val deepClone = kit.contents.deepClone()
                 player.openInventory.cursor = ItemStack(Material.AIR)
                 player.inventory.contents = deepClone
                 player.updateInventory()
 
-                // then handle saving
                 for (int in 0 until 36)
                 {
                     loadout.inventoryContents[int] = deepClone[int]
@@ -201,14 +200,13 @@ class EditLoadoutContentsMenu(
     {
         if (manualClose)
         {
-            //save active loadout
+
             handleLoadoutSave(player).thenRun {
                 player.sendMessage("${CC.GREEN}Saving loadout...")
                 handleBackwardsMenuNavigation(player)
             }
         }
 
-        //revert user to previous state
         if (!movingToExtendedContentMenu)
         {
             Tasks.sync {

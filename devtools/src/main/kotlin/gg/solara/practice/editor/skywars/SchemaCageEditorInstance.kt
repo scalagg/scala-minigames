@@ -1,11 +1,7 @@
 package gg.solara.practice.editor.skywars
 
-import gg.scala.game.extensions.cosmetics.cages.SchemaCage
+import gg.scala.minigame.skywars.shared.cages.SchemaCage
 
-/**
- * @author GrowlyX
- * @since 8/25/2024
- */
 data class SchemaCageEditorInstance(
     val id: String,
     val schemaCage: SchemaCage

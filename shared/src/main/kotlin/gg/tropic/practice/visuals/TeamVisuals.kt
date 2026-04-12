@@ -4,10 +4,6 @@ import gg.tropic.practice.games.team.TeamIdentifier
 import org.bukkit.ChatColor
 import org.bukkit.Color
 
-/**
- * @author GrowlyX
- * @since 5/26/2022
- */
 object TeamVisuals
 {
     private val chatColorToReadable = mapOf(

@@ -3,10 +3,6 @@ package gg.solara.practice.editor
 import gg.tropic.practice.namespace
 import net.evilblock.cubed.ScalaCommonsSpigot
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 object EditorStatusMarker
 {
     fun markAsComplete(world: String) = ScalaCommonsSpigot.instance.kvConnection

@@ -13,10 +13,6 @@ import gg.tropic.practice.player.LobbyPlayerService
 import gg.tropic.practice.player.hotbar.LobbyHotbarService
 import org.bukkit.Bukkit
 
-/**
- * @author GrowlyX
- * @since 10/19/2023
- */
 @AutoRegister
 object SpawnCommand : ScalaCommand()
 {

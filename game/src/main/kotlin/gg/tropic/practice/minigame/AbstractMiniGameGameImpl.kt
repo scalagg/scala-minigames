@@ -15,10 +15,6 @@ import org.bukkit.Material
 import org.bukkit.World
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/23/2024
- */
 abstract class AbstractMiniGameGameImpl<T : MiniGameConfiguration>(
     arenaWorld: World,
     val orchestrator: BasicMiniGameOrchestrator<T>,
@@ -101,7 +97,7 @@ abstract class AbstractMiniGameGameImpl<T : MiniGameConfiguration>(
     {
         if (spectatorLocation != null)
         {
-            // Disable lighting to save >90ms/tick during game starts
+
             if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
             {
                 arenaWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = false

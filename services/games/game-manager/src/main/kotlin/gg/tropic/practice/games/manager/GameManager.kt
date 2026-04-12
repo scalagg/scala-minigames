@@ -6,16 +6,12 @@ import gg.tropic.practice.games.SystemBulkMetadata
 import gg.tropic.practice.metadata.InstanceMetadata
 import gg.tropic.practice.metadata.MetadataRPC
 import gg.tropic.practice.namespace
+import gg.tropic.practice.persistence.RedisShared
 import gg.tropic.practice.suffixWhenDev
-import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 9/25/2023
- */
 object GameManager
 {
     private val gameListingCache = Caffeine.newBuilder()
@@ -33,7 +29,7 @@ object GameManager
 
     private fun syncStatusIndexes()
     {
-        ScalaCommonsSpigot.instance.kvConnection.sync().setex(
+        RedisShared.keyValueCache.sync().setex(
             "${namespace().suffixWhenDev()}:gamemanager:bulk-statuses",
             10,
             Serializers.gson.toJson(
@@ -49,7 +45,7 @@ object GameManager
 
         MetadataRPC.statusService.addFunctionalHandler { metadata, context ->
             gameListingCache.put(metadata.server, metadata.metadata)
-//            context.reply(Unit)
+
         }
     }
 }

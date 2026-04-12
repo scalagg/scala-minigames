@@ -24,10 +24,6 @@ import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import kotlin.math.min
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 data class Quest(
     val id: String,
     var name: String,

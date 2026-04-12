@@ -9,10 +9,6 @@ import gg.tropic.practice.settings.DuelsSettingCategory
 import gg.tropic.practice.statistics.StatisticLifetime
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 @Service
 object QuestsService
 {

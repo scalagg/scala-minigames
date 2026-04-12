@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Color
 
-/**
- * @author GrowlyX
- * @since 7/17/2024
- */
 enum class RBTeamSide(
     val display: String,
     val color: String,

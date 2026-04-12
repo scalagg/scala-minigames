@@ -6,10 +6,6 @@ import net.kyori.adventure.nbt.LongBinaryTag
 import kotlin.collections.set
 import kotlin.jvm.optionals.getOrNull
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 class LegacySlimeWorld(override val worldInstance: SlimeWorld) : SlimeWorldGeneric<SlimeWorld>
 {
     override fun clone(newName: String) = LegacySlimeWorld(

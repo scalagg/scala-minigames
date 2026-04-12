@@ -12,10 +12,6 @@ import gg.scala.lemon.util.QuickAccess
 import gg.tropic.practice.region.PlayerRegionFromRedisProxy
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 12/23/2023
- */
 @AutoRegister
 object RegionCommand : ScalaCommand()
 {

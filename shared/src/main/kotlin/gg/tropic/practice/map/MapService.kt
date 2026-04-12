@@ -13,10 +13,6 @@ import gg.tropic.practice.suffixWhenDev
 import net.kyori.adventure.key.Key
 import java.util.logging.Logger
 
-/**
- * @author GrowlyX
- * @since 9/21/2023
- */
 @Service
 object MapService : DataSyncService<MapContainer>()
 {

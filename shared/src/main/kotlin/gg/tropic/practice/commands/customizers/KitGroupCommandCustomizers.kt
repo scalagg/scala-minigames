@@ -8,10 +8,6 @@ import gg.tropic.practice.kit.group.KitGroupService
 import gg.tropic.practice.map.Map
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 object KitGroupCommandCustomizers
 {
     @CommandManagerCustomizer

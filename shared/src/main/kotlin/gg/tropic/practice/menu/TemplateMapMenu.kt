@@ -13,10 +13,6 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemFlag
 import kotlin.math.floor
 
-/**
- * @author GrowlyX
- * @since 10/21/2023
- */
 abstract class TemplateMapMenu : PaginatedMenu()
 {
     init

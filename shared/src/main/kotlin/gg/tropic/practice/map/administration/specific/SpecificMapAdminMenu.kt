@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 7/28/2024
- */
 class SpecificMapAdminMenu(private val map: gg.tropic.practice.map.Map) : Menu(
     "Editing ${map.name}..."
 )

@@ -9,10 +9,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 5/23/25
- */
 data class SyntheticSignHologram(
     val editor: SyntheticsEditor,
     val refID: UUID,
@@ -33,7 +29,7 @@ data class SyntheticSignHologram(
 {
     init
     {
-        // will be auto removed later on
+
         persistent = false
     }
 

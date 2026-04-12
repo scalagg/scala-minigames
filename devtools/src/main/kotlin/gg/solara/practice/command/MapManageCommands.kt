@@ -22,10 +22,6 @@ import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 @AutoRegister
 @CommandAlias("mapmanage")
 @CommandPermission("op")
