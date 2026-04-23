@@ -19,9 +19,9 @@ include(
     "microgames:events-api",
     "microgames:events-lobby",
 
-    "persistentgames:housing",
-    "persistentgames:housing-api",
-    "persistentgames:housing-lobby",
+//    "persistentgames:housing",
+//    "persistentgames:housing-api",
+//    "persistentgames:housing-lobby",
 
     "versioned:generics",
     "versioned:legacy",
@@ -47,9 +47,9 @@ include(
     "minigames:bedwars-lobby",
     "minigames:bedwars-shared",
 
-    "minigames:miniwalls",
-    "minigames:miniwalls-lobby",
-    "minigames:miniwalls-shared",
+//    "minigames:miniwalls",
+//    "minigames:miniwalls-lobby",
+//    "minigames:miniwalls-shared",
 
     "spigot-integration"
 )
