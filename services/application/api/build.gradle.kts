@@ -1,3 +1,3 @@
 dependencies {
-    compileOnly(project(":shared"))
+    api(project(":shared"))
 }

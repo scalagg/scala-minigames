@@ -15,7 +15,7 @@ var currentBranch: String = "master"
 val userHome = System.getProperty("user.home")
 
 allprojects {
-    group = "gg.scala.duels"
+    group = "gg.scala.minigames"
     version = "1.7.0"
 
     repositories {
