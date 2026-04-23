@@ -5,7 +5,7 @@ import gg.tropic.practice.replication.ReplicationResultStatus
 import java.util.UUID
 
 data class GenerationResult(
-    override val uniqueId: UUID,
+    override val uniqueId: UUID = UUID.randomUUID(),
     val status: ReplicationResultStatus,
     val message: String? = null
 ) : AwareConversationMessageResponse

@@ -53,3 +53,6 @@ include(
 
     "spigot-integration"
 )
+
+include("persistentgames:prisons")
+include("persistentgames:prisons-api")
