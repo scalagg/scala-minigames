@@ -21,7 +21,9 @@ import gg.tropic.practice.commands.*
 import gg.tropic.practice.configuration.MinigameLobbyConfiguration
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.minigame.hologram.MinigameLeaderboardHologramEntity
+import gg.tropic.practice.minigame.hologram.MinigameLeaderboardInteractionHologramEntity
 import gg.tropic.practice.minigame.holographicstats.CoreHolographicStatsHologramEntity
+import gg.tropic.practice.minigame.holographicstats.CoreHolographicStatsNPCEntity
 import gg.tropic.practice.minigame.levitationportals.LevitationPortal
 import gg.tropic.practice.minigame.npc.MinigameLobbyNPCEntity
 import gg.tropic.practice.minigame.npc.MinigamePlayNPCEntity
@@ -36,6 +38,7 @@ import gg.tropic.practice.player.hotbar.LobbyHotbarService
 import gg.tropic.practice.replacements.toTemplatePlayerCounts
 import gg.tropic.practice.services.LeaderboardManagerService
 import gg.tropic.practice.services.NetworkFluidityService
+import gg.tropic.practice.versioned.MinigameModernAccess
 import me.lucko.helper.Events
 import me.lucko.helper.Helper
 import me.lucko.helper.Schedulers
@@ -58,10 +61,6 @@ import org.bukkit.metadata.FixedMetadataValue
 import java.time.Duration
 import java.util.*
 
-/**
- * @author Subham
- * @since 6/26/25
- */
 @Service
 object MinigameLobby
 {
@@ -140,12 +139,11 @@ object MinigameLobby
                     }
             }, 0L, 10L)
 
-        LobbyHotbarService.reconfigureForMinigames()
         NetworkFluidityService.disableFluidityPartially()
-        LobbyHotbarService.set(
-            PlayerState.Idle,
-            generateMainLobbyHotbar()
-        )
+        val mainLobbyHotbar = generateMainLobbyHotbar()
+        LobbyHotbarService.set(PlayerState.Idle, mainLobbyHotbar)
+        LobbyHotbarService.set(PlayerState.InPartyAsLeader, mainLobbyHotbar)
+        LobbyHotbarService.set(PlayerState.InPartyAsMember, mainLobbyHotbar)
 
         plugin.unregisterCommands(
             StatResetTokenCommand,
@@ -171,11 +169,10 @@ object MinigameLobby
 
         NetworkFluidityService.disableFluidity()
         PracticeConfigurationService.registerTypeProvider(typeProvider)
-        LobbyHotbarService.set(
-            PlayerState.Idle, generateDefaultHotbar(
-                typeProvider, customizer
-            )
-        )
+        val minigameHotbar = generateDefaultHotbar(typeProvider, customizer)
+        LobbyHotbarService.set(PlayerState.Idle, minigameHotbar)
+        LobbyHotbarService.set(PlayerState.InPartyAsLeader, minigameHotbar)
+        LobbyHotbarService.set(PlayerState.InPartyAsMember, minigameHotbar)
 
         configurePlayNPCs()
         PracticeConfigurationService.onReload {
@@ -244,8 +241,6 @@ object MinigameLobby
                 nearbyPlayNPCEntity.onPortal(event.entity as Player)
             }
 
-        LobbyHotbarService.reconfigureForMinigames()
-
         with(PracticeConfigurationService.cached()) {
             if (!minigameConfigurations.containsKey(typeProvider.provide().internalId))
             {
@@ -266,151 +261,13 @@ object MinigameLobby
         preset.addSlot(
             0,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.COMPASS)
-                    .name("${CC.GREEN}Play ${typeProvider.provide().displayName} ${CC.GRAY}(Right Click)")
+                ItemBuilder(MinigameModernAccess.lobbyNavigatorMaterial())
+                    .name("${CC.GREEN}Game Menu ${CC.GRAY}(Right Click)")
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
-                    customizer.playProvider(player)
-                }
-            }
-        )
-
-        preset.addSlot(
-            1,
-            StaticHotbarPresetEntry(
-                ItemBuilder(typeProvider.provide().item)
-                    .name("${CC.GREEN}${typeProvider.provide().displayName} Menu ${CC.GRAY}(Right Click)")
-                    .setUnbreakable(true)
-            ).also {
-                it.onClick = context@{ player ->
-                    customizer.mainMenuProvider(player)
-                }
-            }
-        )
-
-        preset.addSlot(
-            6,
-            DynamicHotbarPresetEntry().also {
-                it.onBuild = scope@{ player ->
-                    return@scope ItemBuilder
-                        .of(XMaterial.CLOCK)
-                        .name("${CC.GREEN}Game Selector ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                it.onClick = scope@{ player ->
-                    PracticeConfigurationService.openEditableUI(player, "game_selector")
-                }
-            }
-        )
-
-        preset.addSlot(
-            2,
-            DynamicHotbarPresetEntry().apply {
-                onBuild = scope@{ player ->
-                    ItemBuilder
-                        .copyOf(
-                            object :
-                                TexturedHeadButton("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVlMzEzZTMwYzUzZGUxNzZlN2YzY2ZjYzI3ODI3ZmQ0NWUxN2QwYzRiOTljNmMxZmI1MmE3MGFiMjkzOTMyNCJ9fX0=")
-                            {}
-                                .getButtonItem(player)
-                        )
-                        .name("${CC.GREEN}Create a Party ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                onClick = scope@{ player ->
-                    player.performCommand("party create")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.InPartyAsLeader
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
-                }
-            }
-        )
-
-        preset.addSlot(
-            4,
-            StaticHotbarPresetEntry(
-                ItemBuilder(Material.CHEST)
-                    .name("${CC.GREEN}Cosmetics ${CC.GRAY}(Right Click)")
-                    .setUnbreakable(true)
-            ).also {
-                it.onClick = context@{ player ->
-                    CosmeticCategoryMenu().openMenu(player)
-                }
-            }
-        )
-
-        val visibilityCooldown = CooldownMap.create<UUID>(Cooldown.ofTicks(20L))
-        preset.addSlot(
-            7,
-            DynamicHotbarPresetEntry().apply {
-                onBuild = context@{
-                    if (SpawnPlayerVisibility.get(it))
-                    {
-                        return@context ItemBuilder
-                            .of(XMaterial.LIME_DYE)
-                            .name("${CC.GRAY}Players: ${CC.GREEN}Enabled ${CC.WHITE}(Right Click)")
-                            .build()
-                    }
-
-                    return@context ItemBuilder
-                        .of(XMaterial.GRAY_DYE)
-                        .name("${CC.GRAY}Players: ${CC.RED}Disabled ${CC.WHITE}(Right Click)")
-                        .build()
-                }
-
-                onClick = context@{
-                    if (!visibilityCooldown.test(it.uniqueId))
-                    {
-                        it.sendMessage("${CC.RED}Slow down! You are toggling visibility too fast!")
-                        return@context
-                    }
-
-                    TogglePlayerVisibilityCommand.onToggleVisibility(it)
-                    preset.applyToPlayer(it)
-                }
-            }
-        )
-
-        preset.addSlot(
-            8,
-            StaticHotbarPresetEntry(
-                ItemBuilder(Material.NETHER_STAR)
-                    .name("${CC.GREEN}Switch ${typeProvider.provide().displayName} Lobby ${CC.GRAY}(Right Click)")
-                    .setUnbreakable(true)
-            ).also {
-                it.onClick = context@{ player ->
-                    SwitchLobbyServerCommand.SwitchLobbyServerMenu().openMenu(player)
-                }
-            }
-        )
-
-        HotbarPresetHandler.startTrackingHotbar("idle-minigames", preset)
-        return preset
-    }
-
-
-    fun generateMainLobbyHotbar(): HotbarPreset
-    {
-        val preset = HotbarPreset()
-        preset.addSlot(
-            0,
-            StaticHotbarPresetEntry(
-                ItemBuilder(Material.COMPASS)
-                    .name("${CC.GREEN}Game Selector ${CC.GRAY}(Right Click)")
-                    .setUnbreakable(true)
-            ).also {
-                it.onClick = context@{ player ->
-                    Button.playNeutral(player)
-                    PracticeConfigurationService.openEditableUI(player, "game_selector")
+                    MinigameModernAccess.playMenuSound(player)
+                    PracticeConfigurationService.openEditableUI(player, "game-menu")
                 }
             }
         )
@@ -420,47 +277,30 @@ object MinigameLobby
             DynamicHotbarPresetEntry().also {
                 it.onBuild = { player ->
                     ItemBuilder
-                        .of(XMaterial.SKELETON_SKULL)
+                        .of(XMaterial.PLAYER_HEAD)
                         .data(3.toShort())
-                        .name("${CC.GREEN}Profile Menu ${CC.GRAY}(Right Click)")
+                        .name("${CC.GREEN}My Profile ${CC.GRAY}(Right Click)")
                         .owner(player.name)
                         .setUnbreakable(true)
                         .build()
                 }
 
                 it.onClick = context@{ player ->
-                    Button.playNeutral(player)
-                    ProfileSinglePageMenu().openMenu(player)
+                    MinigameModernAccess.playMenuSound(player)
+                    player.performCommand("profile")
                 }
             }
         )
 
         preset.addSlot(
             2,
-            DynamicHotbarPresetEntry().apply {
-                onBuild = scope@{ player ->
-                    ItemBuilder
-                        .copyOf(
-                            object :
-                                TexturedHeadButton("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVlMzEzZTMwYzUzZGUxNzZlN2YzY2ZjYzI3ODI3ZmQ0NWUxN2QwYzRiOTljNmMxZmI1MmE3MGFiMjkzOTMyNCJ9fX0=")
-                            {}
-                                .getButtonItem(player)
-                        )
-                        .name("${CC.GREEN}Create a Party ${CC.GRAY}(Right Click)")
-                        .build()
-                }
-
-                onClick = scope@{ player ->
-                    player.performCommand("party create")
-                    Button.playNeutral(player)
-
-                    val lobbyPlayer = LobbyPlayerService.find(player)
-                        ?: return@scope
-
-                    synchronized(lobbyPlayer.stateUpdateLock) {
-                        lobbyPlayer.state = PlayerState.InPartyAsLeader
-                        lobbyPlayer.maintainStateTimeout = System.currentTimeMillis() + 1000L
-                    }
+            StaticHotbarPresetEntry(
+                ItemBuilder(Material.EMERALD)
+                    .name("${CC.GREEN}${typeProvider.provide().displayName} Menu & Shop ${CC.GRAY}(Right Click)")
+                    .setUnbreakable(true)
+            ).also {
+                it.onClick = context@{ player ->
+                    customizer.mainMenuProvider(player)
                 }
             }
         )
@@ -468,12 +308,12 @@ object MinigameLobby
         preset.addSlot(
             4,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.CHEST)
+                ItemBuilder(MinigameModernAccess.cosmeticsMaterial())
                     .name("${CC.GREEN}Cosmetics ${CC.GRAY}(Right Click)")
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
-                    Button.playNeutral(player)
+                    MinigameModernAccess.playMenuSound(player)
                     CosmeticCategoryMenu().openMenu(player)
                 }
             }
@@ -488,13 +328,13 @@ object MinigameLobby
                     {
                         return@context ItemBuilder
                             .of(XMaterial.LIME_DYE)
-                            .name("${CC.GRAY}Players: ${CC.GREEN}Enabled ${CC.WHITE}(Right Click)")
+                            .name("${CC.WHITE}Players: ${CC.GREEN}Enabled ${CC.GRAY}(Right Click)")
                             .build()
                     }
 
                     return@context ItemBuilder
                         .of(XMaterial.GRAY_DYE)
-                        .name("${CC.GRAY}Players: ${CC.RED}Disabled ${CC.WHITE}(Right Click)")
+                        .name("${CC.WHITE}Players: ${CC.RED}Disabled ${CC.GRAY}(Right Click)")
                         .build()
                 }
 
@@ -505,7 +345,7 @@ object MinigameLobby
                         return@context
                     }
 
-                    Button.playNeutral(it)
+                    MinigameModernAccess.playMenuSound(it)
                     TogglePlayerVisibilityCommand.onToggleVisibility(it)
                     preset.applyToPlayer(it)
                 }
@@ -515,12 +355,114 @@ object MinigameLobby
         preset.addSlot(
             8,
             StaticHotbarPresetEntry(
-                ItemBuilder(Material.NETHER_STAR)
-                    .name("${CC.GREEN}Switch Main Lobby ${CC.GRAY}(Right Click)")
+                ItemBuilder(MinigameModernAccess.menuAccentMaterial())
+                    .name("${CC.GREEN}Lobby Selector ${CC.GRAY}(Right Click)")
                     .setUnbreakable(true)
             ).also {
                 it.onClick = context@{ player ->
-                    Button.playNeutral(player)
+                    MinigameModernAccess.playMenuSound(player)
+                    SwitchLobbyServerCommand.SwitchLobbyServerMenu().openMenu(player)
+                }
+            }
+        )
+
+        HotbarPresetHandler.startTrackingHotbar("idle-minigames", preset)
+        return preset
+    }
+
+    fun generateMainLobbyHotbar(): HotbarPreset
+    {
+        val preset = HotbarPreset()
+        preset.addSlot(
+            0,
+            StaticHotbarPresetEntry(
+                ItemBuilder(MinigameModernAccess.lobbyNavigatorMaterial())
+                    .name("${CC.GREEN}Game Menu ${CC.GRAY}(Right Click)")
+                    .setUnbreakable(true)
+            ).also {
+                it.onClick = context@{ player ->
+                    MinigameModernAccess.playMenuSound(player)
+                    PracticeConfigurationService.openEditableUI(player, "game-menu")
+                }
+            }
+        )
+
+        preset.addSlot(
+            1,
+            DynamicHotbarPresetEntry().also {
+                it.onBuild = { player ->
+                    ItemBuilder
+                        .of(XMaterial.PLAYER_HEAD)
+                        .data(3.toShort())
+                        .name("${CC.GREEN}My Profile ${CC.GRAY}(Right Click)")
+                        .owner(player.name)
+                        .setUnbreakable(true)
+                        .build()
+                }
+
+                it.onClick = context@{ player ->
+                    MinigameModernAccess.playMenuSound(player)
+                    player.performCommand("profile")
+                }
+            }
+        )
+
+        preset.addSlot(
+            4,
+            StaticHotbarPresetEntry(
+                ItemBuilder(MinigameModernAccess.cosmeticsMaterial())
+                    .name("${CC.GREEN}Cosmetics ${CC.GRAY}(Right Click)")
+                    .setUnbreakable(true)
+            ).also {
+                it.onClick = context@{ player ->
+                    MinigameModernAccess.playMenuSound(player)
+                    CosmeticCategoryMenu().openMenu(player)
+                }
+            }
+        )
+
+        val visibilityCooldown = CooldownMap.create<UUID>(Cooldown.ofTicks(20L))
+        preset.addSlot(
+            7,
+            DynamicHotbarPresetEntry().apply {
+                onBuild = context@{
+                    if (SpawnPlayerVisibility.get(it))
+                    {
+                        return@context ItemBuilder
+                            .of(XMaterial.LIME_DYE)
+                            .name("${CC.WHITE}Players: ${CC.GREEN}Enabled ${CC.GRAY}(Right Click)")
+                            .build()
+                    }
+
+                    return@context ItemBuilder
+                        .of(XMaterial.GRAY_DYE)
+                        .name("${CC.WHITE}Players: ${CC.RED}Disabled ${CC.GRAY}(Right Click)")
+                        .build()
+                }
+
+                onClick = context@{
+                    if (!visibilityCooldown.test(it.uniqueId))
+                    {
+                        it.sendMessage("${CC.RED}Slow down! You are toggling visibility too fast!")
+                        return@context
+                    }
+
+                    MinigameModernAccess.playMenuSound(it)
+                    TogglePlayerVisibilityCommand.onToggleVisibility(it)
+                    preset.applyToPlayer(it)
+                }
+            }
+        )
+
+        preset.addSlot(
+            8,
+            StaticHotbarPresetEntry(
+                ItemBuilder(MinigameModernAccess.menuAccentMaterial())
+                    .name("${CC.GREEN}Lobby Selector ${CC.GRAY}(Right Click)")
+                    .setUnbreakable(true)
+            ).also {
+                it.onClick = context@{ player ->
+                    MinigameModernAccess.playMenuSound(player)
                     SwitchLobbyServerCommand.SwitchLobbyServerMenu().openMenu(player)
                 }
             }
@@ -585,9 +527,11 @@ object MinigameLobby
         listOf(
             MinigamePlayNPCEntity::class.java,
             MinigameLeaderboardHologramEntity::class.java,
+            MinigameLeaderboardInteractionHologramEntity::class.java,
             MinigameTop3HologramEntity::class.java,
             QuestMasterEntity::class.java,
-            CoreHolographicStatsHologramEntity::class.java
+            CoreHolographicStatsHologramEntity::class.java,
+            CoreHolographicStatsNPCEntity::class.java
         ).forEach {
             EntityHandler
                 .getEntitiesByType(it)
@@ -597,12 +541,13 @@ object MinigameLobby
                 }
         }
 
-        CoreHolographicStatsHologramEntity(
-            PracticeConfigurationService.local().coreHolographicStatsPosition
-        ).apply {
-            initializeData()
-            EntityHandler.trackEntity(this)
-        }
+        val coreStatsPosition = PracticeConfigurationService.local().coreHolographicStatsPosition
+
+        CoreHolographicStatsNPCEntity(
+            location = coreStatsPosition.toLocation(Bukkit.getWorlds().first()),
+            lineProvider = { customizer().profileStatsNPCHeader() },
+            statsLineProvider = { player -> customizer().holographicStatsProvider(player) }
+        ).configure()
 
         PracticeConfigurationService.local().playNPCs
             .forEach { playNPC ->

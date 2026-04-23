@@ -12,10 +12,6 @@ import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import java.util.logging.Level
 
-/**
- * @author GrowlyX
- * @since 1/1/2024
- */
 @Service(priority = 30)
 object ReplicationAutoScaleTask : Thread("replication-auto-scale")
 {

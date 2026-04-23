@@ -4,10 +4,6 @@ import gg.tropic.practice.minigame.MiniGameQueueConfiguration
 import gg.tropic.practice.region.Region
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 data class QueueEntry(
     val leader: UUID,
     val leaderPing: Int,

@@ -4,10 +4,6 @@ import gg.tropic.practice.expectation.GameExpectation
 import gg.tropic.practice.kit.Kit
 import org.bukkit.World
 
-/**
- * @author GrowlyX
- * @since 8/23/2024
- */
 abstract class BasicMiniGameOrchestrator<T : MiniGameConfiguration> : MiniGameOrchestrator<T>
 {
     abstract fun prepare(miniGame: AbstractMiniGameGameImpl<T>, configuration: T): MiniGameLifecycle<T>

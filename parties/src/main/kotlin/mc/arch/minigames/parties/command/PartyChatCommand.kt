@@ -17,10 +17,6 @@ import mc.arch.minigames.parties.model.PartySetting
 import mc.arch.minigames.parties.toParty
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 5/7/2022
- */
 @AutoRegister
 object PartyChatCommand : ScalaCommand()
 {
@@ -50,7 +46,6 @@ object PartyChatCommand : ScalaCommand()
                 }
             }
 
-            // TODO: chat filter
             QuickAccess.sendChannelMessage(
                 channelId = "party",
                 message = message,

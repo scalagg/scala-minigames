@@ -8,10 +8,6 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.tropic.practice.PracticeGame
 
-/**
- * @author GrowlyX
- * @since 3/2/2024
- */
 @Service
 @IgnoreAutoScan
 object MetricsService

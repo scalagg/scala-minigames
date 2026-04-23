@@ -6,10 +6,6 @@ import io.lettuce.core.ScoredValue
 import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.*
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 class ExpiringStatistic(
     override val id: StatisticID,
     private val lifetime: StatisticLifetime,
@@ -61,10 +57,6 @@ class ExpiringStatistic(
         }
     }
 
-    /**
-     * Gets just the percentile value as a Double
-     * @return The percentile (0.0 to 100.0) or null if player not found
-     */
     context(PracticeProfile)
     override fun percentile(): Float
     {
@@ -94,7 +86,7 @@ class ExpiringStatistic(
             StatisticRedis.incr(identifier, id.toRedisKey(), -newValue, lifetime)
         } else
         {
-            // If the key exists, just decrement it
+
             StatisticRedis.incr(identifier, id.toRedisKey(), -newValue, lifetime)
         }
     }

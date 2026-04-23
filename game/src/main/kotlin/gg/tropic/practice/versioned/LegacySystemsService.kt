@@ -6,10 +6,6 @@ import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.ServerVersion
 import org.bukkit.Bukkit
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 class LegacySystemsService
 {
     fun configure()

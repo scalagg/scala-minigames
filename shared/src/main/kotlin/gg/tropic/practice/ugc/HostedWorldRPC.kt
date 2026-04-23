@@ -9,10 +9,6 @@ import gg.tropic.practice.ugc.generation.addplayer.AddPlayerResponse
 import gg.tropic.practice.ugc.generation.visits.VisitWorldRequest
 import gg.tropic.practice.ugc.generation.visits.VisitWorldResponse
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object HostedWorldRPC
 {
     private val gateway = DPSRedisService("ugcgateway")

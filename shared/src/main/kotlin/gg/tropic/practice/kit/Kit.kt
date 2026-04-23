@@ -2,6 +2,7 @@ package gg.tropic.practice.kit
 
 import com.cryptomorin.xseries.XMaterial
 import gg.tropic.practice.extensions.deepClone
+import gg.tropic.practice.cosmetic.DuelsCosmeticApplicator
 import gg.tropic.practice.queue.QueueType
 import gg.tropic.practice.kit.feature.FeatureFlag
 import gg.tropic.practice.kit.feature.GameLifecycle
@@ -13,10 +14,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 data class Kit(
     val id: String,
     var displayName: String,
@@ -32,7 +29,7 @@ data class Kit(
     val features: MutableMap<FeatureFlag, MutableMap<String, String>> = mutableMapOf()
 )
 {
-    // We need the two layers of nullability
+
     @Transient
     private var backingAllowedBlockTypeMappings: Optional<Map<Material, Int>>? = null
 
@@ -115,6 +112,8 @@ data class Kit(
                 ))
             }
         }
+
+        DuelsCosmeticApplicator.apply(player)
     }
 
     override fun equals(other: Any?): Boolean

@@ -8,10 +8,6 @@ import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.staff.reports.ReportProcessor
 import gg.scala.staff.reports.ResponseAction
 
-/**
- * @author GrowlyX
- * @since 1/16/2024
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("ScStaff")

@@ -10,10 +10,6 @@ import me.lucko.helper.Schedulers
 import net.kyori.adventure.nbt.LongBinaryTag
 import org.bukkit.Bukkit
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 object ModernSlimeProvider : SlimeProvider
 {
     private val api = AdvancedSlimePaperAPI.instance()

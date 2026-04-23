@@ -12,10 +12,6 @@ import gg.tropic.practice.ugc.generation.visits.VisitWorldRequest
 import gg.tropic.practice.ugc.generation.visits.VisitWorldResponse
 import gg.tropic.practice.ugc.generation.visits.VisitWorldStatus
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class VisitWorldRequestHandler(
     private val worldLoadService: WorldLoadService
 ) : AwareRPCHandler<VisitWorldRequest, VisitWorldResponse>

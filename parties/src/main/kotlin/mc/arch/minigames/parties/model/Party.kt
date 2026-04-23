@@ -8,10 +8,6 @@ import org.bukkit.Bukkit
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 12/2/2021
- */
 data class Party(
     val uniqueId: UUID = UUID.randomUUID(),
     var leader: PartyMember

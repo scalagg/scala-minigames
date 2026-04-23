@@ -7,10 +7,6 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import java.io.File
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 class SchematicEditable(private val file: File) : Editable
 {
     override val icon: XMaterial

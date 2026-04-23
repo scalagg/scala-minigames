@@ -7,10 +7,6 @@ import io.lettuce.core.api.StatefulRedisConnection
 import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 object RedisShared
 {
     val keyValueCache: StatefulRedisConnection<String, String> = DPSRedisService("dpskv")

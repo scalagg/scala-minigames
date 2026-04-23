@@ -11,10 +11,6 @@ import gg.tropic.practice.reports.GameReportService
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 @AutoRegister
 @CommandAlias("games|matchhistory|mh|matchhist")
 object MatchHistoryCommand : ScalaCommand()

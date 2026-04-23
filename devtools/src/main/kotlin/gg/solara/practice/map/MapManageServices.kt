@@ -8,10 +8,6 @@ import gg.scala.flavor.service.Service
 import gg.solara.practice.PracticeDevTools
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 @Service
 object MapManageServices
 {

@@ -48,43 +48,18 @@ object MapBlockFaceUtilities
         return wrappedAngle
     }
 
-    /**
-     * Gets the Notch integer representation of a BlockFace<br></br>
-     * **These are the horizontal faces, which exclude up and down**
-     *
-     * @param face to get
-     * @return Notch of the face
-     */
     fun faceToNotch(face: BlockFace?): Int
     {
         val notch = notches[face]
         return notch ?: 0
     }
 
-    /**
-     * Gets the angle from a horizontal Block Face
-     *
-     * @param face to get the angle for
-     * @return face angle
-     */
     fun faceToYaw(face: BlockFace): Int
     {
         return wrapAngle(45 * faceToNotch(face))
     }
-    /**
-     * Gets the horizontal Block Face from a given yaw angle
-     *
-     * @param yaw angle
-     * @param useSubCardinalDirections setting, True to allow NORTH_WEST to be returned
-     * @return The Block Face of the angle
-     */
-    /**
-     * Gets the horizontal Block Face from a given yaw angle<br></br>
-     * This includes the NORTH_WEST faces
-     *
-     * @param yaw angle
-     * @return The Block Face of the angle
-     */
+
+    
     @JvmOverloads
     fun yawToFace(yaw: Float, useSubCardinalDirections: Boolean = true): BlockFace?
     {

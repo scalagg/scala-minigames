@@ -11,7 +11,7 @@ import gg.scala.commons.spatial.Box
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.game.extensions.cosmetics.CosmeticRegistry
-import gg.scala.game.extensions.cosmetics.victorydances.VictoryDance
+import gg.scala.game.extensions.cosmetics.victorydances.cosmetics.VictoryDance
 import gg.scala.game.extensions.cosmetics.victorydances.VictoryDanceCosmeticCategory
 import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.tropic.practice.expectation.ExpectationService
@@ -42,6 +42,7 @@ import gg.tropic.practice.queue.QueueType
 import gg.tropic.practice.region.Region
 import gg.tropic.practice.serializable.Message
 import gg.tropic.practice.statistics.*
+import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.strategies.WorldEvictionStrategy
 import gg.tropic.practice.extensions.BotMessages
 import gg.tropic.practice.games.player.CosmeticPlayerResources
@@ -56,7 +57,7 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.text.TextUtil
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import okio.withLock
+import kotlin.concurrent.withLock
 import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang3.time.DurationFormatUtils
 import org.bukkit.Bukkit
@@ -78,10 +79,6 @@ import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Logger
 import kotlin.math.roundToInt
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 open class GameImpl(
     val arenaWorld: World,
     expectation: GameExpectation,
@@ -125,6 +122,7 @@ open class GameImpl(
     private val playerCounters = mutableMapOf<UUID, LocalAccumulator>()
 
     val expectedSpectators = ConcurrentHashMap.newKeySet<UUID>()
+    val expectedSpectatorTargets = ConcurrentHashMap<UUID, UUID>()
     val expectedQueueRejoin = ConcurrentHashMap.newKeySet<UUID>()
 
     val placedBlocks = mutableSetOf<Vector>()
@@ -135,7 +133,6 @@ open class GameImpl(
     val consumedBots = AtomicInteger(0)
     var gameLifecycleObjectiveMet: (GameTeam) -> Boolean = { false }
 
-    // TODO: Migrate to features
     var shouldContainIdentifiableTeams = true
     var shouldAllowFriendlyFire = false
     var shouldKeepCentralChat = false
@@ -186,7 +183,7 @@ open class GameImpl(
                 it.getWhitelisted() == ServerSync.getLocalGameServer().getWhitelisted()
             }
             .minByOrNull {
-                it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
+                it.getPlayersCount() ?: Int.MAX_VALUE 
             }
     }
 
@@ -348,22 +345,37 @@ open class GameImpl(
             val allOpponentPlayers = opponents.flatMap(GameTeam::players)
             if (!robot() && expectationModel.queueType != null)
             {
+                val statisticKitIds = linkedSetOf<String>()
+                val minigameTypeId = minigameType()
+                val minigameRootId = runCatching {
+                    PracticeConfigurationService
+                        .minigameType()
+                        .provide()
+                        .internalId
+                }.getOrNull()
+
+                if (
+                    miniGameLifecycle != null &&
+                    minigameTypeId != null &&
+                    minigameRootId != null &&
+                    minigameTypeId.equals(minigameRootId, ignoreCase = true)
+                )
+                {
+                    statisticKitIds.add(minigameTypeId)
+                }
+
+                statisticKitIds.add(kit.id)
+
                 val trackedKitStatisticsUpdates = allOpponentPlayers.map {
                     StatisticService.update(it) {
                         statisticWrite(
                             statisticIds {
-                                if (miniGameLifecycle != null)
-                                {
-                                    kits(minigameType())
-                                } else
-                                {
-                                    globalKit()
-                                }
-                                kits(kit)
+                                kits(*statisticKitIds.toTypedArray())
                                 globalQueueType()
                                 queueTypes(expectationModel.queueType!!)
                                 daily()
                                 weekly()
+                                monthly()
                                 lifetime()
                                 types(TrackedKitStatistic.Plays, TrackedKitStatistic.Losses)
                             }
@@ -373,7 +385,7 @@ open class GameImpl(
 
                         statisticWrite(
                             statisticIds {
-                                kits(kit)
+                                kits(*statisticKitIds.toTypedArray())
                                 globalQueueType()
                                 queueTypes(expectationModel.queueType!!)
                                 lifetime()
@@ -391,19 +403,13 @@ open class GameImpl(
                     StatisticService.update(it) {
                         statisticWrite(
                             statisticIds {
-                                if (miniGameLifecycle != null)
-                                {
-                                    kits(minigameType())
-                                } else
-                                {
-                                    globalKit()
-                                }
-                                kits(kit)
+                                kits(*statisticKitIds.toTypedArray())
                                 queueTypes(expectationModel.queueType!!)
                                 lifetime()
                                 globalQueueType()
                                 daily()
                                 weekly()
+                                monthly()
                                 types(TrackedKitStatistic.Plays, TrackedKitStatistic.Wins)
                             }
                         ) {
@@ -412,7 +418,7 @@ open class GameImpl(
 
                         statisticWrite(
                             statisticIds {
-                                kits(kit)
+                                kits(*statisticKitIds.toTypedArray())
                                 globalQueueType()
                                 queueTypes(expectationModel.queueType!!)
                                 lifetime()
@@ -423,26 +429,56 @@ open class GameImpl(
                             add(1)
                         }
 
-                        val current = getStatisticValue(
-                            statisticIdFrom(TrackedKitStatistic.WinStreak) {
-                                kit(kit)
+                        fun updateWinStreakHighest(kitProvider: gg.tropic.practice.statistics.StatisticReferenceDSL.() -> Unit)
+                        {
+                            val currentQueueStreak = getStatisticValue(
+                                statisticIdFrom(TrackedKitStatistic.WinStreak) {
+                                    kitProvider()
+                                    queueType(expectationModel.queueType!!)
+                                }
+                            ) ?: return
+
+                            val highestQueueStreakID = statisticIdFrom(TrackedKitStatistic.WinStreakHighest) {
+                                kitProvider()
                                 queueType(expectationModel.queueType!!)
                             }
-                        ) ?: return@update
 
-                        val highestWinStreakID = statisticIdFrom(TrackedKitStatistic.WinStreakHighest) {
-                            kit(kit)
-                            queueType(expectationModel.queueType!!)
+                            val highestQueueStreak = getStatisticValue(highestQueueStreakID)
+                                ?: return
+
+                            if (highestQueueStreak.score < currentQueueStreak.score)
+                            {
+                                statisticWrite(highestQueueStreakID) {
+
+                                    update(currentQueueStreak.score.toLong() + 1)
+                                }
+                            }
+
+                            val currentGlobalStreak = getStatisticValue(
+                                statisticIdFrom(TrackedKitStatistic.WinStreak) {
+                                    kitProvider()
+                                }
+                            ) ?: return
+
+                            val highestGlobalStreakID = statisticIdFrom(TrackedKitStatistic.WinStreakHighest) {
+                                kitProvider()
+                            }
+
+                            val highestGlobalStreak = getStatisticValue(highestGlobalStreakID)
+                                ?: return
+
+                            if (highestGlobalStreak.score < currentGlobalStreak.score)
+                            {
+                                statisticWrite(highestGlobalStreakID) {
+
+                                    update(currentGlobalStreak.score.toLong() + 1)
+                                }
+                            }
                         }
 
-                        val highestWinStreak = getStatisticValue(highestWinStreakID)
-                            ?: return@update
-
-                        if (highestWinStreak.score < current.score)
-                        {
-                            statisticWrite(highestWinStreakID) {
-                                // This is in a lazily loaded clause, so we just add one to compensate.
-                                update(current.score.toLong() + 1)
+                        statisticKitIds.forEach { statisticKitID ->
+                            updateWinStreakHighest {
+                                kit(statisticKitID)
                             }
                         }
                     }.exceptionally { throwable ->
@@ -864,8 +900,8 @@ open class GameImpl(
             !this.state(GameState.Completed)
         )
         {
-            // This will return a capitalized name state which
-            // makes sense in the context this function will be used in.
+
+            
             return this.state.name
         }
 
@@ -919,7 +955,6 @@ open class GameImpl(
                     return mapOf("was-game-participant" to "true")
                 }
 
-                // This would expose the player's true name with the rematch item in the lobby
                 if (playerResourcesOf(target)?.disguised == true)
                 {
                     return mapOf("was-game-participant" to "true")

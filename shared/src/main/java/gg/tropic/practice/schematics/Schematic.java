@@ -5,12 +5,6 @@ import gg.tropic.practice.schematics.manipulation.BlockOffset;
 
 import java.util.List;
 
-/*
- * @author MineBug.de Development
- *
- * Created by TheHolyException at 25.11.2018 - 01:51:06
- */
-
 public class Schematic {
 
 	private short[] blocks;

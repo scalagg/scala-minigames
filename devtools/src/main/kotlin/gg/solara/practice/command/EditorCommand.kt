@@ -20,10 +20,6 @@ import gg.tropic.practice.map.utilities.MapMetadataScanUtilities
 import net.evilblock.cubed.util.CC
 import org.bukkit.block.Sign
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 @AutoRegister
 @CommandPermission("op")
 @CommandAlias("editor")
@@ -88,8 +84,8 @@ object EditorCommand : ScalaCommand()
                         spawn = metadata.position,
                         spawnID = metadata.id,
                         model = model,
-                        originalYaw = templateSpawnOG.position.yaw, // Original spawn's yaw
-                        targetYaw = metadata.position.yaw // Target spawn's yaw
+                        originalYaw = templateSpawnOG.position.yaw, 
+                        targetYaw = metadata.position.yaw 
                     )
                 }
 
@@ -121,7 +117,7 @@ object EditorCommand : ScalaCommand()
 
                     if (it.signMetadataModel.id == "global")
                     {
-                        // ignore is extra system for this purpose lol
+
                         return@filter it.signMetadataModel.extraMetadata.first() == spawnID
                     }
 
@@ -159,7 +155,7 @@ object EditorCommand : ScalaCommand()
 
                     if (it.id == "global")
                     {
-                        // ignore is extra system for this purpose lol
+
                         return@filter it.extraMetadata.first() == spawnID
                     }
 

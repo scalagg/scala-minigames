@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.time.TimeUtil
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.event.player.PlayerJoinEvent
 
-/**
- * @author Subham
- * @since 6/16/25
- */
 @Service
 object RejoinGameService
 {

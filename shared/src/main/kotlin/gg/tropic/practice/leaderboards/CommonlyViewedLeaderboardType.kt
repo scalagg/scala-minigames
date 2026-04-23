@@ -5,10 +5,6 @@ import gg.tropic.practice.statistics.StatisticID
 import gg.tropic.practice.statistics.TrackedKitStatistic
 import gg.tropic.practice.statistics.statisticIdFrom
 
-/**
- * @author GrowlyX
- * @since 9/25/2023
- */
 enum class CommonlyViewedLeaderboardType(
     val displayName: String,
     val toStatisticID: (Kit?) -> StatisticID,

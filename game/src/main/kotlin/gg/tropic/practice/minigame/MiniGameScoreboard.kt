@@ -9,10 +9,6 @@ import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
 import java.util.Date
 
-/**
- * @author GrowlyX
- * @since 8/19/2024
- */
 val dateFormat = SimpleDateFormat("MM/dd/yy")
 
 interface MiniGameScoreboard

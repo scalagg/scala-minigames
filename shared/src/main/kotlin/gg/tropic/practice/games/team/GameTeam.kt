@@ -4,10 +4,6 @@ import gg.tropic.practice.games.player.SpectatingPlayerProvider
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
-*/
 open class GameTeam(
     teamIdentifier: TeamIdentifier,
     players: MutableSet<UUID>

@@ -4,10 +4,6 @@ import gg.scala.commons.spatial.Position
 import gg.tropic.practice.map.metadata.scanner.AbstractMapMetadataScanner
 import gg.tropic.practice.map.metadata.scanner.MetadataScannerUtilities
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 data class MapSignMetadataModel(
     val metaType: String,
     val location: Position,

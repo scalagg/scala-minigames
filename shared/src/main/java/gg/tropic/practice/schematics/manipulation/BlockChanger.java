@@ -26,11 +26,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author Devlrxxh
- * @apiNote 1.8 - 1.21 easy to use util to be able to
- * set blocks blazingly fast
- */
 @SuppressWarnings({"unused", "deprecation"})
 public class BlockChanger {
     private static int MINOR_VERSION;
@@ -39,13 +34,12 @@ public class BlockChanger {
     private static Long2ObjectMap<Object> worldCache;
     private static ExecutorService executorService;
 
-    // NMS Classes
     private static Class<?> CRAFT_BLOCK_DATA;
     private static Class<?> LEVEL_HEIGHT_ACCESSOR;
     private static Class<?> CRAFT_WORLD;
     private static Class<?> WORLD_SERVER;
     private static Class<?> BLOCK;
-    // NMS MethodHandles
+
     private static MethodHandle GET_STATE;
     private static MethodHandle GET_SECTIONS;
     private static MethodHandle GET_SECTION_INDEX;
@@ -54,7 +48,7 @@ public class BlockChanger {
     private static MethodHandle GET_COMBINED_ID;
     private static MethodHandle SET_TYPE;
     private static MethodHandle GET_BLOCK_DATA;
-    // NMS Constructors
+
     private static Constructor<?> CHUNK_SECTION_CONSTRUCTOR;
 
     public static void load(JavaPlugin instance, boolean debug) {
@@ -67,12 +61,6 @@ public class BlockChanger {
         init();
     }
 
-    /**
-     * Sets blocks block-data's using NMS.
-     *
-     * @param world  World to set block in.
-     * @param blocks Set of locations and ItemStacks to be set
-     */
     public static void setBlocks(World world, Set<BlockSnapshot> blocks) {
         long startTime = System.currentTimeMillis();
         HashMap<Long, Object> chunkCache = new HashMap<>();
@@ -89,25 +77,10 @@ public class BlockChanger {
         debug("Pasted blocks time: " + duration + " ms (" + blocks.size() + ")");
     }
 
-    /**
-     * Sets blocks block-data's using NMS.
-     *
-     * @param world  World to set block in.
-     * @param blocks Set of locations and ItemStacks to be set
-     * @return A CompletableFuture that completes when the operation is done.
-     */
     public static CompletableFuture<Void> setBlocksAsync(World world, Set<BlockSnapshot> blocks) {
         return CompletableFuture.runAsync(() -> setBlocks(world, blocks), executorService);
     }
 
-    /**
-     * Sets blocks block-data's using NMS.
-     *
-     * @param pos1     Position 1
-     * @param pos2     Position 2
-     * @param material Material to fill all blocks between pos1 and pos2
-     * @see BlockChanger#loadChunks(Location, Location);
-     */
     public static void setBlocks(Location pos1, Location pos2, Material material) {
         World world = pos1.getWorld();
         HashMap<Long, Object> chunkCache = new HashMap<>();
@@ -132,27 +105,10 @@ public class BlockChanger {
         refreshChunks(world, minX, minZ, maxX, maxZ);
     }
 
-    /**
-     * Sets blocks block-data's using NMS.
-     *
-     * @param pos1     Position 1
-     * @param pos2     Position 2
-     * @param material Material to fill all blocks between pos1 and pos2
-     * @return A CompletableFuture that completes when the operation is done.
-     * @see BlockChanger#loadChunks(Location, Location);
-     */
     public static CompletableFuture<Void> setBlocksAsync(Location pos1, Location pos2, Material material) {
         return CompletableFuture.runAsync(() -> setBlocks(pos1, pos2, material), executorService);
     }
 
-    /**
-     * Paste a snapshot and allowing an offset
-     *
-     * @param snapshot Captured Snapshot.
-     * @param offsetX  The offset to apply to the X coordinate of each block.
-     * @param offsetZ  The offset to apply to the Z coordinate of each block.
-     * @see BlockChanger#loadChunks(Snapshot);
-     */
     public static void paste(Snapshot snapshot, int offsetX, int offsetZ, boolean ignoreAir) {
         Object2ObjectOpenHashMap<Object, ObjectOpenHashSet<BlockLocation>> data = new Object2ObjectOpenHashMap<>();
 
@@ -171,27 +127,10 @@ public class BlockChanger {
         setBlocks(snapshot.world, data);
     }
 
-    /**
-     * Paste a snapshot and allowing an offset
-     *
-     * @param snapshot Captured Snapshot.
-     * @param offsetX  The offset to apply to the X coordinate of each block.
-     * @param offsetZ  The offset to apply to the Z coordinate of each block.
-     * @return A CompletableFuture that completes when the operation is done.
-     * @see BlockChanger#loadChunks(Snapshot);
-     */
     public static CompletableFuture<Void> pasteAsync(Snapshot snapshot, int offsetX, int offsetZ, boolean ignoreAir) {
         return CompletableFuture.runAsync(() -> paste(snapshot, offsetX, offsetZ, ignoreAir), executorService);
     }
 
-    /**
-     * Capture all blocks between 2 positions
-     *
-     * @param pos1 Position 1
-     * @param pos2 Position 2
-     * @return Snapshot captured snapshot
-     * @see BlockChanger#loadChunks(Location, Location);
-     */
     public static Snapshot capture(Location pos1, Location pos2, boolean ignoreAir) {
         if (pos1 == null) {
             throw new IllegalArgumentException("pos1 must not be null");
@@ -234,24 +173,10 @@ public class BlockChanger {
         return snapshot;
     }
 
-    /**
-     * Capture all blocks between 2 positions
-     *
-     * @param pos1 Position 1
-     * @param pos2 Position 2
-     * @return A CompletableFuture containing the Snapshot captured.
-     * @see BlockChanger#loadChunks(Location, Location);
-     */
     public static CompletableFuture<Snapshot> captureAsync(Location pos1, Location pos2, boolean ignoreAir) {
         return CompletableFuture.supplyAsync(() -> capture(pos1, pos2, ignoreAir), executorService);
     }
 
-    /**
-     * Revert all changes from the snapshot.
-     *
-     * @param snapshot Snapshot you have captured
-     * @see BlockChanger#loadChunks(Snapshot);
-     */
     public static void revert(Snapshot snapshot) {
         long startTime = System.currentTimeMillis();
 
@@ -261,31 +186,14 @@ public class BlockChanger {
         debug("Snapshot revert time: " + duration + " ms");
     }
 
-    /**
-     * Revert all changes from the snapshot.
-     *
-     * @param snapshot Snapshot you have captured
-     * @return A CompletableFuture that completes when the operation is done.
-     */
     public static CompletableFuture<Void> revertAsync(Snapshot snapshot) {
         return CompletableFuture.runAsync(() -> revert(snapshot), executorService);
     }
 
-    /**
-     * Load all chunks in a Snapshot
-     *
-     * @param snapshot Snapshot to load all chunks for.
-     */
     public static void loadChunks(Snapshot snapshot) {
         loadChunks(snapshot.pos1, snapshot.pos2);
     }
 
-    /**
-     * Load all chunks between 2 positions
-     *
-     * @param pos1 Position 1
-     * @param pos2 Position 2
-     */
     public static void loadChunks(Location pos1, Location pos2) {
         int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
         int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
@@ -306,12 +214,6 @@ public class BlockChanger {
         }
     }
 
-    /**
-     * Turn a Block into and ItemStack.
-     *
-     * @param block Block to be turned into an ItemStack
-     * @return ItemStack
-     */
     public static ItemStack fromBlock(Block block) {
         ItemStack itemStack = new ItemStack(block.getType());
         if (MINOR_VERSION == 8) {
@@ -321,12 +223,6 @@ public class BlockChanger {
         return itemStack;
     }
 
-    /**
-     * Turn a BlockState into and ItemStack.
-     *
-     * @param blockState BlockState to be turned into an ItemStack
-     * @return ItemStack
-     */
     public static ItemStack fromBlockState(BlockState blockState) {
         ItemStack itemStack = new ItemStack(blockState.getType());
         if (MINOR_VERSION == 8) {
@@ -746,11 +642,6 @@ public class BlockChanger {
         return null;
     }
 
-    /**
-     * Snapshots contains all captured block data which can later be used to paste or revert.
-     *
-     * @see BlockChanger#capture(Location, Location, boolean)
-     */
     public static class Snapshot {
         protected final World world;
         protected final Object2ObjectOpenHashMap<Object, ObjectOpenHashSet<BlockLocation>> data;
@@ -777,22 +668,11 @@ public class BlockChanger {
         }
     }
 
-    /**
-     * BlockChanger representation of blocks for multi version support
-     */
     @SuppressWarnings("all")
     public static class BlockSnapshot {
         protected final Object blockDataNMS;
         protected BlockLocation location;
 
-        /**
-         * BlockChanger representation of blocks for multi-version support
-         * <p>
-         * This is works for all versions.
-         *
-         * @param location The location of the block
-         * @param material The material of the block
-         */
         public BlockSnapshot(Location location, Material material) {
             ItemStack itemStack = new ItemStack(material);
             Object dataNMS = null;
@@ -805,13 +685,6 @@ public class BlockChanger {
             this.location = BlockLocation.fromLocation(location);
         }
 
-        /**
-         * BlockChanger representation of blocks for multi version support
-         * <p>
-         * This is works for all versions.
-         *
-         * @param itemStack itemStack
-         */
         public BlockSnapshot(Location location, ItemStack itemStack) {
             Object dataNMS = null;
             try {
@@ -874,9 +747,9 @@ public class BlockChanger {
         protected Location toLocation(World world) {
             return new Location(
                     world,
-                    (int)(packedCoords >> 38),  // X
-                    (int)(packedCoords & 0xFFF), // Y
-                    (int)(packedCoords << 26 >> 38) // Z
+                    (int)(packedCoords >> 38),  
+                    (int)(packedCoords & 0xFFF), 
+                    (int)(packedCoords << 26 >> 38) 
             );
         }
 

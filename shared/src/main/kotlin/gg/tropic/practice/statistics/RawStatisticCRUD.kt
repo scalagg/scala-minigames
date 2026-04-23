@@ -3,17 +3,12 @@ package gg.tropic.practice.statistics
 import org.bson.Document
 import java.util.*
 
-/**
- * @author Subham
- * @since 6/23/25
- */
 object RawStatisticCRUD
 {
     fun set(profile: Document, newValue: Long, id: StatisticID)
     {
         val identifier = UUID.fromString(profile.getString("identifier"))
 
-        // Don't clutter the DB with random unmapped keys
         if (StatisticRedis.exists(id.toRedisKey()) == 0L)
         {
             return
@@ -36,7 +31,6 @@ object RawStatisticCRUD
     {
         val identifier = UUID.fromString(profile.getString("identifier"))
 
-        // Don't clutter the DB with random unmapped keys
         if (StatisticRedis.exists(id.toRedisKey()) == 0L)
         {
             return

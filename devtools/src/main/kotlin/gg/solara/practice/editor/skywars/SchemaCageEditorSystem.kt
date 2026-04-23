@@ -4,8 +4,8 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.hotbar.HotbarPreset
 import gg.scala.lemon.hotbar.HotbarPresetHandler
 import gg.scala.lemon.hotbar.entry.impl.DynamicHotbarPresetEntry
-import gg.scala.game.extensions.cosmetics.cages.SchemaCage
-import gg.scala.game.extensions.cosmetics.cages.SchemaCageDataSync
+import gg.scala.minigame.skywars.shared.cages.SchemaCage
+import gg.scala.minigame.skywars.shared.cages.SchemaCageDataSync
 import gg.solara.practice.editor.EditorGenerator
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
@@ -21,10 +21,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 class SchemaCageEditorSystem(private val player: Player, private val instance: SchemaCageEditorInstance)
 {
     companion object
@@ -186,7 +182,6 @@ class SchemaCageEditorSystem(private val player: Player, private val instance: S
                 instances.remove(player.uniqueId)?.terminable?.closeAndReportException()
             }
         })
-
 
         hotbarPreset.applyToPlayer(player)
         HotbarPresetHandler.startTrackingHotbar(

@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/29/25
- */
 class MinigameLobbyNPCEntity(
     val configuration: MinigameLobbyNPC,
 ) : NpcEntity(
@@ -38,16 +34,16 @@ class MinigameLobbyNPCEntity(
             "${if (isBlueNewlyReleased) CC.B_AQUA else CC.B_WHITE}${
                 configuration.broadcastLabel
             }",
-            "${CC.B_YELLOW}${configuration.actionLabel}",
             "${CC.RED}${configuration.gamemodeName}",
-            "${CC.B_YELLOW}${configuration.replacement.toTemplatePlayerCounts()}"
+            "${CC.B_YELLOW}${configuration.replacement.toTemplatePlayerCounts()}",
+            "${CC.B_YELLOW}${configuration.actionLabel}"
         )
     } else
     {
         listOf(
-            "${CC.B_YELLOW}${configuration.actionLabel}",
             "${CC.RED}${configuration.gamemodeName}",
-            "${CC.B_YELLOW}${configuration.replacement.toTemplatePlayerCounts()}"
+            "${CC.B_YELLOW}${configuration.replacement.toTemplatePlayerCounts()}",
+            "${CC.B_YELLOW}${configuration.actionLabel}"
         )
     }
 

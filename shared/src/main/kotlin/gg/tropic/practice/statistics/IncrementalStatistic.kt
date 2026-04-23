@@ -6,10 +6,6 @@ import io.lettuce.core.ScoredValue
 import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.*
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 class IncrementalStatistic(
     override val id: StatisticID,
     override val defaultValue: Long = 0L,
@@ -32,10 +28,9 @@ class IncrementalStatistic(
         val score = StatisticRedis.scoreAndPositionOf(identifier, id.toRedisKey(), reversed)
         if (score == null || !score.hasValue())
         {
-            // Return -1, don't clutter the memory DB with default values
+
             return ScoredValue.just(defaultValue.toDouble(), -1)
-//            set(defaultValue)
-//            return StatisticRedis.scoreAndPositionOf(identifier, id.toRedisKey())
+
         }
         return score
     }

@@ -1,9 +1,5 @@
 package gg.tropic.practice.statistics
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
@@ -28,6 +24,12 @@ fun getCurrentWeekYearString(): String
     val weekNumber = currentDate.get(weekFields.weekOfWeekBasedYear())
     val year = currentDate.year
     return "$weekNumber-$year"
+}
+
+fun getCurrentMonthYearString(): String
+{
+    val formatter = DateTimeFormatter.ofPattern("MM-yyyy")
+    return LocalDate.now().format(formatter)
 }
 
 enum class StatisticLifetime(
@@ -68,6 +70,24 @@ enum class StatisticLifetime(
                 .atTime(LocalTime.MAX)
 
             endOfWeek.toInstant(ZoneOffset.of("-6"))
+        }
+    ),
+    Monthly(
+        keyID = { getCurrentMonthYearString() },
+        timeUntilReset = {
+            val now = LocalDateTime.now()
+            val endOfMonth = now.toLocalDate()
+                .withDayOfMonth(now.toLocalDate().lengthOfMonth())
+                .atTime(LocalTime.MAX)
+            ChronoUnit.MILLIS.between(now, endOfMonth)
+        },
+        timeAtReset = {
+            val now = LocalDateTime.now()
+            val endOfMonth = now.toLocalDate()
+                .withDayOfMonth(now.toLocalDate().lengthOfMonth())
+                .atTime(LocalTime.MAX)
+
+            endOfMonth.toInstant(ZoneOffset.of("-6"))
         }
     );
 

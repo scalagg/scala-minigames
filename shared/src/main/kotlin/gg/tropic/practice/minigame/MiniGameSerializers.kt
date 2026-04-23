@@ -4,10 +4,6 @@ import gg.tropic.practice.ugc.generation.visits.VisitWorldRequestConfiguration
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 
-/**
- * @author GrowlyX
- * @since 8/23/2024
- */
 object MiniGameSerializers
 {
     fun configure()

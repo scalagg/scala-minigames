@@ -9,11 +9,6 @@ import gg.tropic.practice.PracticeShared
 import gg.tropic.practice.devProvider
 import gg.tropic.practice.minigame.MiniGameSerializers
 
-/**
- * @author Subham
- * @since 7/22/25
- */
-
 @Plugin(
     name = "Minigames",
     version = "%remote%/%branch%/%id%",

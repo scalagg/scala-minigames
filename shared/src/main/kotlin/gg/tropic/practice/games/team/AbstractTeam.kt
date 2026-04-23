@@ -3,10 +3,6 @@ package gg.tropic.practice.games.team
 import org.bukkit.Bukkit
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
-*/
 abstract class AbstractTeam(
     val teamIdentifier: TeamIdentifier,
     val players: MutableSet<UUID>

@@ -20,10 +20,6 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
-/**
- * @author GrowlyX
- * @since 7/15/2024
- */
 class PlayerRespawnTask(
     private val player: Player,
     private val game: GameImpl,
@@ -97,7 +93,7 @@ class PlayerRespawnTask(
             return
         }
 
-        val respawnMessage = "${CC.SEC}Respawning in ${CC.WHITE}$tick${CC.SEC}..."
+        val respawnMessage = "${CC.YELLOW}You will respawn in ${CC.RED}$tick ${CC.YELLOW}seconds!"
         GameService.audiences.player(player).apply {
             showTitle(
                 Title.title(

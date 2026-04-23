@@ -6,10 +6,6 @@ import gg.scala.game.extensions.cosmetics.messagebundles.cosmetics.MessageBundle
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 object DeathMessageStrategy
 {
     private fun getMessageBundlePhrase(player: Player): String
@@ -38,11 +34,11 @@ object DeathMessageStrategy
         alternativeDeath: Boolean = false,
     ) = if (alternativeDeath && killedBy == null && eliminationCause == EliminationCause.VOID_DAMAGE)
     {
-        // Handle special void case for alternative death
+
         "${CC.RED}$killedDisplayName${CC.GRAY} fell into the void!"
     } else
     {
-        // Use the smart elimination cause formatting
+
         when (eliminationCause)
         {
             EliminationCause.KILLED_BY_PLAYER ->

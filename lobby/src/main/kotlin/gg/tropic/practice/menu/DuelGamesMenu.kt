@@ -20,10 +20,6 @@ import org.bukkit.entity.Player
 import java.util.UUID
 import java.util.concurrent.ForkJoinPool
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 class DuelGamesMenu(
     private val reports: List<GameReport>,
     private val of: UUID

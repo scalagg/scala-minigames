@@ -25,8 +25,6 @@ dependencies {
     implementation("gg.scala.commons:commons:$commonsVersion")
     implementation("gg.scala.commons:store:$commonsVersion")
     implementation("gg.scala.commons:serversync:$commonsVersion")
-    implementation("gg.scala.commons:consensus:$commonsVersion")
-    implementation("gg.scala.commons:rpc:$commonsVersion")
     implementation("gg.scala.commons:serializers:$commonsVersion")
 
     implementation("net.kyori:adventure-key:4.18.0")
@@ -43,6 +41,9 @@ dependencies {
     implementation("io.lettuce:lettuce-core:6.2.6.RELEASE")
 
     implementation("org.litote.kmongo:kmongo:4.11.0")
+
+    implementation("io.fabric8:kubernetes-client:6.13.4")
+    implementation("org.slf4j:slf4j-jdk14:2.0.16")
 }
 
 application {

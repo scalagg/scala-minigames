@@ -36,10 +36,6 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 @Service
 object MinigameServerFrontendService
 {
@@ -113,7 +109,7 @@ object MinigameServerFrontendService
         val spectatorSpecificChannel = ChatChannelBuilder.Companion.newBuilder()
             .identifier("minigame-spectator")
             .format { sender, receiver, message, server, rank ->
-                // Respect disguise privacy
+
                 val bukkitUsernameOrUsername = Bukkit
                     .getPlayer(sender)?.name
                     ?: sender.username()
@@ -210,7 +206,7 @@ object MinigameServerFrontendService
             if (hostedWorld != null)
             {
                 return@supplyCustomPlayerList ListCommand.PlayerList(
-                    maxCount = 30, // TODO: change based on hosted world config
+                    maxCount = 30, 
                     sortedPlayerEntries = PlayerHandler.getCorrectedPlayerList(
                         sender,
                         hostedWorld.onlinePlayers().toList()
@@ -277,9 +273,6 @@ object MinigameServerFrontendService
                 }
         }
 
-        /**
-         * Dynamically edit all CommandManager instances' player completions
-         */
         Schedulers
             .sync()
             .runLater({

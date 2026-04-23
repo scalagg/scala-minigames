@@ -12,10 +12,6 @@ import gg.tropic.practice.application.api.defaults.AwareRPCContext
 import gg.tropic.practice.application.api.defaults.AwareRPCHandler
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class ReplicationGenerationRequestHandler(
     private val generator: () -> (Map, GameExpectation) -> CompletableFuture<GenerationResult>,
     private val allocator: () -> (Map, GameExpectation) -> CompletableFuture<GenerationResult>
@@ -53,7 +49,6 @@ class ReplicationGenerationRequestHandler(
                     throw IllegalStateException("ReplicationManagerService expected a prepared replication, but instead received a null entry for ${request.map}")
                 }
 
-                // Ensure the response has the correct uniqueId
                 context.reply(it.copy(uniqueId = request.uniqueId))
             }
             .exceptionally {

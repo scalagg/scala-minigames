@@ -25,10 +25,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.metadata.FixedMetadataValue
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 class GameStartTask(
     private val game: GameImpl
 ) : Runnable
@@ -44,7 +40,7 @@ class GameStartTask(
             this.game.toBukkitPlayers()
                 .filterNotNull()
                 .forEach { player ->
-                    // pre-generate
+
                     game.playerResourcesOf(player)
 
                     game.resetPlayerForFight(player)
@@ -207,64 +203,6 @@ class GameStartTask(
                     " "
                 )
 
-                /*if (Bukkit.getPluginManager().isPluginEnabled("anticheat"))
-                {
-                    fun Player.runAutoBanFor(reason: String)
-                    {
-                        val profile = uniqueId.offlineProfile
-                        if (profile.hasActiveRankedBan())
-                        {
-                            return
-                        }
-
-                        profile.applyRankedBan(Duration.parse("7d"))
-                        profile.deliverRankedBanMessage(player)
-                        profile.saveAndPropagate()
-
-                        Bukkit.dispatchCommand(
-                            Bukkit.getConsoleSender(),
-                            "terminatematch $name Anticheat Ban ($reason)"
-                        )
-                    }
-
-                    game.toBukkitPlayers()
-                        .filterNotNull()
-                        .forEach { player ->
-                            AnticheatFeature
-                                .subscribeToSixtySecondSampleOf(
-                                    player = player,
-                                    check = AnticheatCheck.DOUBLE_CLICK,
-                                    evaluate = { sample ->
-                                        val thresholds = PracticeConfigurationService.cached().dataSampleThresholds()
-
-                                        // If the player typically gets 3 or more violations in a 10-second period,
-                                        // the player must be banned
-                                        if (sample.accumulatedMedianOf() > thresholds.doubleClick)
-                                        {
-                                            player.runAutoBanFor("SADC")
-                                        }
-                                    }
-                                )
-                                .bindWith(game)
-
-                            AnticheatFeature
-                                .subscribeToSixtySecondSampleOf(
-                                    player = player,
-                                    check = AnticheatCheck.AUTO_CLICKER,
-                                    evaluate = { sample ->
-                                        val thresholds = PracticeConfigurationService.cached().dataSampleThresholds()
-
-                                        // If the player typically gets 5 or more violations in a 10-second period,
-                                        // the player must be banned
-                                        if (sample.accumulatedMedianOf() > thresholds.autoClick)
-                                        {
-                                            player.runAutoBanFor("SAAC")
-                                        }
-                                    }
-                                )
-                                .bindWith(game)
-                        }
-                }*/
             }
 
             this.game.playSound(XSound.ENTITY_FIREWORK_ROCKET_BLAST.parseSound()!!, pitch = 1.0f)

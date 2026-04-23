@@ -9,10 +9,6 @@ import net.evilblock.cubed.visibility.VisibilityAdapter
 import net.evilblock.cubed.visibility.VisibilityAdapterRegister
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/9/2022
- */
 @VisibilityAdapterRegister("duels")
 object DuelsVisibilityImpl : VisibilityAdapter
 {
@@ -28,8 +24,8 @@ object DuelsVisibilityImpl : VisibilityAdapter
             playerGame.expectedSpectators.contains(viewed.uniqueId)
 
         if (
-            (playerGame != null && targetGame?.expectation == playerGame.expectation && playerGame.miniGameLifecycle != null) || // Spectating in a minigame, and in the same minigame
-            (hostedWorldPlayer != null && hostedWorldPlayer.globalId == hostedWorldTarget?.globalId) // In the same hosted world
+            (playerGame != null && targetGame?.expectation == playerGame.expectation && playerGame.miniGameLifecycle != null) || 
+            (hostedWorldPlayer != null && hostedWorldPlayer.globalId == hostedWorldTarget?.globalId) 
         )
         {
             val isTargetSpectating = GameService.isSpectating(viewed)
@@ -37,7 +33,7 @@ object DuelsVisibilityImpl : VisibilityAdapter
 
             if (isTargetSpectating)
             {
-                if (!isViewerSpectating) // Viewer is not spectating, but the target is spectating
+                if (!isViewerSpectating) 
                 {
                     if (playerGame != null && playerGame.shouldShowAllPlayers)
                     {
@@ -46,14 +42,13 @@ object DuelsVisibilityImpl : VisibilityAdapter
                             return VirtualVisibility.HIDDEN
                         }
 
-                        // In an event setting, all players may be visible
                         return VirtualVisibility.NEUTRAL
                     }
 
                     return VirtualVisibility.HIDDEN
                 }
 
-                if (viewed.isASilentSpectator() && eligibleForSilentSpectator) // Target is spectating
+                if (viewed.isASilentSpectator() && eligibleForSilentSpectator) 
                 {
                     return VirtualVisibility.HIDDEN
                 }
@@ -62,7 +57,12 @@ object DuelsVisibilityImpl : VisibilityAdapter
             return VirtualVisibility.NEUTRAL
         }
 
-        return VirtualVisibility.NEUTRAL
+        if (playerGame == null && targetGame == null && hostedWorldPlayer == null && hostedWorldTarget == null)
+        {
+            return VirtualVisibility.NEUTRAL
+        }
+
+        return VirtualVisibility.HIDDEN
     }
 
     override fun getAction(
@@ -88,7 +88,7 @@ object DuelsVisibilityImpl : VisibilityAdapter
 
             if (isTargetSpectating)
             {
-                if (!isViewerSpectating) // Viewer is not spectating, but the target is spectating
+                if (!isViewerSpectating) 
                 {
                     if (playerGame != null && playerGame.shouldShowAllPlayers)
                     {
@@ -97,7 +97,6 @@ object DuelsVisibilityImpl : VisibilityAdapter
                             return VisibilityAction.HIDE
                         }
 
-                        // In an event setting, all players may be visible
                         return VisibilityAction.NEUTRAL
                     }
 

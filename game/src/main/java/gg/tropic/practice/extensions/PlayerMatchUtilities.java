@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 public class PlayerMatchUtilities {
     public static List<String> getPlayerMatches(
             CommandSender sender,
@@ -27,7 +23,6 @@ public class PlayerMatchUtilities {
                 matchedPlayers.add(name);
             }
         }
-
 
         matchedPlayers.sort(String.CASE_INSENSITIVE_ORDER);
         return matchedPlayers;

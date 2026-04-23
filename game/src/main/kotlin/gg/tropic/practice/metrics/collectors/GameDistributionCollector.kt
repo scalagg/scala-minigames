@@ -4,10 +4,6 @@ import dev.cubxity.plugins.metrics.api.metric.collector.Collector
 import dev.cubxity.plugins.metrics.api.metric.data.GaugeMetric
 import gg.tropic.practice.games.GameService
 
-/**
- * @author GrowlyX
- * @since 3/2/2024
- */
 object GameDistributionCollector : Collector
 {
     override fun collect() = listOf(

@@ -6,10 +6,6 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
 import net.evilblock.cubed.util.CC
 import org.bukkit.Location
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 class ParkourLeaderboardHologram(
     location: Location
 ) : AbstractTypeSerializable, UpdatingHologramEntity("", location)

@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.potion.PotionType
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 object KitCommandCustomizers
 {
     @CommandManagerCustomizer

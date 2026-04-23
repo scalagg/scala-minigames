@@ -4,10 +4,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 1/1/2024
- */
 data class RankedBan(var effectiveUntil: Long? = null)
 {
     fun isEffective() = effectiveUntil == null ||

@@ -9,10 +9,6 @@ import net.evilblock.cubed.serializers.Serializers
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 1/2/2023
- */
 @Service
 object GameReportFeature
 {

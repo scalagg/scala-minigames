@@ -6,10 +6,6 @@ import gg.tropic.practice.messaging.ExternalPlayerCountApiSubmissionService
 import gg.tropic.practice.metadata.SystemMetadataService
 import net.evilblock.cubed.util.math.Numbers
 
-/**
- * @author Subham
- * @since 7/6/25
- */
 fun String.toTemplatePlayerCounts() = template { key, data ->
     when (key)
     {

@@ -9,10 +9,6 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.metadata.Metadatable
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 fun Metadatable.ownedBy() = getMetadata("ownership").firstOrNull()
     ?.value()
     ?.let { it as TeamIdentifier }

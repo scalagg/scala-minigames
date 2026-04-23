@@ -7,10 +7,6 @@ import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.friends.service.FriendsService
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 1/19/2024
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("Friends")

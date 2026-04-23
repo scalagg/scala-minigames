@@ -5,10 +5,6 @@ import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 @Model
 data class PersistentWorld(
     @Indexed

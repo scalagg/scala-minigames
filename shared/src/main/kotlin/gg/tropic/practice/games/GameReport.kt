@@ -4,10 +4,6 @@ import gg.scala.lemon.util.QuickAccess.username
 import gg.tropic.practice.games.player.CosmeticPlayerResources
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/4/2022
- */
 class GameReport(
     val identifier: UUID,
     val winners: List<UUID>,

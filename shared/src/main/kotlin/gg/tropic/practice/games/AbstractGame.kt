@@ -7,10 +7,6 @@ import gg.tropic.practice.games.team.GameTeam
 import gg.tropic.practice.kit.Kit
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 abstract class AbstractGame<T : AbstractTeam>(
     val expectationModel: GameExpectation,
     var teams: Set<T>,

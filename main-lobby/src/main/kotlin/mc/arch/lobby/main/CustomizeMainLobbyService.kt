@@ -4,10 +4,6 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.tropic.practice.minigame.MinigameLobby
 
-/**
- * @author Subham
- * @since 7/6/25
- */
 @Service
 object CustomizeMainLobbyService
 {

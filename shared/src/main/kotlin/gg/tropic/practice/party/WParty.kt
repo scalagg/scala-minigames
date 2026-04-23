@@ -3,10 +3,6 @@ package gg.tropic.practice.party
 import mc.arch.minigames.parties.model.Party
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 2/9/2024
- */
 data class WParty(var delegate: Party)
 {
     var currentPlayers = 0

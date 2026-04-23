@@ -12,6 +12,7 @@ import gg.tropic.practice.settings.DuelsSettingCategory
 import gg.tropic.practice.settings.restriction.RangeRestriction
 import gg.tropic.practice.statistics.TrackedKitStatistic
 import gg.tropic.practice.statistics.statisticIdFrom
+import gg.tropic.practice.suffixWhenDev
 import mc.arch.minigames.parties.service.NetworkPartyService
 import me.lucko.helper.Helper
 import net.evilblock.cubed.util.CC
@@ -20,10 +21,6 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 8/3/25
- */
 object QueueCommunications
 {
     fun joinQueue(kit: Kit, queueType: QueueType, teamSize: Int, player: Player,
@@ -95,7 +92,7 @@ object QueueCommunications
                     "teamSize" to teamSize
                 ).publish(
                     context = AwareThreadContext.SYNC,
-                    channel = "communications-gamequeue"
+                    channel = "minigames:gamequeue".suffixWhenDev()
                 )
             }
             .exceptionally {

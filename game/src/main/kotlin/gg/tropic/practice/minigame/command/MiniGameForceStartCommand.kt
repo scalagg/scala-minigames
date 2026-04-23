@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/25/2024
- */
 @AutoRegister
 object MiniGameForceStartCommand : ScalaCommand()
 {

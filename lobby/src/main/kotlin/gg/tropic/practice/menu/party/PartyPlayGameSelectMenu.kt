@@ -1,18 +1,21 @@
 package gg.tropic.practice.menu.party
 
 import gg.tropic.practice.player.LobbyPlayerService
+import gg.tropic.practice.versioned.MinigameModernAccess
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 2/9/2024
- */
 class PartyPlayGameSelectMenu() : Menu("Select a game")
 {
+    private val robotFightsMaterial = if (MinigameModernAccess.isModern()) {
+        Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("EYE_OF_ENDER") ?: Material.NETHER_STAR
+    } else {
+        Material.EYE_OF_ENDER
+    }
+
     init
     {
         placeholder = true
@@ -20,7 +23,7 @@ class PartyPlayGameSelectMenu() : Menu("Select a game")
 
     override fun getButtons(player: Player) = mapOf(
         3 to ItemBuilder
-            .of(Material.GOLD_SWORD)
+            .of(Material.matchMaterial("GOLDEN_SWORD") ?: Material.IRON_SWORD)
             .name("${CC.AQUA}Team vs. Team Fights")
             .addToLore(
                 "${CC.GRAY}Create two teams with your",
@@ -50,7 +53,7 @@ class PartyPlayGameSelectMenu() : Menu("Select a game")
                 PartyPlayTVTFights(players.toList()).openMenu(player)
             },
         5 to ItemBuilder
-            .of(Material.ENDER_PORTAL_FRAME)
+            .of(robotFightsMaterial)
             .name("${CC.GOLD}Robot Fights")
             .addToLore(
                 "${CC.GRAY}Your team versus bots!",
@@ -70,17 +73,6 @@ class PartyPlayGameSelectMenu() : Menu("Select a game")
 
                 player.sendMessage("${CC.RED}This feature is currently disabled!")
 
-                /*lobbyPlayer.partyOf()
-                    .onlinePracticePlayersInLobby()
-                    .thenAccept {
-                        if (it.keys.size < 2)
-                        {
-                            player.sendMessage("${CC.RED}You must have at least two players in your party to start a Robot fight!")
-                            return@thenAccept
-                        }
-
-                        PartyPlayBotsIntegration.createBotsWith(player, it.keys)
-                    }*/
             }
     )
 }

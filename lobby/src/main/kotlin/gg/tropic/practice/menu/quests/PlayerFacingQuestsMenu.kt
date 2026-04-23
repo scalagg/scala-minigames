@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 class PlayerFacingQuestsMenu : Menu("${
     PracticeConfigurationService.minigameType()
         .provide().displayName

@@ -4,10 +4,6 @@ import com.cryptomorin.xseries.XMaterial
 import org.bukkit.World
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 interface Editable
 {
     val icon: XMaterial

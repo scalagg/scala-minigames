@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.math.Numbers
 import net.evilblock.cubed.util.text.TextSplitter
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author Subham
- * @since 6/28/25
- */
 data class MiniGameModeMetadata(
     val id: String,
     val description: String,
@@ -31,10 +27,10 @@ data class MiniGameModeMetadata(
 
     fun toNPCHeader() = listOf(
         "${CC.B_YELLOW}CLICK TO PLAY",
-        "${CC.RED}$displayName",
+        "${CC.AQUA}$displayName",
         "${CC.B_YELLOW}${
             Numbers.format(playersPlaying())
-        } player${
+        } Player${
             if (playersPlaying() == 1) "" else "s"
         }"
     )

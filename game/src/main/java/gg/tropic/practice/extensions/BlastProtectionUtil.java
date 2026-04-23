@@ -12,9 +12,6 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Using direct line-of-sight calculation
- */
 public class BlastProtectionUtil {
 
     public static boolean isBedBlock(Material material) {
@@ -33,10 +30,6 @@ public class BlastProtectionUtil {
         return material == Material.GLASS;
     }
 
-    /**
-     * Ultra-fast protection check using Bresenham-like 3D line algorithm
-     * This eliminates the iterator overhead entirely
-     */
     public static boolean isProtected(Location pov, @NotNull Block block, double step) {
         if (!block.hasMetadata("placed") || isBedBlock(block.getType())) {
             return true;
@@ -46,12 +39,10 @@ public class BlastProtectionUtil {
         final Vector start = pov.toVector();
         final Vector end = block.getLocation().toVector();
 
-        // Simple center-to-center ray check first
         if (isDirectLineClear(world, start, end, step)) {
             return false;
         }
 
-        // Check a few offset rays if center is blocked
         Vector[] offsets = {
                 new Vector(0.3, 0, 0),
                 new Vector(-0.3, 0, 0),
@@ -72,9 +63,6 @@ public class BlastProtectionUtil {
         return true;
     }
 
-    /**
-     * Direct line-of-sight check without iterator overhead
-     */
     private static boolean isDirectLineClear(World world, Vector start, Vector end, double step) {
         double dx = end.getX() - start.getX();
         double dy = end.getY() - start.getY();
@@ -101,7 +89,6 @@ public class BlastProtectionUtil {
             int blockY = NumberConversions.floor(currentY);
             int blockZ = NumberConversions.floor(currentZ);
 
-            // Skip duplicate blocks
             if (blockX != lastBlockX || blockY != lastBlockY || blockZ != lastBlockZ) {
                 Block block = world.getBlockAt(blockX, blockY, blockZ);
                 Material type = block.getType();

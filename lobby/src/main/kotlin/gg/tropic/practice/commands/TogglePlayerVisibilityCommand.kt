@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.entity.Player
 
-/**
- * @author Elb1to
- * @since 10/18/2023
- */
 @AutoRegister
 object TogglePlayerVisibilityCommand : ScalaCommand()
 {

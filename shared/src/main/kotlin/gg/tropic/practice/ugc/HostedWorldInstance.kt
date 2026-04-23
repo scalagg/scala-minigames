@@ -10,17 +10,6 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * Core instance interface for Hosted Worlds.
- *
- * Hosted worlds, unlike minigame [gg.tropic.practice.games.AbstractGame]
- * instances, only allow for online players.
- *
- * Lifecycle is nearly identical to the game system.
- *
- * @author Subham
- * @since 7/18/25
- */
 interface HostedWorldInstance<R : HostedWorldInstancePlayerResources> : CompositeTerminable
 {
     val playerResources: MutableMap<UUID, R>
@@ -82,9 +71,6 @@ interface HostedWorldInstance<R : HostedWorldInstancePlayerResources> : Composit
         return bukkitWorld.spawnLocation
     }
 
-    /**
-     * Base events
-     */
     fun onLogin(player: Player)
     {
 

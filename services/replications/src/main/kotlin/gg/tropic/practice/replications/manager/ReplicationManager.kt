@@ -11,10 +11,6 @@ import gg.tropic.practice.metadata.EmptyResponse
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 object ReplicationManager
 {
     private val gameInstanceCache = Caffeine.newBuilder()

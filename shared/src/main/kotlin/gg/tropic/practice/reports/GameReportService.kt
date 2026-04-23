@@ -8,10 +8,6 @@ import net.evilblock.cubed.serializers.Serializers
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 1/2/2023
- */
 object GameReportService
 {
     fun loadSnapshot(matchId: UUID): CompletableFuture<GameReport?>
@@ -35,7 +31,7 @@ object GameReportService
             }
             .thenApply {
                 it.map { key ->
-                    // better than calling another GET
+
                     key.split(":")[5]
                 }
             }

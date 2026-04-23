@@ -7,6 +7,7 @@ import gg.tropic.practice.leaderboards.CommonlyViewedLeaderboardType
 import gg.tropic.practice.leaderboards.StatisticLeaderboard
 import gg.tropic.practice.profile.PracticeProfileService
 import gg.tropic.practice.services.LeaderboardManagerService
+import gg.tropic.practice.versioned.MinigameModernAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -15,10 +16,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-/**
- * @author GrowlyX
- * @since 12/16/2023
- */
 class LeaderboardsMenu(player: Player) : TemplateKitMenu(player)
 {
     private var menuState = CommonlyViewedLeaderboardType.ELO
@@ -43,8 +40,14 @@ class LeaderboardsMenu(player: Player) : TemplateKitMenu(player)
         val buttons = super.getGlobalButtons(player)
             ?.toMutableMap() ?: mutableMapOf()
 
+        val toggleMaterial = if (MinigameModernAccess.isModern()) {
+            Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("EYE_OF_ENDER") ?: Material.NETHER_STAR
+        } else {
+            Material.EYE_OF_ENDER
+        }
+
         buttons[5] = ItemBuilder
-            .of(Material.ENDER_PORTAL_FRAME)
+            .of(toggleMaterial)
             .glow()
             .name("${CC.PRI}Toggle View")
             .addToLore(

@@ -16,10 +16,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/23/25
- */
 @AutoRegister
 @CommandAlias("worldcomponent")
 object WorldComponentCommand : ScalaCommand()
@@ -106,14 +102,14 @@ object WorldComponentCommand : ScalaCommand()
                     null, SchematicFilter.ALL -> true
                     SchematicFilter.RECENT ->
                     {
-                        // You could implement timestamp-based filtering here
-                        // For now, just show all
+
+                        
                         true
                     }
 
                     SchematicFilter.PERSONAL ->
                     {
-                        // Filter by player name if schematics follow naming convention
+
                         schematicName.startsWith(player.name, ignoreCase = true)
                     }
                 }
@@ -164,7 +160,6 @@ object WorldComponentCommand : ScalaCommand()
         {
             player.closeInventory()
 
-            // Check if player has a clipboard
             val session = WorldEdit.getInstance().getSession(player.name)
             if (session.clipboard == null)
             {
@@ -174,8 +169,7 @@ object WorldComponentCommand : ScalaCommand()
 
             player.sendMessage("${CC.YELLOW}Enter a name for your schematic:")
 
-            // You'll need to implement text input here - this is a placeholder
-            // Could use anvil GUI or chat input system
+            
             promptForSchematicName(player) { name ->
                 if (name.isBlank())
                 {
@@ -204,10 +198,10 @@ object WorldComponentCommand : ScalaCommand()
                 {
                     try
                     {
-                        // Load schematic to player's clipboard
+
                         val session = WorldEdit.getInstance().getSession(player.name)
-                        // You'll need to implement the actual clipboard loading here
-                        // This depends on your Schematic class implementation
+
+                        
 
                         player.sendMessage("${CC.GREEN}Schematic '$schematicName' loaded to clipboard!")
                         Button.playSuccess(player)
@@ -237,7 +231,7 @@ object WorldComponentCommand : ScalaCommand()
 
         private fun deleteSchematic(player: Player, schematicName: String)
         {
-            // Add confirmation dialog
+
             ConfirmMenu(
                 title = "Delete Schematic",
                 confirm = true
@@ -249,7 +243,7 @@ object WorldComponentCommand : ScalaCommand()
                         {
                             player.sendMessage("${CC.GREEN}Schematic '$schematicName' deleted!")
                             Button.playSuccess(player)
-                            openMenu(player) // Refresh the menu
+                            openMenu(player) 
                         } else
                         {
                             player.sendMessage("${CC.RED}Failed to delete schematic!")
@@ -275,7 +269,6 @@ object WorldComponentCommand : ScalaCommand()
                     return@promptForSchematicName
                 }
 
-                // Check if new name already exists
                 schematicProvider.schematicExists(newName).thenAccept { exists ->
                     if (exists)
                     {
@@ -283,7 +276,6 @@ object WorldComponentCommand : ScalaCommand()
                         return@thenAccept
                     }
 
-                    // Load old schematic and save with new name
                     schematicProvider.loadSchematicBytes(oldName).thenAccept { data ->
                         if (data != null)
                         {

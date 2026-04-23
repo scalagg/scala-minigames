@@ -8,10 +8,6 @@ import org.bukkit.potion.Potion
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionType
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 object LegacyPotionProvider : PotionProvider
 {
     override fun buildPotion(

@@ -5,10 +5,6 @@ import gg.tropic.practice.statistics.StatisticService
 import gg.tropic.practice.statistics.statisticRead
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 data class QuestRequirement(
     var statisticID: String = "custom:bedwars:core:wins:daily",
     var description: String = "Daily wins",

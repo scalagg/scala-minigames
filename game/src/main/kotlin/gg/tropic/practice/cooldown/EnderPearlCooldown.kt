@@ -24,10 +24,6 @@ import kotlin.math.max
 import kotlin.math.round
 import kotlin.math.roundToInt
 
-/**
- * @author GrowlyX
- * @since 11/21/2021
- */
 @Service
 object EnderPearlCooldown : PlayerStaticCooldown(
     "Enderpearl", 0L

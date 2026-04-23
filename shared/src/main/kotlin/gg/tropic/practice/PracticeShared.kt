@@ -8,13 +8,9 @@ import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import org.bukkit.potion.PotionEffectType
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 object PracticeShared
 {
-    // i don't like this, but we need to do it
+
     init
     {
         Serializers.create {

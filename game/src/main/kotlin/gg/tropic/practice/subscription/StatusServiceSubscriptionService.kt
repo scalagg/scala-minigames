@@ -21,10 +21,6 @@ import gg.tropic.practice.ugc.creator.HostedWorldInstanceCreatorRegistry
 import net.evilblock.cubed.util.ServerVersion
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 @Service
 object StatusServiceSubscriptionService
 {

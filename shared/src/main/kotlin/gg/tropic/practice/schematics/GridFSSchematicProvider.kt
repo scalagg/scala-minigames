@@ -18,10 +18,6 @@ import java.io.*
 import java.util.concurrent.CompletableFuture
 import java.util.zip.GZIPOutputStream
 
-/**
- * GridFS-based schematic storage system
- * Stores and retrieves schematics from MongoDB GridFS
- */
 class GridFSSchematicProvider
 {
     private val database: MongoDatabase = ScalaDataStoreShared.INSTANCE
@@ -33,7 +29,7 @@ class GridFSSchematicProvider
 
     init
     {
-        // Create unique index on filename
+
         database.getCollection("schematics.files")
             .createIndex(
                 Indexes.ascending("filename"),
@@ -41,12 +37,6 @@ class GridFSSchematicProvider
             )
     }
 
-    /**
-     * Save a schematic to GridFS
-     * @param name The name/identifier for the schematic
-     * @param schematicData The raw schematic file bytes
-     * @return CompletableFuture<Boolean> indicating success
-     */
     fun saveSchematic(name: String, schematicData: ByteArray) = CompletableFuture
         .runAsync {
             deleteSchematicSync(name)
@@ -55,23 +45,12 @@ class GridFSSchematicProvider
             }
         }
 
-    /**
-     * Save a schematic file to GridFS
-     * @param name The name/identifier for the schematic
-     * @param schematicFile The schematic file
-     * @return CompletableFuture<Boolean> indicating success
-     */
     fun saveSchematic(name: String, schematicFile: File) = CompletableFuture
         .supplyAsync {
             readFileToBytes(schematicFile)
         }
         .thenComposeAsync { saveSchematic(name, it) }
 
-    /**
-     * Load a schematic from GridFS
-     * @param name The name/identifier of the schematic
-     * @return CompletableFuture<Schematic?> or null if not found
-     */
     fun loadSchematic(name: String) = CompletableFuture
         .supplyAsync {
             if (!schematicExistsSync(name))
@@ -87,11 +66,6 @@ class GridFSSchematicProvider
             }
         }
 
-    /**
-     * Load schematic data as bytes
-     * @param name The name/identifier of the schematic
-     * @return CompletableFuture<ByteArray?> or null if not found
-     */
     fun loadSchematicBytes(name: String) = CompletableFuture
         .supplyAsync {
             if (!schematicExistsSync(name))
@@ -105,26 +79,12 @@ class GridFSSchematicProvider
             }
         }
 
-    /**
-     * Check if a schematic exists
-     * @param name The name/identifier of the schematic
-     * @return CompletableFuture<Boolean>
-     */
     fun schematicExists(name: String) = CompletableFuture.supplyAsync { schematicExistsSync(name) }
 
-    /**
-     * Delete a schematic
-     * @param name The name/identifier of the schematic
-     * @return CompletableFuture<Boolean> indicating success
-     */
     fun deleteSchematic(name: String) = CompletableFuture.supplyAsync {
         deleteSchematicSync(name)
     }
 
-    /**
-     * List all available schematics
-     * @return CompletableFuture<List<String>>
-     */
     fun listSchematics() = CompletableFuture
         .supplyAsync {
             bucket.find()
@@ -132,13 +92,6 @@ class GridFSSchematicProvider
                 .toList()
         }
 
-    /**
-     * Save current WorldEdit clipboard as a schematic
-     * Requires WorldEdit to be installed
-     * @param player The player whose clipboard to save
-     * @param name The name for the schematic
-     * @return CompletableFuture<Boolean> indicating success
-     */
     fun saveFromClipboard(player: Player, name: String) = CompletableFuture.supplyAsync {
         val session = WorldEdit.getInstance().getSession(player.name)
         if (session.clipboard == null)
@@ -158,8 +111,6 @@ class GridFSSchematicProvider
         saveSchematic(name, byteArrayOutputStream.toByteArray()).join()
     }
 
-
-    // Synchronous helper methods for use within locks
     private fun schematicExistsSync(name: String): Boolean
     {
         return try

@@ -4,10 +4,6 @@ import gg.tropic.practice.application.api.defaults.AwareConversationMessage
 import gg.tropic.practice.games.GameReference
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 10/20/2023
- */
 data class SpectateRequest(
     override val uniqueId: UUID = UUID.randomUUID(),
     val server: String,

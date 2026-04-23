@@ -9,13 +9,6 @@ import gg.scala.flavor.service.Service
 import gg.tropic.practice.PracticeLobby
 import net.evilblock.cubed.util.CC
 
-/**
- * Class created on 10/12/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 @Service
 object LobbyScoreboardConfigurationService : DataSyncService<LobbyScoreboardConfig>()
 {

@@ -2,10 +2,6 @@ package gg.tropic.practice.map.metadata.scanner
 
 import gg.tropic.practice.map.metadata.scanner.impl.*
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 object MetadataScannerUtilities
 {
     val scanners = mutableListOf(

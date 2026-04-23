@@ -18,10 +18,6 @@ import gg.tropic.practice.statistics.statisticWrite
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 
-/**
- * @author Subham
- * @since 7/24/25
- */
 @AutoRegister
 @CommandAlias("statistic")
 @CommandPermission("practice.command.statistic")

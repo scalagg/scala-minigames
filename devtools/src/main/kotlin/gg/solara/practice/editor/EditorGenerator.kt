@@ -7,10 +7,6 @@ import org.bukkit.generator.BlockPopulator
 import org.bukkit.generator.ChunkGenerator
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 object EditorGenerator
 {
 

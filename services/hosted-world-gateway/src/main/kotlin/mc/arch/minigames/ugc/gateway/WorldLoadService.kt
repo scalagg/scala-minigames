@@ -13,10 +13,6 @@ import gg.tropic.practice.ugc.generation.WorldLoadStatus
 import gg.tropic.practice.ugc.generation.visits.VisitWorldRequest
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class WorldLoadService(
     private val rpcService: AwareRPCService<WorldLoadRequest, WorldLoadResponse>
 )

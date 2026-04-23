@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 7/28/2024
- */
 class SpecificKitAdminMenu(private val kit: Kit) : Menu(
     "Editing ${kit.id}..."
 )

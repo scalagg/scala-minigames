@@ -9,10 +9,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 7/19/2024
- */
 fun Player.fixInventoryBasedOnRBTeamColor()
 {
     val game = GameService.byPlayer(this)

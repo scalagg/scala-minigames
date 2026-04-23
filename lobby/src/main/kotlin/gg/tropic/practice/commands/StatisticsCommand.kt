@@ -13,10 +13,6 @@ import gg.tropic.practice.menu.StatisticsMenu
 import gg.tropic.practice.profile.PracticeProfileService
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Elb1to
- * @since 10/19/2023
- */
 @AutoRegister
 object StatisticsCommand : ScalaCommand()
 {

@@ -16,10 +16,6 @@ import gg.tropic.practice.leaderboards.CommonlyViewedLeaderboardType
 import gg.tropic.practice.minigame.MinigameLobby
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 12/29/2023
- */
 @AutoRegister
 @CommandAlias("spawnhologram")
 @CommandPermission("practice.command.spawnhologram")

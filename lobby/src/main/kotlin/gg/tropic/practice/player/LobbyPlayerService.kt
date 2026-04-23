@@ -1,6 +1,5 @@
 package gg.tropic.practice.player
 
-import com.cryptomorin.xseries.XSound
 import gg.scala.basics.plugin.profile.BasicsProfileService
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
 import gg.scala.commons.agnostic.sync.ServerSync
@@ -16,6 +15,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.queue.spigot.stream.SpigotRedisService
 import gg.scala.game.extensions.cosmetics.EquipOnLoginCosmeticService
+import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.tropic.practice.PracticeLobby
 import gg.tropic.practice.configuration.PracticeConfigurationService
 import gg.tropic.practice.minigame.MinigameLobby
@@ -24,12 +24,12 @@ import gg.tropic.practice.configuration.minigame.teleportWithVelocityPreset
 import gg.tropic.practice.parkour.extractPlaySession
 import gg.tropic.practice.parkour.formatDurationIntoTwoDecimal
 import gg.tropic.practice.parkour.isPlayingParkour
-import gg.tropic.practice.player.prevention.PreventionListeners
 import gg.tropic.practice.profile.PracticeProfileService
 import gg.tropic.practice.quests.QuestsService
 import gg.tropic.practice.quests.model.tracker.QuestTrackerState
 import gg.tropic.practice.queue.QueueService
 import gg.tropic.practice.queue.QueueType
+import gg.tropic.practice.versioned.MinigameModernAccess
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.cooldown.Cooldown
@@ -44,7 +44,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
@@ -53,9 +52,7 @@ import org.bukkit.event.player.PlayerInitialSpawnEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.metadata.FixedMetadataValue
-import org.bukkit.util.Vector
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -92,6 +89,9 @@ object LobbyPlayerService
         Bukkit.getWorlds()
             .forEach { world ->
                 world.setGameRuleValue("doDaylightCycle", "false")
+                world.setStorm(false)
+                world.isThundering = false
+                world.weatherDuration = Int.MAX_VALUE
             }
 
         Schedulers
@@ -227,32 +227,8 @@ object LobbyPlayerService
 
         if (!SpigotNetworkMetadataDataSync.isFlagged("STRIPPED_LOBBY"))
         {
-            PreventionListeners.plugin.logger.info { "skipping lobby prevention listeners" }
-            Events
-                .subscribe(PlayerToggleFlightEvent::class.java)
-                .filter {
-                    it.player.gameMode == GameMode.SURVIVAL &&
-                        (MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby())
-                }
-                .handler {
-                    val vector = it.player.location
-                        .direction
-                        .multiply(
-                            Vector(
-                                0.85,
-                                1.0,
-                                0.85
-                            )
-                        )
-                        .setY(1.1)
-
-                    it.isCancelled = true
-                    it.player.velocity = vector
-
-                    XSound.ENTITY_FIREWORK_ROCKET_BLAST.play(it.player, 0.5f, 0.75f)
-                }
+            plugin.logger.info { "skipping lobby prevention listeners" }
         }
-
 
         Events
             .subscribe(
@@ -272,6 +248,13 @@ object LobbyPlayerService
                     ?: return@handler
 
                 event.player.configureFlight()
+
+                val coreProfile = CorePlayerProfileService.find(event.player)
+                if (coreProfile != null)
+                {
+                    event.player.level = coreProfile.level
+                    event.player.exp = coreProfile.getFractionCompleteUntilNextLevel().coerceIn(0f, 0.99f)
+                }
 
                 CompletableFuture.runAsync(player::syncQueueState)
                     .thenRun {
@@ -331,21 +314,21 @@ object LobbyPlayerService
                     if (event.player.hasPermission("minigames.important-lobby-join-notifications"))
                     {
                         Bukkit.broadcastMessage(
-                            "${CC.B_RED}>${CC.B_GOLD}>${CC.B_YELLOW}> ${
+                            "${MinigameModernAccess.gradient("✦", "#d94b66", "#ffffff")} ${MinigameModernAccess.gradient("arrival", "#d94b66", "#f7bac7")} ${CC.GRAY}• ${
                                 PlayerHandler.find(player.uniqueId)
                                     ?.getColoredName(prefixIncluded = true)
                                     ?: event.player.name
-                            } ${CC.YELLOW}joined the lobby! ${CC.B_YELLOW}<${CC.B_GOLD}<${CC.B_RED}<"
+                            } ${CC.WHITE}${MinigameModernAccess.gradient("entered the arena lobby", "#d94b66", "#ffffff")}"
                         )
                         return@handler
                     }
 
                     Bukkit.broadcastMessage(
-                        "${CC.BD_AQUA}>${CC.B_AQUA}>${CC.B_GREEN}> ${
+                        "${MinigameModernAccess.gradient("❖", "#d94b66", "#ffffff")} ${MinigameModernAccess.gradient("lobby", "#d94b66", "#f7bac7")} ${CC.GRAY}• ${
                             PlayerHandler.find(player.uniqueId)
                                 ?.getColoredName(prefixIncluded = true)
                                 ?: event.player.name
-                        } ${CC.YELLOW}joined the lobby! ${CC.B_GREEN}<${CC.B_AQUA}<${CC.BD_AQUA}<"
+                        } ${CC.WHITE}${MinigameModernAccess.gradient("joined the queue hub", "#d94b66", "#ffffff")}"
                     )
                 }
             }
@@ -357,7 +340,10 @@ object LobbyPlayerService
 
         Events
             .subscribe(PlayerMoveEvent::class.java)
-            .filter { it.player.location.block.type == Material.STONE_PLATE }
+            .filter {
+                val launchPad = Material.matchMaterial("STONE_PRESSURE_PLATE") ?: Material.matchMaterial("STONE_PLATE")
+                launchPad != null && it.player.location.block.type == launchPad
+            }
             .handler {
                 val configuration = PracticeConfigurationService.local()
                 if (!playerLaunchpadCooldown.test(it.player.uniqueId))
@@ -398,13 +384,6 @@ object LobbyPlayerService
                     QueueService.leaveQueue(event.player, true)
                 }
 
-                /*if (profile.state == PlayerState.InTournament)
-                {
-                    TournamentCommand.onLeave(
-                        ScalaPlayer(event.player, audiences, plugin)
-                    )
-                }*/
-
                 playerCache.remove(event.player.uniqueId)
 
             }
@@ -419,7 +398,7 @@ object LobbyPlayerService
                 it.getWhitelisted() == ServerSync.getLocalGameServer().getWhitelisted()
             }
             .minByOrNull {
-                it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
+                it.getPlayersCount() ?: Int.MAX_VALUE 
             }
     }
 

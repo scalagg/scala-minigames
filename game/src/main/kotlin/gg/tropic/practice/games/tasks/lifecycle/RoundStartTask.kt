@@ -21,10 +21,6 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
-/**
- * @author GrowlyX
- * @since 7/17/2024
- */
 class RoundStartTask(
     private val winner: GameTeam,
     private val game: GameImpl
@@ -79,7 +75,7 @@ class RoundStartTask(
 
         game.toBukkitPlayers().filterNotNull()
             .forEach { player ->
-                // enter a "light" spectator mode, where they can't interact with anything yet
+
                 game.prepareForNewLife(
                     player,
                     volatile = false,

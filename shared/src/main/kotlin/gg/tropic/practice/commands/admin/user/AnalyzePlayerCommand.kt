@@ -34,13 +34,6 @@ import mc.arch.minigames.parties.service.NetworkPartyService
 import net.evilblock.cubed.util.CC
 import java.util.concurrent.TimeUnit
 
-/**
- * Class created on 7/11/2025
-
- * @author Max C.
- * @project arch-minigames
- * @website https://solo.to/redis
- */
 @AutoRegister
 object AnalyzePlayerCommand : ScalaCommand()
 {
@@ -83,7 +76,7 @@ object AnalyzePlayerCommand : ScalaCommand()
                     grants = grants,
                     punishments = punishments,
                     currentParty = party,
-                    playerStatus = status.activityDescription,
+                    playerStatus = status?.activityDescription ?: "Unknown",
                     currentMatch = null,
                     anticheatLogs = anticheatLogs,
                     friends,
@@ -91,9 +84,8 @@ object AnalyzePlayerCommand : ScalaCommand()
                     QuickAccess.computeRank(profile.uniqueId).join(),
                     CorePlayerProfileService.loadCopyOf(profile.uniqueId).join()
                 )
-            ).openMenu(sender)
+            ).openMenu(sender.bukkit())
         }
-
 
     data class PlayerAnalysisContainer(
         val profile: LemonPlayer,

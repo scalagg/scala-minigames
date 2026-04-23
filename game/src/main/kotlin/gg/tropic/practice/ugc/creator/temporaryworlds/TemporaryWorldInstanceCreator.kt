@@ -12,10 +12,6 @@ import gg.tropic.practice.ugc.strategies.SlimeWorldLoadStrategy
 import gg.tropic.practice.ugc.temporaryworlds.TemporaryWorldPlayerResourcesWorld
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 @Service
 object TemporaryWorldInstanceCreator : HostedWorldInstanceCreator<TemporaryWorldPlayerResourcesWorld>
 {

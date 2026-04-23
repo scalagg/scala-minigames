@@ -5,10 +5,6 @@ import dev.cubxity.plugins.metrics.api.metric.data.GaugeMetric
 import gg.tropic.practice.games.GameService
 import gg.tropic.practice.ugc.HostedWorldInstanceService
 
-/**
- * @author GrowlyX
- * @since 3/2/2024
- */
 object HostedWorldDistributionCollector : Collector
 {
     override fun collect() = HostedWorldInstanceService.worldInstances()

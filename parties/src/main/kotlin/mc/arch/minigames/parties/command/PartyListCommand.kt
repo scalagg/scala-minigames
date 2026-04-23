@@ -6,10 +6,6 @@ import gg.scala.commons.annotations.commands.HighPriority
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 
-/**
- * @author Subham
- * @since 7/9/25
- */
 @AutoRegister
 @HighPriority
 object PartyListCommand : ScalaCommand()

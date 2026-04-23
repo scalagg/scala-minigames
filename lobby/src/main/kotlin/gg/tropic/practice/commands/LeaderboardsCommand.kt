@@ -6,10 +6,6 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.tropic.practice.menu.LeaderboardsMenu
 
-/**
- * @author GrowlyX
- * @since 12/16/2023
- */
 @AutoRegister
 object LeaderboardsCommand : ScalaCommand()
 {

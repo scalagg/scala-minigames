@@ -2,10 +2,6 @@ package gg.tropic.practice.application.api.defaults.defaults.kit
 
 import gg.tropic.practice.kit.feature.FeatureFlag
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 data class ImmutableKit(
     val id: String,
     val displayName: String,

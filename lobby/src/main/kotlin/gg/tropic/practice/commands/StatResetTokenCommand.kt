@@ -20,10 +20,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 7/12/2023
- */
 @AutoRegister
 @CommandAlias("statresettokens|srtokens|statresets")
 object StatResetTokenCommand : ScalaCommand()

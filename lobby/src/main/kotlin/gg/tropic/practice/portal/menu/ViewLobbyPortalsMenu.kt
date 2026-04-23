@@ -9,10 +9,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 4/4/25
- */
 class ViewLobbyPortalsMenu : PaginatedMenu()
 {
     init

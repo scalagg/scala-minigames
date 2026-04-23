@@ -8,10 +8,6 @@ import gg.scala.commons.issuer.ScalaPlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.block.Sign
 
-/**
- * @author Subham
- * @since 7/22/25
- */
 @AutoRegister
 object SignListCommand : ScalaCommand()
 {

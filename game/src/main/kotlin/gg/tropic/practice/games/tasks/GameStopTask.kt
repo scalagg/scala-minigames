@@ -37,10 +37,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.abs
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 class GameStopTask(
     private val game: GameImpl,
     private val report: GameReport,

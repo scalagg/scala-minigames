@@ -4,10 +4,6 @@ import me.lucko.helper.Helper
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
-/**
- * @author Subham
- * @since 10/23/25
- */
 fun Player.removeSession()
 {
     removeMetadata("levitation", Helper.hostPlugin())

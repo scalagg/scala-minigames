@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 7/28/2024
- */
 class KitFeaturesEditMenu(private val kit: Kit) : PaginatedMenu()
 {
     override fun getAllPagesButtons(player: Player): Map<Int, Button>

@@ -4,10 +4,6 @@ import gg.tropic.practice.profile.PracticeProfile
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
 
-/**
-* @author Subham
-* @since 6/22/25
-*/
 fun <T> statistic(id: StatisticID, use: Statistic.() -> T) = StatisticService.statistic(id.toId(), use)
 fun <T> statistic(vararg id: StatisticID, use: Statistic.() -> T) = id.forEach { StatisticService.statistic(it.toId(), use) }
 fun <T> statistic(ids: List<StatisticID>, use: Statistic.() -> T) = ids.forEach { StatisticService.statistic(it.toId(), use) }

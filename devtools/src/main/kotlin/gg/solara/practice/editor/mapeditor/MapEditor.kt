@@ -39,10 +39,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.util.LinkedList
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 7/18/2024
- */
 class MapEditor(private val player: Player, private val loader: SlimeLoader) : SyntheticsEditor
 {
     companion object

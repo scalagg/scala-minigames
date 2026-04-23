@@ -21,10 +21,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 
-/**
- * @author GrowlyX
- * @since 9/16/2022
- */
 class PlayerViewMenu(
     private val gameReport: GameReport,
     private val snapshot: GameReportSnapshot,

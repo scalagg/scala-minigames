@@ -10,10 +10,6 @@ import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/30/25
- */
 data class MinigameTop3HologramEntity(
     private val leaderboard: MinigameTopPlayerNPCSet
 ) : PersonalizedHologramEntity(

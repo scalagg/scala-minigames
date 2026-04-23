@@ -24,10 +24,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Logger
 
-/**
- * @author GrowlyX
- * @since 8/25/2024
- */
 @Service
 object PracticePlayerCommsService
 {
@@ -36,7 +32,7 @@ object PracticePlayerCommsService
 
     private val aware by lazy {
         AwareBuilder
-            .of<AwareMessage>("communications-lobbies".suffixWhenDev())
+            .of<AwareMessage>("minigames:lobbies".suffixWhenDev())
             .codec(AwareMessageCodec)
             .logger(Logger.getAnonymousLogger())
             .build()

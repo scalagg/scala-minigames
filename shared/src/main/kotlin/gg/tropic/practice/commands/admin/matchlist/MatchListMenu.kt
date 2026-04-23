@@ -18,10 +18,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 1/13/2024
- */
 class MatchListMenu : PaginatedMenu()
 {
     private var sort = MatchListSort.Kit

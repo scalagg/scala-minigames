@@ -6,10 +6,6 @@ import gg.scala.commons.replacement.annotation.ReplacementAutoRegister
 import gg.scala.lemon.aggregate.ServerGroupAggregate
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 5/2/2022
- */
 @ReplacementAutoRegister
 object ServerGroupTextReplacement : Replacement
 {

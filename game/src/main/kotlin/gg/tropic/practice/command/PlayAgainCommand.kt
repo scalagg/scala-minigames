@@ -7,10 +7,6 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.tropic.practice.strategies.MarkSpectatorStrategy
 
-/**
- * @author Subham
- * @since 8/3/25
- */
 @AutoRegister
 object PlayAgainCommand : ScalaCommand()
 {

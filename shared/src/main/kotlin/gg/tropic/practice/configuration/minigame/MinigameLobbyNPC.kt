@@ -5,10 +5,6 @@ import gg.scala.commons.spatial.Position
 import gg.tropic.practice.configuration.minigame.type.LobbyNPCSkinType
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author Subham
- * @since 6/24/25
- */
 data class MinigameLobbyNPC(
     var heldItem: ItemStack = XMaterial.RED_BED.parseItem()!!,
     var command: String = "joinqueue bedwars",

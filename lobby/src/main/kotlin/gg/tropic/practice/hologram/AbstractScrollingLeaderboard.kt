@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 12/30/2023
- */
 abstract class AbstractScrollingLeaderboard(
     val scrollTime: Int,
     location: Location

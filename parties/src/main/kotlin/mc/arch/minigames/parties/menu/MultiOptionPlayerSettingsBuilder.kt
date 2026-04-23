@@ -11,10 +11,6 @@ import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 9/12/2021
- */
 class MultiOptionPlayerSettingsBuilder {
 
     var title = "N/A"

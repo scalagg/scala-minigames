@@ -5,10 +5,6 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 5/27/2022
- */
 enum class ShopCurrency(
     val displaySingular: String,
     val displayPlural: String,

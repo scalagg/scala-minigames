@@ -21,6 +21,8 @@ import gg.tropic.practice.player.formattedDomain
 import gg.tropic.practice.queue.QueueType
 import gg.tropic.practice.region.PlayerRegionFromRedisProxy
 import gg.tropic.practice.scoreboard.animation.FrameAnimation
+import gg.tropic.practice.scoreboard.animation.GradientWaveTitle
+import gg.tropic.practice.scoreboard.animation.WaveAnimationTitle
 import gg.tropic.practice.scoreboard.configuration.LobbyScoreboardConfigurationService
 import gg.tropic.practice.scoreboard.configuration.primaryColor
 import gg.tropic.practice.scoreboard.configuration.secondaryColor
@@ -47,10 +49,6 @@ import org.bukkit.metadata.FixedMetadataValue
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 @Service
 @ScoreboardAdapterRegister
 object LobbyScoreboardAdapter : ScoreboardAdapter()
@@ -62,56 +60,53 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
         val layout: ScoreboardStyle = layout(player)
         val profile = LobbyPlayerService.find(player.uniqueId)
             ?: return
+        val coreProfile = CorePlayerProfileService.find(player)
 
         if (layout == ScoreboardStyle.Disabled)
         {
             return
         }
 
-        if (MinigameLobby.isMinigameLobby())
-        {
-            board += "${CC.GRAY}${dateFormat.format(Date())} ${CC.D_GRAY}${getLocalGameServer()
+        board += "${CC.GRAY}${dateFormat.format(Date())} ${CC.D_GRAY}${
+            getLocalGameServer()
                 .id
                 .split("-")
-                .lastOrNull() ?: "??"}"
-        }
+                .lastOrNull() ?: "??"
+        }"
 
         board += ""
 
         if (!(MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby()))
         {
-            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Online: ${CC.WHITE}${
+            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Online: ${CC.GOLD}${
                 Numbers.format(ScoreboardInfoService.scoreboardInfo.online)
             }"
-            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}In-game: ${CC.WHITE}${
+            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}In-game: ${CC.GOLD}${
                 Numbers.format(ScoreboardInfoService.scoreboardInfo.playing)
             }"
         } else
         {
             if (MinigameLobby.isMainLobby())
             {
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Global: ${CC.WHITE}${
-                    Numbers.format(MinigameLobby.globalPlayerCount)
-                }"
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Lobby: ${CC.WHITE}#${
-                    MinigameLobby.lobbies[ServerSync.local.id]?.friendlyId ?: "1"
-                }"
-                board += ""
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Rank: ${
+                board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Rank: ${
                     QuickAccess.realRank(player).getColoredName()
                 }"
-
-                val profile = EconomyProfileService.find(player)
-                if (profile != null)
+                if (coreProfile != null)
                 {
-                    val economy = EconomyDataSync.cached().economies["coins"]
-                    if (economy != null)
-                    {
-                        board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Coins: ${
-                            economy.format(profile.balance("coins"))
-                        }"
-                    }
+                    board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Level: ${CC.AQUA}${
+                        Numbers.format(coreProfile.level)
+                    }"
                 }
+
+                board += ""
+
+                board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Lobby: ${CC.AQUA}#${
+                    MinigameLobby.lobbies[ServerSync.local.id]?.friendlyId ?: "1"
+                }"
+                board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Players: ${CC.AQUA}${
+                    Numbers.format(MinigameLobby.globalPlayerCount)
+                }"
+
             } else
             {
                 if (SpigotNetworkMetadataDataSync.isFlagged("BOARD_OVERRIDE_LOBBY"))
@@ -123,85 +118,86 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
                     return
                 } else
                 {
+                    board.clear()
                     board += MinigameLobby.customizer()
                         .scoreboard()
                         .provideIdleLines(player, profile)
+                    return
                 }
             }
-        }
 
-        val coreProfile = CorePlayerProfileService.find(player)
-        if (profile.isNetworkQueue())
-        {
-            val queue = SpigotRedisService.findQueuePlayerIsIn(player)
-            if (queue != null)
+            if (profile.isNetworkQueue())
             {
-                board += ""
-                board += "${primaryColor()}${queue.displayName} Queue:"
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Position: ${CC.WHITE}${
-                    Numbers.format(
-                        queue.position(player.uniqueId)
-                    )
-                }${CC.GRAY}/${CC.WHITE}${
-                    Numbers.format(
-                        queue.players.size
-                    )
-                }"
-            }
-        } else if (profile.inQueue())
-        {
-            board += ""
-            board += "${primaryColor()}${profile.queuedForType().name} Queue:"
-            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}${profile.queuedForKit()?.displayName} ${
-                profile.queuedForTeamSize()
-            }v${
-                profile.queuedForTeamSize()
-            }"
-            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Queued for ${CC.WHITE}${
-                TimeUtil.formatIntoMMSS((profile.queuedForTime() / 1000).toInt())
-            }"
-
-            val shouldIncludeELORange = profile.validateQueueEntry() &&
-                profile.queuedForType() == QueueType.Ranked &&
-                MinecraftProtocol.getPlayerVersion(player) <= 5
-
-            if (shouldIncludeELORange)
-            {
-                val domain = profile.queueEntry().leaderRangedELO
-                    .toIntRangeInclusive()
-                    .formattedDomain()
-
-                board += "${CC.GRAY}ELO Range: ${primaryColor()}$domain"
-            }
-        } else if (profile.isInParty())
-        {
-            board += " "
-            board += "${primaryColor()}Party:"
-
-            with(profile.partyOf().delegate) {
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Leader: ${CC.WHITE}${
-                    leader.uniqueId.username()
-                }"
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Online: ${CC.WHITE}${profile.partyOf().currentPlayers}${CC.GRAY}/${CC.WHITE}$limit"
-                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Party is " + status.capitalized + "..."
-            }
-        } else
-        {
-            if (!(MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby()))
-            {
-                if (coreProfile != null)
+                val queue = SpigotRedisService.findQueuePlayerIsIn(player)
+                if (queue != null)
                 {
                     board += ""
-                    board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Level: ${CC.GREEN}${
-                        Numbers.format(coreProfile.level)
-                    } ${Constants.EXP_SYMBOL}"
+                    board += "${primaryColor()}${queue.displayName} Queue:"
+                    board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Position: ${CC.WHITE}${
+                        Numbers.format(
+                            queue.position(player.uniqueId)
+                        )
+                    }${CC.GRAY}/${CC.WHITE}${
+                        Numbers.format(
+                            queue.players.size
+                        )
+                    }"
+                }
+            } else if (profile.inQueue())
+            {
+                board += ""
+                board += "${primaryColor()}${profile.queuedForType().name} Queue:"
+                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}${profile.queuedForKit()?.displayName} ${
+                    profile.queuedForTeamSize()
+                }v${
+                    profile.queuedForTeamSize()
+                }"
+                board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Queued for ${CC.WHITE}${
+                    TimeUtil.formatIntoMMSS((profile.queuedForTime() / 1000).toInt())
+                }"
 
-                    val economyProfile = EconomyProfileService.find(player)
-                    if (economyProfile != null)
+                val shouldIncludeELORange = profile.validateQueueEntry() &&
+                    profile.queuedForType() == QueueType.Ranked &&
+                    MinecraftProtocol.getPlayerVersion(player) <= 5
+
+                if (shouldIncludeELORange)
+                {
+                    val domain = profile.queueEntry().leaderRangedELO
+                        .toIntRangeInclusive()
+                        .formattedDomain()
+
+                    board += "${CC.GRAY}ELO Range: ${primaryColor()}$domain"
+                }
+            } else if (profile.isInParty())
+            {
+                board += " "
+                board += "${primaryColor()}Party:"
+
+                with(profile.partyOf().delegate) {
+                    board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Leader: ${CC.WHITE}${
+                        leader.uniqueId.username()
+                    }"
+                    board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Online: ${CC.WHITE}${profile.partyOf().currentPlayers}${CC.GRAY}/${CC.WHITE}$limit"
+                    board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Party is " + status.capitalized + "..."
+                }
+            } else
+            {
+                if (!(MinigameLobby.isMinigameLobby() || MinigameLobby.isMainLobby()))
+                {
+                    if (coreProfile != null)
                     {
-                        board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Coins: ${CC.GOLD}${
-                            Numbers.format(economyProfile.balance("coins"))
-                        } ${Constants.TOKENS_SYMBOL}"
+                        board += ""
+                        board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Level: ${CC.AQUA}${
+                            Numbers.format(coreProfile.level)
+                        } ${Constants.EXP_SYMBOL}"
+
+                        val economyProfile = EconomyProfileService.find(player)
+                        if (economyProfile != null)
+                        {
+                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Coins: ${CC.GOLD}${
+                                Numbers.format(economyProfile.balance("duels"))
+                            } ${Constants.TOKENS_SYMBOL}"
+                        }
                     }
                 }
             }
@@ -216,22 +212,22 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
                     if (scoreboardView != LobbyScoreboardView.None)
                     {
                         board += ""
-                        board += "${primaryColor()}${scoreboardView.displayName}:"
+                        board += "${CC.AQUA}${scoreboardView.displayName}:"
                     }
 
                     when (scoreboardView)
                     {
                         LobbyScoreboardView.Dev ->
                         {
-                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Game servers: ${CC.WHITE}${
+                            board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Game servers: ${CC.AQUA}${
                                 ScoreboardInfoService.scoreboardInfo.gameServers
                             }"
-                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Mean TPS: ${CC.GREEN}${
+                            board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Mean TPS: ${CC.AQUA}${
                                 ScoreboardInfoService.scoreboardInfo.meanTPS.run {
                                     if (this > 20.0) "+20.0" else "%.1f".format(ScoreboardInfoService.scoreboardInfo.meanTPS)
                                 }
                             }"
-                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Games: ${CC.WHITE}${
+                            board += "${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}Games: ${CC.AQUA}${
                                 Numbers.format(ScoreboardInfoService.scoreboardInfo.runningGames)
                             } ${CC.D_GRAY}(${
                                 "%.2f".format(ScoreboardInfoService.scoreboardInfo.percentagePlaying)
@@ -247,13 +243,16 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
                             val basicsProfile = BasicsProfileService.find(player)
 
                             board.add(
-                                "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Group: ${when (playerStatus.visibilityGroup())
-                                {
-                                    VisibilityGroup.ALL -> "${CC.GREEN}All"
-                                    VisibilityGroup.STAFF -> "${CC.BLUE}Staff"
-                                    VisibilityGroup.ADMIN -> "${CC.RED}Admin"
-                                    VisibilityGroup.OPERATOR -> "${CC.RED}Operator"
-                                }}"
+                                "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${CC.GRAY}Group: ${
+                                    when (playerStatus.visibilityGroup())
+                                    {
+                                        VisibilityGroup.ALL -> "${CC.GREEN}All"
+                                        VisibilityGroup.STAFF -> "${CC.BLUE}Staff"
+                                        VisibilityGroup.ADMIN -> "${CC.RED}Admin"
+                                        VisibilityGroup.OPERATOR -> "${CC.D_RED}Owner"
+                                        else -> "${CC.GRAY}Custom"
+                                    }
+                                }"
                             )
 
                             if (basicsProfile != null)
@@ -263,7 +262,11 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
                                 }"
                             }
 
-                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Mod Mode: ${metadataDisplay("mod-mode")}"
+                            board += "${primaryColor()}${Constants.THIN_VERTICAL_LINE} ${secondaryColor()}Mod Mode: ${
+                                metadataDisplay(
+                                    "mod-mode"
+                                )
+                            }"
                         }
 
                         LobbyScoreboardView.None ->
@@ -275,7 +278,7 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
         }
 
         board += ""
-        board += "${CC.DARK_GRAY}${LemonConstants.WEB_LINK}${CC.GRAY}      ${primaryColor()}"
+        board += "${CC.GRAY}${LemonConstants.WEB_LINK}${CC.GRAY}      ${primaryColor()}"
     }
 
     @Configure
@@ -308,7 +311,7 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
         {
             if (LobbyScoreboardConfigurationService.cached().titleAnimated)
             {
-                return FrameAnimation.getCurrentTitle()
+                return WaveAnimationTitle.getCurrentTitle()
             }
 
             return LobbyScoreboardConfigurationService.cached().title
@@ -319,8 +322,7 @@ object LobbyScoreboardAdapter : ScoreboardAdapter()
             return MinigameLobby.customizer().scoreboard().provideTitle()
         }
 
-        return "${CC.B_PRI}Duels${
-            if ("mipdev" in ServerSync.getLocalGameServer().groups) " ${CC.D_GRAY}(dev)" else ""
-        }"
+        return GradientWaveTitle.render("DUELS", "#F5C037", "#FC695C") +
+            if ("mipdev" in ServerSync.getLocalGameServer().groups) " ${CC.GRAY}(dev)" else ""
     }
 }

@@ -9,10 +9,6 @@ import gg.tropic.practice.ugc.generation.addplayer.AddPlayerRequest
 import gg.tropic.practice.ugc.generation.addplayer.AddPlayerResponse
 import gg.tropic.practice.ugc.generation.addplayer.AddPlayerStatus
 
-/**
- * @author Subham
- * @since 7/24/25
- */
 class AddPlayerHandler : AwareRPCHandler<AddPlayerRequest, AddPlayerResponse>
 {
     override fun handle(

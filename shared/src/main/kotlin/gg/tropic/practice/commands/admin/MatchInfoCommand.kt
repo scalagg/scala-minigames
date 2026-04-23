@@ -16,10 +16,6 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
 
-/**
- * @author GrowlyX
- * @since 12/24/2023
- */
 @AutoRegister
 object MatchInfoCommand : ScalaCommand()
 {

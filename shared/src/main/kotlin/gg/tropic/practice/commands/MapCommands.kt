@@ -18,10 +18,6 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Material
 
-/**
- * @author GrowlyX
- * @since 9/17/2023
- */
 @AutoRegister
 @CommandAlias("map")
 @CommandPermission("practice.command.map")

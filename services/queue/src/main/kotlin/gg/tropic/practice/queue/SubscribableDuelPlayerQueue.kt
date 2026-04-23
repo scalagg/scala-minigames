@@ -9,10 +9,6 @@ import gg.tropic.practice.persistence.RedisShared
 import gg.tropic.practice.region.Region
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 class SubscribableDuelPlayerQueue(
     private val kit: ImmutableKit,
     private val teamSize: Int,
@@ -33,11 +29,9 @@ class SubscribableDuelPlayerQueue(
             return listOf()
         }
 
-        // don't unnecessarily load in and map to data class if not needed
         val first: List<QueueEntry>
         val second: List<QueueEntry>
 
-        // Faster than doing a list intersect which compares all items
         fun IntRange.quickIntersect(other: IntRange): Boolean
         {
             return this.first <= other.last && this.last >= other.first
@@ -56,7 +50,6 @@ class SubscribableDuelPlayerQueue(
                                         .toIntRangeInclusive()
                                 )
 
-                            // we can ignore ping intersections if they have no ping restriction
                             val doesPingIntersect =
                                 (entry.data.maxPingDiff == -1 || otherEntry.data.maxPingDiff == -1) ||
                                     entry.data.leaderRangedPing.toIntRangeInclusive()
@@ -83,7 +76,7 @@ class SubscribableDuelPlayerQueue(
                 .map { entry ->
                     val otherEntriesMatchingEntry = queueEntries
                         .filter { otherEntry ->
-                            // we can ignore ping intersections if they have no ping restriction
+
                             val doesPingIntersect =
                                 (entry.data.maxPingDiff == -1 || otherEntry.data.maxPingDiff == -1) ||
                                     entry.data.leaderRangedPing.toIntRangeInclusive()
@@ -113,7 +106,6 @@ class SubscribableDuelPlayerQueue(
         val selectedQueueMatch = groupedQueueEntries.random()
             .map { it.data }
 
-        // Expecting a symmetric list here, lets hope it doesn't break?
         first = selectedQueueMatch.take(teamSize)
         second = selectedQueueMatch.takeLast(teamSize)
 
@@ -162,7 +154,7 @@ class SubscribableDuelPlayerQueue(
             .prepareGameFor(
                 map = map,
                 expectation = expectation,
-                // prefer NA servers if queuing globally
+
                 region = if (region == Region.Both) Region.NA else region
             )
             .exceptionally {

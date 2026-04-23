@@ -7,10 +7,6 @@ import gg.scala.commons.spatial.Position
 import kotlin.math.ceil
 import kotlin.math.floor
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 data class MapSpawnProtExpandMetadata(
     override val id: String,
 ) : AbstractMapMetadata()

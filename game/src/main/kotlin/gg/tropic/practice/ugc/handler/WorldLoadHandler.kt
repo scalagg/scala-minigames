@@ -10,11 +10,8 @@ import gg.tropic.practice.ugc.generation.WorldLoadResponse
 import gg.tropic.practice.ugc.generation.WorldLoadStatus
 import gg.tropic.practice.ugc.instance.HostedWorldInstanceLifecycleController
 import net.evilblock.cubed.ScalaCommonsSpigot
+import net.evilblock.cubed.isAgonesInstanceDraining
 
-/**
- * @author Subham
- * @since 7/20/25
- */
 class WorldLoadHandler : AwareRPCHandler<WorldLoadRequest, WorldLoadResponse>
 {
     override fun handle(

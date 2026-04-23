@@ -5,10 +5,6 @@ import gg.tropic.practice.leaderboards.CommonlyViewedLeaderboardType
 import gg.tropic.practice.leaderboards.StatisticLeaderboard
 import org.bukkit.Location
 
-/**
- * @author GrowlyX
- * @since 12/29/2023
- */
 class ScrollingTypeLeaderboardHologram(
     private val kit: String?,
     private val leaderboardTypes: List<CommonlyViewedLeaderboardType>,

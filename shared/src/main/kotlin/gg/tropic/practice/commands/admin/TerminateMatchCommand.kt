@@ -19,10 +19,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 12/24/2023
- */
 @AutoRegister
 object TerminateMatchCommand : ScalaCommand()
 {

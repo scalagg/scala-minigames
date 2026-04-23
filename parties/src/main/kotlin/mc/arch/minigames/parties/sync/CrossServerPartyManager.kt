@@ -13,13 +13,6 @@ import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import org.bukkit.event.player.PlayerJoinEvent
 
-/**
- * Class created on 12/20/2024
-
- * @author Max C.
- * @project scala-cgs
- * @website https://solo.to/redis
- */
 @Service
 object CrossServerPartyManager
 {

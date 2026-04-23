@@ -22,10 +22,6 @@ import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageLobbyMenu : Menu("Managing Minigame Lobby")
 {
     init

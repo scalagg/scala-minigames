@@ -17,6 +17,7 @@ import gg.tropic.practice.settings.scoreboard.ScoreboardStyle
 import gg.tropic.practice.extensions.colorOf
 import gg.tropic.practice.extensions.toRBTeamSide
 import gg.tropic.practice.minigame.dateFormat
+import gg.tropic.practice.scoreboard.animation.GradientWaveTitle
 import gg.tropic.practice.ugc.toHostedWorld
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.scoreboard.ScoreboardAdapterRegister
@@ -27,14 +28,31 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/5/2022
- */
 @Service
 @ScoreboardAdapterRegister
 object GameScoreboardAdapter : ScoreboardAdapter()
 {
+    private fun hex(value: String): String
+    {
+        val normalized = value.removePrefix("#")
+        val builder = StringBuilder("§x")
+        normalized.forEach { builder.append('§').append(it) }
+        return builder.toString()
+    }
+
+    private fun smallCaps(value: String): String
+    {
+        val normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        val small = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀѕᴛᴜᴠᴡxʏᴢ"
+        return value.uppercase(Locale.getDefault()).map { character ->
+            if (character == ' ') character else small.getOrElse(normal.indexOf(character)) { character }
+        }.joinToString("")
+    }
+
+    private fun rose() = hex("#d94b66")
+    private fun blush() = hex("#ffd8df")
+    private fun modernLine(icon: String, label: String, value: String) = "${rose()}$icon ${CC.WHITE}${smallCaps(label)} ${CC.GRAY}» ${blush()}$value"
+
     override fun getLines(
         board: LinkedList<String>, player: Player
     )
@@ -47,14 +65,14 @@ object GameScoreboardAdapter : ScoreboardAdapter()
         }
 
         player.toHostedWorld()?.apply {
-            board += "${CC.GRAY}${dateFormat.format(Date())} ${CC.D_GRAY}${getLocalGameServer()
+            board += "${rose()}✦ ${CC.WHITE}${dateFormat.format(Date())} ${CC.GRAY}${smallCaps("arena")}-${getLocalGameServer()
                 .id
                 .split("-")
                 .lastOrNull() ?: "??"}"
             board += ""
             board += generateScoreboardLines(player)
             board += ""
-            board += "${CC.DARK_GRAY}${LemonConstants.WEB_LINK}${CC.GRAY}      ${CC.PRI}"
+            board += "${CC.GRAY}${LemonConstants.WEB_LINK}"
             return@apply
         }
 
@@ -284,7 +302,7 @@ object GameScoreboardAdapter : ScoreboardAdapter()
 
                         if (opponents.size == 1)
                         {
-                            //todo: test with usernames above 16 char
+
                             board += "${CC.PRI}${Constants.THIN_VERTICAL_LINE} ${CC.SEC}Opponent: ${CC.WHITE}${
                                 if (game.robot())
                                     game.robotInstance.first().name()
@@ -556,7 +574,7 @@ object GameScoreboardAdapter : ScoreboardAdapter()
         }
 
         board += ""
-        board += "${CC.DARK_GRAY}${LemonConstants.WEB_LINK}${CC.GRAY}      ${CC.PRI}"
+        board += "${CC.GRAY}${LemonConstants.WEB_LINK}"
     }
 
     override fun getTitle(player: Player): String
@@ -571,8 +589,7 @@ object GameScoreboardAdapter : ScoreboardAdapter()
             }"
 
         return game.miniGameLifecycle?.scoreboard?.titleFor(player)
-            ?: "${CC.B_PRI}Duels${
-                if ("mipdev" in ServerSync.getLocalGameServer().groups) " ${CC.D_GRAY}(dev)" else ""
-            }"
+            ?: return GradientWaveTitle.render("DUELS", "#F5C037", "#FC695C") +
+                if ("mipdev" in ServerSync.getLocalGameServer().groups) " ${CC.GRAY}(dev)" else ""
     }
 }

@@ -16,10 +16,6 @@ import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import kotlin.properties.Delegates
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 @Plugin(
     name = "DevTools",
     version = "%remote%/%branch%/%id%"

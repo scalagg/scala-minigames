@@ -10,6 +10,7 @@ import gg.tropic.practice.versioned.Versioned
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.ScalaCommonsSpigot
+import net.evilblock.cubed.isAgonesInstanceDraining
 import net.evilblock.cubed.util.CC
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -19,10 +20,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.collections.set
 
-/**
- * @author Subham
- * @since 7/19/25
- */
 @Service
 object HostedWorldInstanceService
 {
@@ -38,7 +35,7 @@ object HostedWorldInstanceService
     @Configure
     fun configure()
     {
-        // Sanity unload checks
+
         Schedulers
             .async()
             .runRepeating({ _ ->
@@ -61,8 +58,8 @@ object HostedWorldInstanceService
                         {
                             if (instance.state == HostedWorldState.DRAINING)
                             {
-                                // The instance is draining, it should be unavailable to
-                                // players. So, we can unload eagerly
+
+                                
                                 HostedWorldInstanceLifecycleController.unload(instance)
                                 return@forEach
                             }

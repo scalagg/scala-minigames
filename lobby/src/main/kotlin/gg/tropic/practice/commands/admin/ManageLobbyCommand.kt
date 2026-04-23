@@ -11,6 +11,7 @@ import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
+import gg.scala.basics.plugin.commands.bukkit
 import gg.scala.commons.annotations.commands.AssignPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
@@ -32,10 +33,6 @@ import org.bukkit.metadata.FixedMetadataValue
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 10/13/2023
- */
 @AutoRegister
 @CommandAlias("managelobby")
 @CommandPermission("practice.lobby.commands.admin")
@@ -52,7 +49,7 @@ object ManageLobbyCommand : ScalaCommand()
     }
 
     @Subcommand("manage")
-    fun onManage(player: ScalaPlayer) = ManageLobbyMenu().openMenu(player)
+    fun onManage(player: ScalaPlayer) = ManageLobbyMenu().openMenu(player.bukkit())
 
     @Subcommand("request-application-reboot")
     @Description("Request an application reboot.")
@@ -61,7 +58,7 @@ object ManageLobbyCommand : ScalaCommand()
         PracticePlayerCommsService.createMessage("reboot-app")
             .publish(
                 AwareThreadContext.ASYNC,
-                channel = "communications-application".suffixWhenDev()
+                channel = "minigames:application".suffixWhenDev()
             )
 
         player.sendMessage("${CC.GREEN}We've requested an application reboot, please wait a moment.")
@@ -80,7 +77,7 @@ object ManageLobbyCommand : ScalaCommand()
             )
             .publish(
                 AwareThreadContext.ASYNC,
-                channel = "communications-gamequeue".suffixWhenDev()
+                channel = "minigames:gamequeue".suffixWhenDev()
             )
 
         player.sendMessage(
@@ -146,7 +143,7 @@ object ManageLobbyCommand : ScalaCommand()
             )
             .publish(
                 AwareThreadContext.ASYNC,
-                channel = "communications-gamequeue".suffixWhenDev()
+                channel = "minigames:gamequeue".suffixWhenDev()
             )
 
         player.sendMessage(

@@ -1,31 +1,28 @@
 package gg.tropic.practice.statistics
 
+import io.lettuce.core.ScoredValue
 import net.evilblock.cubed.ScalaCommonsSpigot
 import java.util.UUID
 
-/**
- * @author Subham
- * @since 6/18/25
- */
 object StatisticRedis
 {
-    fun scoreAndPositionOf(player: UUID, id: String, reversed: Boolean) = ScalaCommonsSpigot.instance
+    fun scoreAndPositionOf(player: UUID, id: String, reversed: Boolean): ScoredValue<Long>? = ScalaCommonsSpigot.instance
         .kvConnection
         .sync()
-        .let {
-            if (reversed)
+        .let { redis ->
+            val member = player.toString()
+            val rank = if (reversed)
             {
-                it.zrevrankWithScore(
-                    id,
-                    player.toString()
-                )
+                redis.zrevrank(id, member)
             } else
             {
-                it.zrankWithScore(
-                    id,
-                    player.toString()
-                )
-            }
+                redis.zrank(id, member)
+            } ?: return@let null
+
+            val score = redis.zscore(id, member)
+                ?: return@let null
+
+            ScoredValue.just(score, rank)
         }
 
     fun save(player: UUID, id: String, value: Long) = ScalaCommonsSpigot.instance
@@ -82,6 +79,28 @@ object StatisticRedis
                     id,
                     0,
                     (limit - 1).toLong()
+                )
+            }
+        }
+
+    fun getPlayersByRankRange(id: String, start: Int, end: Int, reversed: Boolean = true) = ScalaCommonsSpigot.instance
+        .kvConnection
+        .sync()
+        .let { sync ->
+            if (reversed)
+            {
+                sync.zrevrangeWithScores(
+                    id,
+                    start.toLong(),
+                    end.toLong()
+                )
+            }
+            else
+            {
+                sync.zrangeWithScores(
+                    id,
+                    start.toLong(),
+                    end.toLong()
                 )
             }
         }

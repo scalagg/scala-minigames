@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageQuestMenu(
     private val questId: String
 ) : Menu("Managing Quest")

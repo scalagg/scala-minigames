@@ -16,10 +16,6 @@ import gg.tropic.practice.parkour.ParkourService
 import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 
-/**
- * @author GrowlyX
- * @since 3/18/2025
- */
 @AutoRegister
 @CommandPermission("practice.command.manageparkour")
 @CommandAlias("manageparkour")

@@ -10,10 +10,6 @@ import gg.tropic.practice.queue.QueueType
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 
-/**
- * @author GrowlyX
- * @since 1/16/2024
- */
 @Service
 @IgnoreAutoScan
 @SoftDependency("ScStaff")

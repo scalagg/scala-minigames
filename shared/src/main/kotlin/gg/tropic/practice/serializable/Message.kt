@@ -6,12 +6,6 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 
-/**
- * A small utility to serialize chat messages with bound actions.
- *
- * @author GrowlyX
- * @since 10/22/2023
- */
 class Message
 {
     var components = mutableListOf<SerializableComponent>()

@@ -6,10 +6,6 @@ import gg.tropic.practice.application.api.defaults.defaults.kit.ImmutableKit
 import gg.tropic.practice.queue.AbstractSubscribableMinigamePlayerQueue
 import gg.tropic.practice.queue.QueueEntry
 
-/**
- * @author Subham
- * @since 6/15/25
- */
 class SkyWarsSubscribableMinigamePlayerQueue(
     kit: ImmutableKit,
     private val mode: SkyWarsMode,

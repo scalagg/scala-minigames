@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/28/25
- */
 data class MinigameNPCPlayMenu(
     private val modeMetadata: MiniGameModeMetadata
 ) : Menu("Play ${modeMetadata.displayName}")

@@ -22,10 +22,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 2/25/2022
- */
 class PartyManageMenu(
     private val party: Party,
     private val role: PartyRole
@@ -212,7 +208,6 @@ class PartyManageMenu(
                 }
                 .asButton()
 
-
             this[1] = ItemBuilder(XMaterial.OAK_SIGN)
                 .name("${CC.GREEN}Party Password")
                 .addToLore(
@@ -376,7 +371,6 @@ class PartyManageMenu(
                             player.sendMessage("${CC.RED}${exception.message}")
                         }
 
-                        // as this is an updating menu
                         Tasks.delayed(2L) {
                             player.closeInventory()
                         }

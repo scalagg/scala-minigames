@@ -7,10 +7,6 @@ import me.lucko.helper.scheduler.Task
 import java.time.Duration
 import java.util.LinkedList
 
-/**
- * @author Subham
- * @since 5/26/25
- */
 data class MiniGameEventTracker(private val lifecycle: MiniGameLifecycle<*>) : Runnable
 {
     private var task: Task? = null

@@ -5,10 +5,6 @@ import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
 import gg.tropic.practice.settings.scoreboard.ScoreboardStyle
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 1/16/2024
- */
 fun Player.isASilentSpectator(): Boolean
 {
     val basicsProfile = BasicsProfileService.find(this)

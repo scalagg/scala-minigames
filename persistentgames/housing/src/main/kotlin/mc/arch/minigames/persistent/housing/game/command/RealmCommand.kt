@@ -1,0 +1,25 @@
+package mc.arch.minigames.persistent.housing.game.command
+
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
+import gg.scala.commons.issuer.ScalaPlayer
+import mc.arch.minigames.persistent.housing.game.menu.house.MainHouseMenu
+import mc.arch.minigames.persistent.housing.game.resources.getPlayerHouseFromInstance
+
+@AutoRegister
+object RealmCommand : ScalaCommand()
+{
+    @CommandAlias("realm")
+    fun onHouse(sender: ScalaPlayer)
+    {
+        val house = sender.bukkit().getPlayerHouseFromInstance()
+            ?: throw ConditionFailedException(
+                "You are not currently visiting a realm!"
+            )
+
+        MainHouseMenu(house, house.playerIsOrAboveAdministrator(sender.uniqueId))
+            .openMenu(sender.bukkit())
+    }
+}

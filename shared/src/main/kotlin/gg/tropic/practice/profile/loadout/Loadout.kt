@@ -2,10 +2,6 @@ package gg.tropic.practice.profile.loadout
 
 import org.bukkit.inventory.ItemStack
 
-/**
- * @author GrowlyX
- * @since 9/23/2023
- */
 data class Loadout(
     var name: String,
     val pairedKit: String,

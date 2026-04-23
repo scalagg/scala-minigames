@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bungee.BungeeUtil
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/29/25
- */
 @AutoRegister
 object LegacyJoinCommand : ScalaCommand()
 {

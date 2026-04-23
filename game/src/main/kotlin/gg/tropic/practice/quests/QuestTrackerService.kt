@@ -14,10 +14,6 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 
-/**
- * @author Subham
- * @since 7/8/25
- */
 @Service
 object QuestTrackerService
 {

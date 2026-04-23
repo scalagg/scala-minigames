@@ -5,10 +5,6 @@ import mc.arch.minigames.versioned.generics.SlimeWorldGeneric
 import net.kyori.adventure.nbt.LongBinaryTag
 import kotlin.collections.set
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 class ModernSlimeWorld(
     override val worldInstance: SlimeWorld
 ) : SlimeWorldGeneric<SlimeWorld>

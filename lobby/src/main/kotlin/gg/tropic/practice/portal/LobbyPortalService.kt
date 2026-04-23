@@ -21,6 +21,14 @@ import org.bukkit.potion.PotionEffectType
 @Service
 object LobbyPortalService : DataSyncService<LobbyPortalContainer>()
 {
+    private val waterMaterial by lazy {
+        Material.matchMaterial("WATER")
+    }
+
+    private val stationaryWaterMaterial by lazy {
+        Material.matchMaterial("STATIONARY_WATER")
+    }
+
     @Inject
     lateinit var plugin: PracticeLobby
 
@@ -39,10 +47,8 @@ object LobbyPortalService : DataSyncService<LobbyPortalContainer>()
                 val blockToTest = event.to.block.location.toVector()
                 val player = event.player
 
-                if (
-                    !(event.to.block.type == Material.STATIONARY_WATER ||
-                        event.to.block.type == Material.WATER)
-                )
+                val blockType = event.to.block.type
+                if (blockType != waterMaterial && blockType != stationaryWaterMaterial)
                 {
                     return@handler
                 }

@@ -15,10 +15,6 @@ import gg.tropic.practice.player.PlayerState
 import gg.tropic.practice.queue.QueueService
 import net.evilblock.cubed.util.CC
 
-/**
- * @author Elb1to
- * @since 10/19/2023
- */
 @AutoRegister
 object SpectateCommand : ScalaCommand()
 {

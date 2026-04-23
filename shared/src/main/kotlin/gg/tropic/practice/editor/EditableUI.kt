@@ -9,10 +9,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemFlag
 
-/**
- * @author Subham
- * @since 7/5/25
- */
 data class EditableUI(
     val id: String,
     var size: Int = 27,

@@ -6,10 +6,6 @@ import gg.tropic.practice.provider.MiniProviderVersion
 import gg.tropic.practice.ugc.HostedWorldInstanceReference
 import gg.tropic.practice.ugc.WorldInstanceProviderType
 
-/**
- * @author GrowlyX
- * @since 9/25/2023
- */
 data class InstanceMetadata(
     val availableMinigames: Set<String>,
     val version: MiniProviderVersion,

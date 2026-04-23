@@ -10,10 +10,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 7/5/25
- */
 class EditableUIViewAllMenu : PaginatedMenu()
 {
     init

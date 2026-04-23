@@ -11,10 +11,6 @@ import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
-/**
- * @author Subham
- * @since 6/27/25
- */
 class ManageQuestRewardMenu(
     private val questId: String,
     private val rewardIndex: Int

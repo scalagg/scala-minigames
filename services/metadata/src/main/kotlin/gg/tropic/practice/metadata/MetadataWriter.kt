@@ -1,16 +1,12 @@
 package gg.tropic.practice.metadata
 
-import net.evilblock.cubed.ScalaCommonsSpigot
+import io.lettuce.core.api.StatefulRedisConnection
 import net.evilblock.cubed.serializers.Serializers
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-/**
- * @author GrowlyX
- * @since 3/28/2025
- */
 class MetadataWriter
 {
     private val updates = mutableMapOf<String, String>()
@@ -18,9 +14,14 @@ class MetadataWriter
     private val updateLock = ReentrantLock()
 
     private var namespace = "tropicpractice"
+    private lateinit var connection: StatefulRedisConnection<String, String>
 
     fun withNamespace(namespace: String) = apply {
         this.namespace = namespace
+    }
+
+    fun withConnection(connection: StatefulRedisConnection<String, String>) = apply {
+        this.connection = connection
     }
 
     fun write(key: String, value: String)
@@ -42,7 +43,7 @@ class MetadataWriter
             bulk.putAll(updates)
             updates.clear()
 
-            ScalaCommonsSpigot.instance.kvConnection.sync()
+            connection.sync()
                 .setex(
                     "$namespace:metadata:bulk",
                     10,

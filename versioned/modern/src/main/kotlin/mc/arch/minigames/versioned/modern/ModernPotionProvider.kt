@@ -9,10 +9,6 @@ import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionType
 
-/**
- * @author Subham
- * @since 8/5/25
- */
 object ModernPotionProvider : PotionProvider
 {
     override fun buildPotion(

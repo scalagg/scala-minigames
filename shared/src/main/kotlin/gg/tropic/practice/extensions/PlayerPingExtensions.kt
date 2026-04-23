@@ -1,9 +1,5 @@
 package gg.tropic.practice.extensions
 
-/**
- * @author GrowlyX
- * @since 12/24/2023
- */
 fun formatPlayerPing(ping: Int) = when (true)
 {
     (ping > 110) -> "&c"

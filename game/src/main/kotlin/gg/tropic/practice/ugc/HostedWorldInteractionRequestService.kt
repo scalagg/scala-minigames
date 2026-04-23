@@ -5,10 +5,6 @@ import gg.scala.flavor.service.Service
 import gg.tropic.practice.ugc.handler.AddPlayerHandler
 import gg.tropic.practice.ugc.handler.WorldLoadHandler
 
-/**
- * @author Subham
- * @since 7/18/25
- */
 @Service
 object HostedWorldInteractionRequestService
 {

@@ -1,20 +1,16 @@
 package gg.tropic.practice.application.api.defaults.defaults.kit
 
-import gg.scala.commons.persist.datasync.DataSyncKeys
-import gg.scala.commons.persist.datasync.DataSyncService
-import gg.scala.commons.persist.datasync.DataSyncSource
+import gg.tropic.practice.application.api.defaults.DPSDataSync
+import gg.tropic.practice.application.api.defaults.DPSDataSyncKeys
+import gg.tropic.practice.application.api.defaults.DPSDataSyncSource
 import gg.tropic.practice.namespace
 import gg.tropic.practice.namespaceShortened
 import gg.tropic.practice.suffixWhenDev
 import net.kyori.adventure.key.Key
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
-object KitDataSync : DataSyncService<ImmutableKitContainer>()
+object KitDataSync : DPSDataSync<ImmutableKitContainer>()
 {
-    object DPSMapKeys : DataSyncKeys
+    object DPSMapKeys : DPSDataSyncKeys
     {
         override fun newStore() = "mi-practice-kits"
 
@@ -22,18 +18,8 @@ object KitDataSync : DataSyncService<ImmutableKitContainer>()
         override fun sync() = Key.key(namespaceShortened().suffixWhenDev(), "ksync")
     }
 
-    override fun locatedIn() = DataSyncSource.Mongo
+    override fun locatedIn() = DPSDataSyncSource.Mongo
 
     override fun keys() = DPSMapKeys
     override fun type() = ImmutableKitContainer::class.java
-
-    private val hooks = mutableListOf<() -> Unit>()
-
-    fun onReload(hook: () -> Unit) = hooks.add(hook)
-
-    override fun postReload()
-    {
-        super.postReload()
-        hooks.forEach { it() }
-    }
 }

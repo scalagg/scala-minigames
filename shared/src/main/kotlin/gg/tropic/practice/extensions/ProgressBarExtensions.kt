@@ -5,10 +5,6 @@ import net.evilblock.cubed.util.bukkit.Constants
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-/**
- * @author Subham
- * @since 6/28/25
- */
 fun createProgressBar(progress: Double, total: Double): String
 {
     if (progress > total) return "${CC.GREEN}${CC.STRIKE_THROUGH} ".repeat(18)

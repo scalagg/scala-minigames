@@ -3,10 +3,6 @@ package gg.tropic.practice.settings.restriction
 import gg.scala.basics.plugin.settings.SettingValue
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 10/15/2023
- */
 enum class RangeRestriction(private val diffsBy: Int) : SettingValue
 {
     _10(10),

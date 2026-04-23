@@ -4,10 +4,6 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
 
-/**
- * @author Subham
- * @since 5/23/25
- */
 object MetadataScannerCustomizer
 {
     @CommandManagerCustomizer

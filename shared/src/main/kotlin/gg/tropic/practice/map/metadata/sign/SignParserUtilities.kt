@@ -8,10 +8,6 @@ import org.bukkit.block.BlockFace
 import org.bukkit.material.Sign
 import java.util.LinkedList
 
-/**
- * @author GrowlyX
- * @since 11/10/2022
- */
 fun List<String>.parseIntoMetadata(location: Location, usedSynthetically: Boolean = false): MapSignMetadataModel?
 {
     if (size < 2)

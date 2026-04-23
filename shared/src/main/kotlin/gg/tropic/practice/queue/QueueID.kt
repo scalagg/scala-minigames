@@ -3,10 +3,6 @@ package gg.tropic.practice.queue
 import gg.tropic.practice.kit.Kit
 import kotlin.properties.Delegates
 
-/**
- * @author GrowlyX
- * @since 8/10/2024
- */
 class DSLQueueID
 {
     private var kitID: String? = null

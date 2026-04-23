@@ -38,7 +38,7 @@ import gg.tropic.practice.serializable.Message
 import gg.tropic.practice.suffixWhenDev
 import gg.scala.minigame.skywars.shared.SkyWarsMode
 import gg.tropic.practice.application.api.defaults.DPSRedisService
-import net.evilblock.cubed.ScalaCommonsSpigot
+import gg.tropic.practice.application.operator.GameServerProvisioner
 import net.evilblock.cubed.serializers.Serializers
 import net.md_5.bungee.api.chat.ClickEvent
 import java.util.*
@@ -48,10 +48,6 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
-/**
- * @author GrowlyX
- * @since 9/24/2023
- */
 object GameQueueManager
 {
     var forceSpecificRegionGames: Region? = null
@@ -87,22 +83,12 @@ object GameQueueManager
             return CompletableFuture.completedFuture(null)
         }
 
-        /**
-         * Although we check for the map lock when searching for a random map,
-         * we want to handle this edge case for duels and anything else.
-         */
         if (map.locked)
         {
             fail("Map service gave an unavailable result for the map")
             return CompletableFuture.completedFuture(null)
         }
 
-        /**
-         * At this point, we have a [GameExpectation] that is saved in Redis, and
-         * we've gotten rid of the queue entries from the list portion of queue. The players
-         * still think they are in the queue, so we can generate the map and THEN update
-         * their personal queue status. If they, for some reason, LEAVE the queue at this time, then FUCK ME!
-         */
         val serverStatuses = ReplicationManager.allServerStatuses()
         val serverToReplicationMappings = serverStatuses.entries
             .filter {
@@ -130,17 +116,43 @@ object GameQueueManager
                         .withinScopeOf(forceSpecificRegionGames ?: region)
             }
 
-        // if there's an existing replication to house the game, we can send them directly
-        // there. if not, we'll take the server with the least player count
-        val serverToRequestReplication = availableReplication?.server
-            ?: (ServerSelectionStrategy.select(
+        
+        val selectedServer = availableReplication?.server
+            ?: ServerSelectionStrategy.select(
                 requiredVersion = version,
                 requiredType = MiniProviderType.MINIGAME,
                 region = region,
                 excludeInstance = excludeInstance,
                 minigameOrchestratorID = expectation.miniGameConfiguration?.orchestratorID,
                 selectNewestInstance = selectNewestInstance,
-            )?.id)
+            )?.id
+
+        if (selectedServer == null)
+        {
+            val provisioner = GameServerProvisioner.instance
+            if (provisioner != null && provisioner.isAvailable())
+            {
+                val gameType = expectation.miniGameConfiguration?.orchestratorID
+                    ?.lowercase() ?: "bedwars"
+
+                val newServerId = provisioner.provision(gameType)
+                if (newServerId != null)
+                {
+                    RedisShared.sendMessage(
+                        expectation.players.toList(),
+                        listOf("&eStarting a new game server, please wait...")
+                    )
+
+                    return CompletableFuture.runAsync({
+                        Thread.sleep(30_000L)
+                    }).thenCompose {
+                        prepareGameFor(map, expectation, region, excludeInstance, version, selectNewestInstance)
+                    }
+                }
+            }
+        }
+
+        val serverToRequestReplication = selectedServer
             ?: return run {
                 fail("No server available to host your minigame")
                 CompletableFuture.completedFuture(null)
@@ -193,12 +205,12 @@ object GameQueueManager
         val executor = Executors.newScheduledThreadPool(3)
         queueHolder.configure(executor)
 
-        val previouslyQueued = ScalaCommonsSpigot.instance.kvConnection
+        val previouslyQueued = RedisShared.keyValueCache
             .sync()
             .hkeys("$queueV2Namespace:states")
             .map { UUID.fromString(it) }
 
-        ScalaCommonsSpigot.instance.kvConnection
+        RedisShared.keyValueCache
             .sync()
             .del("$queueV2Namespace:states")
 
@@ -293,7 +305,6 @@ object GameQueueManager
                                 )
                             }
 
-                        // we need to do the check again, so why not
                         val map = if (request.mapID == null)
                         {
                             MapDataSync
@@ -337,7 +348,6 @@ object GameQueueManager
                 val kit = KitDataSync.cached().kits[kitID]
                     ?: return@listen
 
-                // we need to do the check again, so why not
                 val map = if (mapID == null)
                 {
                     MapDataSync
@@ -531,7 +541,7 @@ object GameQueueManager
                                 (!kit.features(FeatureFlag.Ranked) || QueueType.Ranked !in model.second)
                             )
                             {
-                                // a ranked queue exists for this kit, but the kit no longer supports ranked
+
                                 queueHolder.forgetPlayerQueue(queueId)
                                 return@scope
                             }
@@ -572,7 +582,7 @@ object GameQueueManager
             "bw_mini_duos" to BedWarsMode.DOUBLES,
             "bw_mega_quads" to BedWarsMode.QUADS,
             "bw_mega_trios" to BedWarsMode.TRIOS,
-            "bw_special_4v4" to BedWarsMode.DREAMS,
+            "bw_special_4v4" to BedWarsMode.FOURS,
         )
 
         bedwarsKitIDs.forEach {
@@ -585,21 +595,6 @@ object GameQueueManager
                 queueHolder.forgetPlayerQueue(it.first)
             }
         }
-
-//        val mappings = listOf(
-//            "sumoevent" to EventType.SUMO
-//        )
-//
-//        mappings.forEach {
-//            val eventKit = KitDataSync.cached().kits[it.first]
-//            if (eventKit != null)
-//            {
-//                queueHolder.trackPlayerQueue(EventsSubscribableMinigamePlayerQueue(eventKit, it.second))
-//            } else
-//            {
-//                queueHolder.forgetPlayerQueue(it.first)
-//            }
-//        }
 
         val skywarsKitIDs = listOf(
             SkyWarsMode.MINI to "sw_mini",
@@ -617,24 +612,6 @@ object GameQueueManager
             }
         }
 
-//        val kitId = listOf(
-//            MiniWallsMode.MAIN to "mw_main",
-//            MiniWallsMode.DM_FASTTRACK to "dm_fasttrack",
-//        )
-//
-//        kitId.forEach { pair ->
-//            val miniWallsKit = KitDataSync.cached().kits[pair.second]
-//            if (miniWallsKit != null)
-//            {
-//                println("tracked mini walls queue")
-//                queueHolder.trackPlayerQueue(MiniWallsSubscribableMinigamePlayerQueue(miniWallsKit, pair.first))
-//            } else
-//            {
-//                queueHolder.forgetPlayerQueue(pair.second)
-//            }
-//        }
-
-        // cleanup queues for kits that no longer exist
         queueHolder.playerQueues.forEach { (key, queue) ->
             val kitId = queue.toQueueIDComponents()?.kitID
                 ?: return@forEach

@@ -6,10 +6,6 @@ import gg.tropic.practice.minigame.rejoin.RejoinToken
 import gg.tropic.practice.minigame.rejoin.TrackedPlayerRejoin
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 data class PlayerMiniGameRejoinTokenExpiredEvent(
     val game: MiniGameLifecycle<*>,
     val player: UUID,

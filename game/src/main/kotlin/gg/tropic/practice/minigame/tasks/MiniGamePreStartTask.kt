@@ -15,10 +15,6 @@ import org.bukkit.Sound
 import org.bukkit.enchantments.Enchantment
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 8/24/2024
- */
 class MiniGamePreStartTask(
     private val game: AbstractMiniGameGameImpl<*>
 ) : Runnable, AutoCloseable

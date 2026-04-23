@@ -2,10 +2,6 @@ package gg.tropic.practice
 
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 7/16/2024
- */
 object Globals
 {
     @JvmStatic

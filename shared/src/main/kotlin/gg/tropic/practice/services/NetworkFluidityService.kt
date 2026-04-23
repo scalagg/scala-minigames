@@ -34,10 +34,6 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.text.toIntOrNull
 
-/**
- * @author GrowlyX
- * @since 12/17/2023
- */
 @Service
 object NetworkFluidityService
 {
@@ -121,7 +117,7 @@ object NetworkFluidityService
                         return@map OnlinePracticePlayer(
                             username = it.name,
                             rankWeight = rank.weight,
-                            displayName = lemonPlayer.getColoredName()
+                            displayName = lemonPlayer.getColoredName(prefixIncluded = true)
                         )
                     }
 

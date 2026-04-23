@@ -8,10 +8,6 @@ import gg.tropic.practice.map.MapService
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 
-/**
- * @author GrowlyX
- * @since 9/22/2023
- */
 object MapCommandCustomizers
 {
     @CommandManagerCustomizer

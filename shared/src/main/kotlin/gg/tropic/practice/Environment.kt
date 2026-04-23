@@ -6,10 +6,6 @@ import gg.scala.lemon.util.QuickAccess.username
 import net.evilblock.cubed.util.CC
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 2/10/2024
- */
 var devProvider: () -> Boolean = { false }
 
 fun isDev() = devProvider()
@@ -27,7 +23,3 @@ fun String.suffixWhenDev() = (if (isDev()) "${if (this == "tropicpractice")
 
 fun isMiniGameServer() = "mipgame" in ServerSync.local.groups
 
-//fun UUID.toDisplayName() = PlayerStatusTrackerService.loadStatusOf(this)
-//    .join()
-//    ?.prefixedName
-//    ?: "${CC.GRAY}${username()}"
