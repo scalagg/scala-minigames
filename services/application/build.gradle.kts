@@ -10,13 +10,13 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":services:queue"))
     implementation(project(":services:hosted-world-gateway"))
-    implementation(project(":services:application:api"))
+    implementation(project(":services:application:shared"))
 
     implementation(project(":minigames:skywars-shared"))
 //    implementation(project(":minigames:miniwalls-shared"))
     implementation(project(":minigames:bedwars-shared"))
-    implementation(project(":microgames:bridging-api"))
-    implementation(project(":microgames:events-api"))
+    implementation(project(":microgames:bridging-shared"))
+    implementation(project(":microgames:events-shared"))
 
     implementation("org.apache.commons:commons-lang3:3.14.0")
 

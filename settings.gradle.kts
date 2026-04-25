@@ -16,11 +16,11 @@ include(
     "parties", "agent",
 
     "microgames:events",
-    "microgames:events-api",
+    "microgames:events-shared",
     "microgames:events-lobby",
 
 //    "persistentgames:housing",
-//    "persistentgames:housing-api",
+//    "persistentgames:housing-shared",
 //    "persistentgames:housing-lobby",
 
     "versioned:generics",
@@ -28,7 +28,7 @@ include(
     "versioned:modern",
 
     "microgames:bridging",
-    "microgames:bridging-api",
+    "microgames:bridging-shared",
 
     "services:application",
     "services:replications",
@@ -36,7 +36,7 @@ include(
     "services:metadata",
     "services:hosted-world-gateway",
 
-    "services:application:api",
+    "services:application:shared",
     "services:games:game-manager",
 
     "minigames:skywars",
@@ -55,4 +55,4 @@ include(
 )
 
 include("persistentgames:prisons")
-include("persistentgames:prisons-api")
+include("persistentgames:prisons-shared")

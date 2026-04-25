@@ -12,30 +12,12 @@ plugins {
 }
 
 var currentBranch: String = "master"
-val userHome = "D:\\.gradle"
 
 allprojects {
     group = "gg.scala.minigames"
     version = "1.7.0"
 
     repositories {
-        mavenLocal {
-            content {
-                includeModule("gg.scala.commons", "bukkit")
-//                includeModule("gg.scala.commons", "modern-access")
-                includeModule("gg.scala.commons", "core")
-                includeModule("gg.scala.commons", "commons")
-                includeModule("gg.scala.commons", "store")
-                includeModule("gg.scala.commons", "serversync")
-                includeModule("gg.scala.commons", "serializers")
-                includeModule("gg.scala.basics.plugin", "scala-basics-plugin")
-                includeModule("lol.arch.symphony", "api")
-                includeModule("gg.scala.staff", "scala-scstaff-plugin")
-                includeModule("gg.scala.friends", "scala-friends")
-                includeModule("gg.scala.game.extensions", "scala-core-game-extensions")
-                includeModule("gg.scala.lemon", "bukkit")
-            }
-        }
         configureScalaRepository()
         configureScalaRepository(dev = true)
 
@@ -47,6 +29,7 @@ allprojects {
         maven {
             url = uri("https://repo.dmulloy2.net/repository/public/")
         }
+        maven("https://repo.mincats.eu/mirrors")
     }
 }
 
@@ -69,12 +52,14 @@ subprojects {
         compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
         compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.5")
 
-        compileOnly("gg.scala.spigot:server:1.1.3")
-        compileOnly(files("$userHome/caches/modules-2/files-2.1/com.github.retrooper/packetevents-spigot/2.11.2/69fbb3310cca52004d4b9a5af607cd80f379f7bc/packetevents-spigot-2.11.2.jar"))
-        compileOnly(files("$userHome/caches/modules-2/files-2.1/com.github.retrooper/packetevents-api/2.11.2/acb60a83fa6eb26746fabc7efe58fcfafe27eec5/packetevents-api-2.11.2.jar"))
+//        compileOnly("gg.scala.spigot:server:1.1.3")
+        compileOnly("gg.scala.spigot:Spigot-API:1.5.4")
+        compileOnly("gg.scala.spigot:Spigot-Server:1.5.4")
+        compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+        compileOnly("com.github.retrooper:packetevents-shared:2.11.2")
         compileOnly("gg.scala.lemon:bukkit:2.1.5")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
-        implementation("dev.cubxity.plugins:unifiedmetrics-api:0.3.8")
+        compileOnly("dev.cubxity.plugins:unifiedmetrics-shared:0.3.6")
         implementation("com.squareup.retrofit2:retrofit:2.9.0")
         implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     }

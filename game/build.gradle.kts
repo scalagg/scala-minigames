@@ -11,14 +11,15 @@ dependencies {
     api(project(":versioned:legacy"))
     api(project(":versioned:modern"))
 
-    compileOnly(project(":services:application:api"))
+    compileOnly(project(":services:application:shared"))
     compileOnly(project(":parties"))
     compileOnly(fileTree("spigot"))
 
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
-    compileOnly("com.lunarclient:apollo-api:1.2.5")
+    compileOnly("com.lunarclient:apollo-shared:1.2.5")
 
-    val commonsVersion = property("commonsVersion")
+//    val commonsVersion = property("commonsVersion")
 //    compileOnly("gg.scala.commons:modern-access:$commonsVersion")
+    compileOnly("dev.cubxity.plugins:unifiedmetrics-shared:0.3.6")
     compileOnly("com.lunarclient:apollo-extra-adventure4:1.2.5")
 }
