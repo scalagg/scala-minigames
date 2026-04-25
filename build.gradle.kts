@@ -22,7 +22,7 @@ allprojects {
         mavenLocal {
             content {
                 includeModule("gg.scala.commons", "bukkit")
-                includeModule("gg.scala.commons", "modern-access")
+//                includeModule("gg.scala.commons", "modern-access")
                 includeModule("gg.scala.commons", "core")
                 includeModule("gg.scala.commons", "commons")
                 includeModule("gg.scala.commons", "store")
@@ -64,16 +64,17 @@ subprojects {
         compileOnly("gg.scala.commons:bukkit:$commonsVersion")
 
         compileOnly("gg.scala.store:spigot:1.0.0")
-        compileOnly("gg.scala.staff:scala-scstaff-plugin:1.1.1")
-        compileOnly("gg.scala.friends:scala-friends:2.1.1")
+        compileOnly("gg.scala.staff:scala-scstaff-plugin:1.2.2")
+        compileOnly("gg.scala.friends:scala-friends:2.1.3")
         compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
-        compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.3")
+        compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.5")
 
         compileOnly("gg.scala.spigot:server:1.1.3")
         compileOnly(files("$userHome/caches/modules-2/files-2.1/com.github.retrooper/packetevents-spigot/2.11.2/69fbb3310cca52004d4b9a5af607cd80f379f7bc/packetevents-spigot-2.11.2.jar"))
         compileOnly(files("$userHome/caches/modules-2/files-2.1/com.github.retrooper/packetevents-api/2.11.2/acb60a83fa6eb26746fabc7efe58fcfafe27eec5/packetevents-api-2.11.2.jar"))
         compileOnly("gg.scala.lemon:bukkit:2.1.5")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
+        implementation("dev.cubxity.plugins:unifiedmetrics-api:0.3.8")
         implementation("com.squareup.retrofit2:retrofit:2.9.0")
         implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     }

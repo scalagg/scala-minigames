@@ -1,6 +1,5 @@
 package mc.arch.minigames.parties.command
 
-import gg.scala.basics.plugin.commands.bukkit
 import gg.scala.basics.plugin.profile.BasicsProfile
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
 import gg.scala.commons.acf.CommandHelp
