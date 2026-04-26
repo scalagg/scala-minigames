@@ -54,7 +54,7 @@ pipeline {
         stage('Publish') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'scala-artifactory-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh "./gradlew artifactoryPublish --no-daemon -Partifactory_user=$USER -Partifactory_password=$PASS -Partifactory_contextUrl=$ARTIFACTORY_URL -Partifactory_release=$ARTIFACTORY_RELEASE -Partifactory_release_local=$ARTIFACTORY_RELEASE_LOCAL"
+                    sh "./gradlew publish --no-daemon -Partifactory_user=$USER -Partifactory_password=$PASS -Partifactory_contextUrl=$ARTIFACTORY_URL -Partifactory_release=$ARTIFACTORY_RELEASE -Partifactory_release_local=$ARTIFACTORY_RELEASE_LOCAL"
                 }
             }
         }
