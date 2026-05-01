@@ -20,6 +20,6 @@ dependencies {
 
 //    val commonsVersion = property("commonsVersion")
 //    compileOnly("gg.scala.commons:modern-access:$commonsVersion")
-    compileOnly("dev.cubxity.plugins:unifiedmetrics-shared:0.3.6")
+    compileOnly("dev.cubxity.plugins:unifiedmetrics-api:0.3.6")
     compileOnly("com.lunarclient:apollo-extra-adventure4:1.2.5")
 }

@@ -4,7 +4,7 @@ dependencies {
     compileOnly(project(":services:replications"))
     compileOnly(project(":services:games:game-manager"))
 
-    api("lol.arch.symphony:shared:1.1.1")
+    api("lol.arch.symphony:api:1.1.1")
 
 //    compileOnly(project(":minigames:miniwalls-shared"))
     compileOnly(project(":minigames:skywars-shared"))

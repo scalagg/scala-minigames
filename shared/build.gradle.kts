@@ -23,5 +23,5 @@ dependencies {
 
     api("joda-time:joda-time:2.12.5")
     api("xyz.xenondevs:particle:1.7.1")
-    api("lol.arch.symphony:shared:1.1.1")
+    api("lol.arch.symphony:api:1.1.1")
 }

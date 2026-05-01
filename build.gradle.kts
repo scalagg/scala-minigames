@@ -20,7 +20,9 @@ allprojects {
     repositories {
         configureScalaRepository()
         configureScalaRepository(dev = true)
-
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
+        maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
         mavenCentral()
         maven {
             name = "lunarclient"
@@ -29,7 +31,6 @@ allprojects {
         maven {
             url = uri("https://repo.dmulloy2.net/repository/public/")
         }
-        maven("https://repo.mincats.eu/mirrors")
     }
 }
 
@@ -56,10 +57,10 @@ subprojects {
         compileOnly("gg.scala.spigot:Spigot-API:1.5.4")
         compileOnly("gg.scala.spigot:Spigot-Server:1.5.4")
         compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
-        compileOnly("com.github.retrooper:packetevents-shared:2.11.2")
+        compileOnly("com.github.retrooper:packetevents-api:2.11.2")
         compileOnly("gg.scala.lemon:bukkit:2.1.5")
         compileOnly("gg.scala.cloudsync:spigot:1.0.4")
-        compileOnly("dev.cubxity.plugins:unifiedmetrics-shared:0.3.6")
+        compileOnly("dev.cubxity.plugins:unifiedmetrics-api:0.3.6")
         implementation("com.squareup.retrofit2:retrofit:2.9.0")
         implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     }
