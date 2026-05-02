@@ -54,7 +54,7 @@ abstract class TemplateCosmeticsMenu : Menu("My Cosmetics")
 
             val builder = if (group.skullTexture != null)
             {
-                ItemBuilder(ItemStack(Material.SKULL_ITEM, 1, 3.toShort()))
+                ItemBuilder(ItemStack(Material.PLAYER_HEAD, 1))
                     .setBase64Head(group.skullTexture!!)
             }
             else

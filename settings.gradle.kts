@@ -24,7 +24,6 @@ include(
 //    "persistentgames:housing-lobby",
 
     "versioned:generics",
-    "versioned:legacy",
     "versioned:modern",
 
     "microgames:bridging",

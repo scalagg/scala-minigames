@@ -26,7 +26,7 @@ object RegionCommand : ScalaCommand()
             .online(it.uniqueId)
             .join()
 
-        if (!isPlayerOnline || !player.bukkit().canSee(it.bukkitPlayer))
+        if (!isPlayerOnline || !player.bukkit().canSee(it.bukkitPlayer!!))
         {
             throw ConditionFailedException(
                 "The player ${CC.YELLOW}${it.name}${CC.RED} is not logged onto the network."

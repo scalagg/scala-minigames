@@ -107,9 +107,9 @@ data class Kit(
         if (potionEffects.isNotEmpty())
         {
             potionEffects.forEach { (t, u) ->
-                player.addPotionEffect(PotionEffect(
-                    PotionEffectType.getByName(t), Int.MAX_VALUE, u
-                ))
+                PotionEffectType.getByName(t)?.let { type ->
+                    player.addPotionEffect(PotionEffect(type, Int.MAX_VALUE, u))
+                }
             }
         }
 

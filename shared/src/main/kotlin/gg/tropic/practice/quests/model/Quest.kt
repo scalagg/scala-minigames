@@ -162,7 +162,7 @@ data class Quest(
                             {
                                 QuestTrackerState.INACTIVE ->
                                 {
-                                    player.playSound(player.location, XSound.ENTITY_PLAYER_LEVELUP.parseSound(), 1.0f, 1.0f)
+                                    player.playSound(player.location, XSound.ENTITY_PLAYER_LEVELUP.parseSound()!!, 1.0f, 1.0f)
                                     player.sendMessage("${CC.GREEN}You activated the ${CC.GOLD}${lifetime.name} Quest: $name${CC.GREEN}!")
                                     updateState(player.uniqueId, QuestTrackerState.ACTIVE)
                                     menu.openMenu(player)

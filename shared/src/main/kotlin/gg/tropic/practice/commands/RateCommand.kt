@@ -55,7 +55,7 @@ object RateCommand : ScalaCommand()
                         .save(newRating, DataStoreStorageType.MONGO)
                 }
                 .thenRunAsync {
-                    player.playSound(player.location, XSound.ENTITY_PLAYER_LEVELUP.parseSound(), 1.0f, 1.0f)
+                    player.playSound(player.location, XSound.ENTITY_PLAYER_LEVELUP.parseSound()!!, 1.0f, 1.0f)
                     player.sendMessage("${CC.GREEN}Thank you for providing feedback for the map ${CC.YELLOW}${map.displayName}${CC.GREEN}!")
                 }
         }

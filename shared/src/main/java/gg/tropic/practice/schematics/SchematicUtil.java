@@ -77,10 +77,15 @@ public class SchematicUtil {
     @SuppressWarnings("deprecation")
     private static Material getNullableMaterial(short blockId, byte data) {
         try {
-            return Objects.requireNonNullElse(Material.getMaterial(blockId), XMaterial.STONE.parseMaterial());
+            for (Material legacy : Material.values()) {
+                if (legacy.isLegacy() && legacy.getId() == blockId) {
+                    return Bukkit.getUnsafe().fromLegacy(legacy, data).getMaterial();
+                }
+            }
+            return XMaterial.STONE.parseMaterial();
         } catch (Exception e) {
             Bukkit.getLogger().warning("Error getting material for block ID " + blockId + ": " + e.getMessage());
-            return XMaterial.STONE.parseMaterial(); 
+            return XMaterial.STONE.parseMaterial();
         }
     }
 

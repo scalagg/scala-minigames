@@ -30,7 +30,7 @@ object PracticeShared
 
                     override fun read(`in`: JsonReader?): PotionEffectType?
                     {
-                        return PotionEffectType.getByName(`in`?.nextString())
+                        return `in`?.nextString()?.let { PotionEffectType.getByName(it) }
                     }
                 }
             )

@@ -88,7 +88,7 @@ object PracticePlayerCommsService
             }
 
             usePlayer {
-                message.sendToPlayer(player)
+                message.sendToPlayer(player!!)
             }
         }
 
@@ -118,7 +118,7 @@ object PracticePlayerCommsService
                 {
                     playSound(
                         location,
-                        Sound.NOTE_PLING,
+                        Sound.BLOCK_NOTE_BLOCK_PLING,
                         1.0f,
                         1.0f
                     )

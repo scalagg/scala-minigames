@@ -8,10 +8,8 @@ repositories {
 dependencies {
     api(project(":services:metadata"))
     compileOnly(project(":parties"))
-    compileOnly(fileTree("spigot"))
 
     compileOnly(project(":versioned:generics"))
-    compileOnly(project(":versioned:legacy"))
     compileOnly(project(":versioned:modern"))
 
 //    compileOnly(fileTree("worldedit"))
@@ -20,8 +18,6 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
     compileOnly("com.grinderwolf:slimeworldmanager-plugin:2.2.1")
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
-    // Server bundles fastutil at runtime; needed on compile classpath for BlockChanger's bulk maps.
-    compileOnly("it.unimi.dsi:fastutil:8.5.13")
 
     api("joda-time:joda-time:2.12.5")
     api("xyz.xenondevs:particle:1.7.1")

@@ -28,7 +28,7 @@ object MatchInfoCommand : ScalaCommand()
                 .online(it.uniqueId)
                 .join()
 
-            if (!online || !player.bukkit().canSee(it.bukkitPlayer))
+            if (!online || !player.bukkit().canSee(it.bukkitPlayer!!))
             {
                 throw ConditionFailedException(
                     "The player ${CC.YELLOW}${it.name} is not logged onto the network."

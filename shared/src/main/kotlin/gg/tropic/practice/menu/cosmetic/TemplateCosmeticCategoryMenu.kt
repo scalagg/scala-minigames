@@ -296,7 +296,7 @@ abstract class TemplateCosmeticCategoryMenu(
 
         val builder = if (entry.skullTexture != null)
         {
-            ItemBuilder(ItemStack(Material.SKULL_ITEM, 1, 3.toShort()))
+            ItemBuilder(ItemStack(Material.PLAYER_HEAD, 1))
                 .setBase64Head(entry.skullTexture!!)
                 .name("$nameColor${entry.displayName}")
                 .addToLore(*lore.toTypedArray())
@@ -312,11 +312,11 @@ abstract class TemplateCosmeticCategoryMenu(
         if (isSelected)
         {
             builder
-                .enchant(Enchantment.DURABILITY, 1)
+                .enchant(Enchantment.UNBREAKING, 1)
                 .addFlags(ItemFlag.HIDE_ENCHANTS)
         }
 
-        builder.addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_POTION_EFFECTS)
+        builder.addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
 
         return builder.toButton { _, clickType ->
             if (clickType == ClickType.RIGHT && canPreview(group, entry))

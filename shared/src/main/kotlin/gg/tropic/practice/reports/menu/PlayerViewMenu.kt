@@ -87,7 +87,7 @@ class PlayerViewMenu(
                         "%.2f".format(snapshot.wastedHeals.toFloat())
                     }${Constants.HEART_SYMBOL}"
                 )
-                .addFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
+                .addFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
                 .toButton()
         } else if (snapshot.containsMushroomStews)
         {

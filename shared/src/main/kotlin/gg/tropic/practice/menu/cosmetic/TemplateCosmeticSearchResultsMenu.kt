@@ -98,7 +98,7 @@ abstract class TemplateCosmeticSearchResultsMenu(
 
             val builder = if (result.item.skullTexture != null)
             {
-                ItemBuilder(ItemStack(Material.SKULL_ITEM, 1, 3.toShort()))
+                ItemBuilder(ItemStack(Material.PLAYER_HEAD, 1))
                     .setBase64Head(result.item.skullTexture!!)
             }
             else

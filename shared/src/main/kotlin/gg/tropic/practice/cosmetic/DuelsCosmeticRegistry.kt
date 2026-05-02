@@ -219,7 +219,7 @@ object DuelsCosmeticRuntime
 
     fun createShieldPreview(patterns: List<DuelsShieldPatternDefinition>): ItemStack
     {
-        val item = ItemStack(shieldMaterial ?: Material.BANNER)
+        val item = ItemStack(shieldMaterial ?: Material.WHITE_BANNER)
         if (patterns.isEmpty()) {
             return item
         }

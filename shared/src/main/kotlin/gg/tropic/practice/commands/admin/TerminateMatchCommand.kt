@@ -31,7 +31,7 @@ object TerminateMatchCommand : ScalaCommand()
                 .online(it.uniqueId)
                 .join()
 
-            if (!online || (player is Player && !player.canSee(it.bukkitPlayer)))
+            if (!online || (player is Player && !player.canSee(it.bukkitPlayer!!)))
             {
                 throw ConditionFailedException(
                     "The player ${CC.YELLOW}${it.name} is not logged onto the network."

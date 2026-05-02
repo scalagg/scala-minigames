@@ -682,7 +682,7 @@ object KitCommands : ScalaCommand()
     {
         player.bukkit().inventory.addItem(
             ItemBuilder
-                .of(Material.FIREBALL)
+                .of(Material.FIRE_CHARGE)
                 .name("${CC.GOLD}Fireball ${CC.GRAY}(Right Click)")
                 .build()
         )

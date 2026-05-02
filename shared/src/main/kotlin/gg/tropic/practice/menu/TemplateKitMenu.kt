@@ -105,7 +105,7 @@ abstract class TemplateKitMenu(private val viewer: Player, private val dynamic: 
                     .addFlags(
                         ItemFlag.HIDE_ATTRIBUTES,
                         ItemFlag.HIDE_ENCHANTS,
-                        ItemFlag.HIDE_POTION_EFFECTS
+                        ItemFlag.HIDE_ADDITIONAL_TOOLTIP
                     )
                     .addToLore(
                         *itemDescriptionOf(player, it)

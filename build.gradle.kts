@@ -31,6 +31,10 @@ allprojects {
         maven {
             url = uri("https://repo.dmulloy2.net/repository/public/")
         }
+        maven {
+            name = "papermc"
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
     }
 }
 
@@ -53,9 +57,9 @@ subprojects {
         compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
         compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.5")
 
-//        compileOnly("gg.scala.spigot:server:1.1.3")
-        compileOnly("gg.scala.spigot:Spigot-API:1.5.4")
-        compileOnly("gg.scala.spigot:Spigot-Server:1.5.4")
+        // Dropped legacy 1.8 baseline (gg.scala.spigot:Spigot-API/Server:1.5.4) — modern Paper 1.21 only.
+        compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+        compileOnly("it.unimi.dsi:fastutil:8.5.13")
         compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
         compileOnly("com.github.retrooper:packetevents-api:2.11.2")
         compileOnly("gg.scala.lemon:bukkit:2.1.5")

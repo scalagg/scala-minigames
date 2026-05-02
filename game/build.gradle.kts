@@ -8,12 +8,10 @@ dependencies {
     api(project(":shared"))
 
     api(project(":versioned:generics"))
-    api(project(":versioned:legacy"))
     api(project(":versioned:modern"))
 
     compileOnly(project(":services:application:shared"))
     compileOnly(project(":parties"))
-    compileOnly(fileTree("spigot"))
 
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
     compileOnly("com.lunarclient:apollo-api:1.2.5")
