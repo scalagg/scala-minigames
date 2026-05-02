@@ -16,7 +16,7 @@ dependencies {
     compileOnly(fileTree("spigot"))
 
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
-    compileOnly("com.lunarclient:apollo-shared:1.2.5")
+    compileOnly("com.lunarclient:apollo-api:1.2.5")
 
 //    val commonsVersion = property("commonsVersion")
 //    compileOnly("gg.scala.commons:modern-access:$commonsVersion")

@@ -27,12 +27,12 @@ object ModernPotionProvider : PotionProvider
             .build()
 
         val meta = potion.itemMeta as PotionMeta
-        meta.displayName = "${CC.WHITE}$name"
+        meta.setDisplayName("${CC.WHITE}$name")
 
         if (customEffects.isEmpty())
         {
             meta.addCustomEffect(
-                PotionEffect(type.effectType, duration, level),
+                PotionEffect(type.effectType!!, duration, level),
                 true
             )
         } else

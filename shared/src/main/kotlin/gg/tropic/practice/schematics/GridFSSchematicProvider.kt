@@ -7,16 +7,16 @@ import com.mongodb.client.gridfs.model.GridFSFile
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
-import com.sk89q.jnbt.NBTOutputStream
-import com.sk89q.worldedit.LocalSession
+import com.sk89q.worldedit.EmptyClipboardException
 import com.sk89q.worldedit.WorldEdit
-import com.sk89q.worldedit.extent.clipboard.io.SchematicWriter
+import com.sk89q.worldedit.bukkit.BukkitAdapter
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat
+import com.sk89q.worldedit.session.ClipboardHolder
 import gg.scala.store.ScalaDataStoreShared
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.io.*
 import java.util.concurrent.CompletableFuture
-import java.util.zip.GZIPOutputStream
 
 class GridFSSchematicProvider
 {
@@ -93,22 +93,24 @@ class GridFSSchematicProvider
         }
 
     fun saveFromClipboard(player: Player, name: String) = CompletableFuture.supplyAsync {
-        val session = WorldEdit.getInstance().getSession(player.name)
-        if (session.clipboard == null)
+        val session = WorldEdit.getInstance().sessionManager
+            .get(BukkitAdapter.adapt(player))
+
+        val holder: ClipboardHolder = try
+        {
+            session.clipboard
+        } catch (e: EmptyClipboardException)
         {
             return@supplyAsync false
         }
 
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val gzipOutputStream = GZIPOutputStream(byteArrayOutputStream)
-        val nbtOutputStream = NBTOutputStream(gzipOutputStream)
+        val output = ByteArrayOutputStream()
+        BuiltInClipboardFormat.SPONGE_V3_SCHEMATIC.getWriter(output).use { writer ->
+            writer.write(holder.clipboard)
+        }
 
-        val writer = SchematicWriter(nbtOutputStream)
-        writer.write(session.clipboard.clipboard, session.selectionWorld.worldData)
-        writer.close()
-
-        gzipOutputStream.close()
-        saveSchematic(name, byteArrayOutputStream.toByteArray()).join()
+        saveSchematic(name, output.toByteArray()).join()
+        true
     }
 
     private fun schematicExistsSync(name: String): Boolean

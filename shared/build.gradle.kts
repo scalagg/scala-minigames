@@ -20,6 +20,8 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
     compileOnly("com.grinderwolf:slimeworldmanager-plugin:2.2.1")
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
+    // Server bundles fastutil at runtime; needed on compile classpath for BlockChanger's bulk maps.
+    compileOnly("it.unimi.dsi:fastutil:8.5.13")
 
     api("joda-time:joda-time:2.12.5")
     api("xyz.xenondevs:particle:1.7.1")
