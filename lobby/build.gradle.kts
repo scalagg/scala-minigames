@@ -10,7 +10,7 @@ dependencies {
     api(project(":shared"))
     compileOnly(project(":parties"))
     compileOnly(fileTree("spigot"))
-    api(project(":microgames:bridging-shared"))
+    api(project(":microgames:bridging-api"))
 
     compileOnly("gg.scala.queue:spigot:1.0.1")
     compileOnly("me.clip:placeholderapi:2.11.6")

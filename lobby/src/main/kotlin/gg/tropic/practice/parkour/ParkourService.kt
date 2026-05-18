@@ -81,7 +81,7 @@ object ParkourService
         Events
             .subscribe(PlayerInteractEvent::class.java)
             .filter {
-                it.hasItem() && it.action == Action.RIGHT_CLICK_AIR && it.item.isSimilar(leaveParkourItem)
+                it.hasItem() && it.action == Action.RIGHT_CLICK_AIR && it.item!!.isSimilar(leaveParkourItem)
             }
             .handler {
                 if (it.player.isPlayingParkour())
@@ -231,7 +231,7 @@ object ParkourService
     {
         player.playSound(
             player.location,
-            XSound.UI_BUTTON_CLICK.parseSound(),
+            XSound.UI_BUTTON_CLICK.parseSound()!!,
             1.0f, 1.0f
         )
 

@@ -351,7 +351,7 @@ class GameStopTask(
                 game.toBukkitPlayers()
                     .filterNotNull()
                     .forEach {
-                        it.itemInHand = reQueueItem
+                        it.inventory.setItemInMainHand(reQueueItem)
                         it.updateInventory()
                     }
 
@@ -359,7 +359,7 @@ class GameStopTask(
                     .subscribe(PlayerInteractEvent::class.java)
                     .filter {
                         it.action.name.contains("RIGHT") &&
-                            it.hasItem() && it.item.isSimilar(reQueueItem)
+                            it.hasItem() && it.item!!.isSimilar(reQueueItem)
                     }
                     .handler {
                         if (game.robot())
@@ -367,7 +367,7 @@ class GameStopTask(
                             game.botGameMetadata?.storeForUser(it.player.uniqueId)
                         }
 
-                        it.player.itemInHand = ItemStack(Material.AIR)
+                        it.player.inventory.setItemInMainHand(ItemStack(Material.AIR))
                         it.player.updateInventory()
                         it.player.sendMessage(
                             "${CC.GREEN}You will be queued again when you return to spawn!"

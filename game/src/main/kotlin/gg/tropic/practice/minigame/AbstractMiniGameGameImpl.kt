@@ -97,12 +97,6 @@ abstract class AbstractMiniGameGameImpl<T : MiniGameConfiguration>(
     {
         if (spectatorLocation != null)
         {
-
-            if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
-            {
-                arenaWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = false
-            }
-
             CompletableFuture
                 .supplyAsync {
                     getCylinderBlocks(
@@ -118,12 +112,6 @@ abstract class AbstractMiniGameGameImpl<T : MiniGameConfiguration>(
                         arenaWorld,
                         locations
                     )
-                }
-                .thenRun {
-                    if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
-                    {
-                        arenaWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = true
-                    }
                 }
                 .exceptionally { throwable ->
                     throwable.printStackTrace()

@@ -9,7 +9,7 @@ dependencies {
 //    compileOnly(project(":minigames:miniwalls-shared"))
     compileOnly(project(":minigames:skywars-shared"))
     compileOnly(project(":minigames:bedwars-shared"))
-    compileOnly(project(":microgames:events-shared"))
+    compileOnly(project(":microgames:events-api"))
 
     implementation("net.md-5:bungeecord-chat:1.20-R0.1")
 }

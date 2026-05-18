@@ -35,9 +35,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ServerVersion
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.minecraft.server.v1_8_R3.WorldSettings
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -293,7 +291,7 @@ object ExpectationService
             .filter {
                 it.hasItem() &&
                     (it.action == Action.RIGHT_CLICK_BLOCK || it.action == Action.RIGHT_CLICK_AIR) &&
-                    it.item.isSimilar(returnToSpawnItem)
+                    it.item!!.isSimilar(returnToSpawnItem)
             }
             .handler {
                 it.isCancelled = true
@@ -329,7 +327,7 @@ object ExpectationService
             .filter {
                 it.hasItem() &&
                     (it.action == Action.RIGHT_CLICK_BLOCK || it.action == Action.RIGHT_CLICK_AIR) &&
-                    it.item.isSimilar(spectateItem)
+                    it.item!!.isSimilar(spectateItem)
             }
             .filter {
                 GameService.isSpectating(it.player)
@@ -349,7 +347,7 @@ object ExpectationService
             .filter {
                 it.hasItem() &&
                     (it.action == Action.RIGHT_CLICK_BLOCK || it.action == Action.RIGHT_CLICK_AIR) &&
-                    it.item.isSimilar(spectatorSettingsItem)
+                    it.item!!.isSimilar(spectatorSettingsItem)
             }
             .filter {
                 GameService.isSpectating(it.player)
@@ -365,12 +363,6 @@ object ExpectationService
             .handler {
                 val pendingHostedWorldLogin = HostedWorldInstanceService
                     .pendingLoginInstance(it.player.uniqueId)
-
-                if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
-                {
-                    (it.player as CraftPlayer).handle.playerInteractManager
-                        .gameMode = WorldSettings.EnumGamemode.SURVIVAL
-                }
 
                 if (pendingHostedWorldLogin != null)
                 {
@@ -416,7 +408,7 @@ object ExpectationService
                     spawnLocation ?: game.arenaWorld.spawnLocation
                     ?: return@handler run {
                         println("Player ${it.player.name} tried logging in with no game spawn location")
-                        it.spawnLocation = Bukkit.getWorld("world").spawnLocation
+                        it.spawnLocation = Bukkit.getWorld("world")!!.spawnLocation
 
                         Schedulers
                             .sync()

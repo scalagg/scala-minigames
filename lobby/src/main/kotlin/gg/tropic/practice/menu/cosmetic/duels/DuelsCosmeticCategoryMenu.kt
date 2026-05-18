@@ -73,7 +73,7 @@ class DuelsCosmeticCategoryMenu(
 
         buttons[4] = currentPreview
             .name("${CC.YELLOW}Current ${duelsGroup().displayName.removeSuffix(" Cosmetics")}")
-            .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
+            .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
             .addToLore(
                 if (selected.id == "none") "${CC.GRAY}Nothing equipped" else "${CC.GRAY}${selected.displayName}",
                 "",

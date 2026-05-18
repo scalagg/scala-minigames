@@ -23,7 +23,7 @@ class PlayerMainMenu : Menu("Navigator")
     private fun menuItem(material: Material, title: String) = ItemBuilder
         .of(material)
         .name(title)
-        .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
+        .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
 
     override fun getButtons(player: Player) = mapOf(
         9 to menuItem(Material.matchMaterial("GRASS_BLOCK") ?: Material.EMERALD_BLOCK, MinigameModernAccess.gradient("Spawn", "#77d76a", "#d6ffb5"))

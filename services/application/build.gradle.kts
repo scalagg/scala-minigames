@@ -15,8 +15,8 @@ dependencies {
     implementation(project(":minigames:skywars-shared"))
 //    implementation(project(":minigames:miniwalls-shared"))
     implementation(project(":minigames:bedwars-shared"))
-    implementation(project(":microgames:bridging-shared"))
-    implementation(project(":microgames:events-shared"))
+    implementation(project(":microgames:bridging-api"))
+    implementation(project(":microgames:events-api"))
 
     implementation("org.apache.commons:commons-lang3:3.14.0")
 

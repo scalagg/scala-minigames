@@ -19,7 +19,7 @@ public class BlastProtectionUtil {
             return material.name().endsWith("_BED");
         }
 
-        return material == Material.BED_BLOCK;
+        return material == Material.RED_BED;
     }
 
     public static boolean isGlass(Material material) {

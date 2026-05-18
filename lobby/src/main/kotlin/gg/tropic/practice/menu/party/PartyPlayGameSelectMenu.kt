@@ -11,9 +11,9 @@ import org.bukkit.entity.Player
 class PartyPlayGameSelectMenu() : Menu("Select a game")
 {
     private val robotFightsMaterial = if (MinigameModernAccess.isModern()) {
-        Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("EYE_OF_ENDER") ?: Material.NETHER_STAR
+        Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_EYE") ?: Material.NETHER_STAR
     } else {
-        Material.EYE_OF_ENDER
+        Material.ENDER_EYE
     }
 
     init

@@ -58,19 +58,6 @@ class GameStartTask(
                             )
                         }
 
-                    val profile = game.flagMetaData(
-                        FeatureFlag.KnockbackProfile,
-                        "profile"
-                    )
-
-                    if (profile != null && ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
-                    {
-                        val customProfile = Bukkit.custom()
-                            .knockbackManager.profileManager
-                            .getProfile("default", profile)
-
-                        customProfile?.setKnockback(player)
-                    }
                 }
 
             val teamVersus = this.game.teams

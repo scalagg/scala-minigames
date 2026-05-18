@@ -16,7 +16,7 @@ include(
     "parties", "agent",
 
     "microgames:events",
-    "microgames:events-shared",
+    "microgames:events-api",
     "microgames:events-lobby",
 
 //    "persistentgames:housing",
@@ -27,7 +27,7 @@ include(
     "versioned:modern",
 
     "microgames:bridging",
-    "microgames:bridging-shared",
+    "microgames:bridging-api",
 
     "services:application",
     "services:replications",

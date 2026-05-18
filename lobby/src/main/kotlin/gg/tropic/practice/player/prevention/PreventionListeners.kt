@@ -10,8 +10,10 @@ import gg.tropic.practice.commands.menu.admin.prevention.AllowRemoveItemsWithinI
 import me.lucko.helper.Events
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.bukkit.ItemUtils
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
+import org.bukkit.inventory.ItemStack
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.*
@@ -50,7 +52,7 @@ object PreventionListeners
                 if (hasBuilderMetadata(event.player)) return@handler
                 if (event.clickedBlock != null)
                 {
-                    if (event.clickedBlock.type.name.contains("CHEST"))
+                    if (event.clickedBlock!!.type.name.contains("CHEST"))
                     {
                         event.isCancelled = true
                     }
@@ -110,12 +112,12 @@ object PreventionListeners
             .filter {
                 it.clickedInventory == it.whoClicked.inventory &&
                     (it.slotType == InventoryType.SlotType.ARMOR ||
-                        (runCatching { ItemUtils.itemTagHasKey(it.currentItem, "invokerc") }.getOrDefault(false)))
+                        (runCatching { ItemUtils.itemTagHasKey(it.currentItem!!, "invokerc") }.getOrDefault(false)))
             }
             .handler {
                 if (hasBuilderMetadata(it.whoClicked as Player)) return@handler
                 it.isCancelled = true
-                it.cursor = null
+                it.whoClicked.setItemOnCursor(ItemStack(Material.AIR))
             }
             .bindWith(plugin)
 

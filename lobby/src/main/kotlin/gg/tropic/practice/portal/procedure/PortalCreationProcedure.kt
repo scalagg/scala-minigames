@@ -13,6 +13,7 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.cuboid.Cuboid
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -47,7 +48,7 @@ object PortalCreationProcedure
                 val block = event.clickedBlock
 
                 if (!player.hasMetadata("creating-portal")) return@handler
-                if (!event.hasItem() || !event.item.isSimilar(wandItem)) return@handler
+                if (!event.hasItem() || !event.item!!.isSimilar(wandItem)) return@handler
 
                 if (action.name.startsWith("LEFT_CLICK"))
                 {
@@ -56,7 +57,7 @@ object PortalCreationProcedure
                         val currentPosition = positionMap[player.uniqueId]
                             ?: Pair(null, null)
                         val newPosition = currentPosition.copy(
-                            first = block.location
+                            first = block!!.location
                         )
 
                         positionMap[player.uniqueId] = newPosition
@@ -89,7 +90,7 @@ object PortalCreationProcedure
                                 player.sendMessage("${CC.GREEN}You have just created a new portal containing ${CC.WHITE}${portalToCreate.blocks.size} blocks${CC.GREEN}.")
 
                                 player.gameMode = GameMode.ADVENTURE
-                                player.itemInHand = null
+                                player.inventory.setItemInMainHand(ItemStack(Material.AIR))
                             }
                         }
                     }
@@ -100,7 +101,7 @@ object PortalCreationProcedure
                         val currentPosition = positionMap[player.uniqueId]
                             ?: Pair(null, null)
                         val newPosition = currentPosition.copy(
-                            second = block.location
+                            second = block!!.location
                         )
 
                         positionMap[player.uniqueId] = newPosition
@@ -114,7 +115,7 @@ object PortalCreationProcedure
                             positionMap.remove(player.uniqueId)
 
                             player.gameMode = GameMode.ADVENTURE
-                            player.itemInHand = null
+                            player.inventory.setItemInMainHand(ItemStack(Material.AIR))
                         }
                     }
                 }

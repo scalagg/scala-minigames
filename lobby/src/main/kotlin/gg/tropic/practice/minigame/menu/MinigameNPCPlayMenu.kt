@@ -22,9 +22,9 @@ data class MinigameNPCPlayMenu(
             "${CC.YELLOW}Click to play!"
         )
         .toButton { _, _ ->
-            Button.playNeutral(player)
-            player.closeInventory()
-            modeMetadata.joinGame(player)
+            Button.playNeutral(this)
+            this.closeInventory()
+            modeMetadata.joinGame(this)
         }
 
     fun Player.selectMapItem() = ItemBuilder
@@ -37,10 +37,10 @@ data class MinigameNPCPlayMenu(
             "${CC.YELLOW}Click to select!"
         )
         .toButton { _, _ ->
-            Button.playNeutral(player)
+            Button.playNeutral(this)
             MinigameMapSelectorMenu({
-                MinigameNPCPlayMenu(modeMetadata).openMenu(player)
-            }, modeMetadata).openMenu(player)
+                MinigameNPCPlayMenu(modeMetadata).openMenu(this)
+            }, modeMetadata).openMenu(this)
         }
 
     fun Player.rejoinItem() = ItemBuilder
@@ -53,13 +53,13 @@ data class MinigameNPCPlayMenu(
             "${CC.YELLOW}Click to select!"
         )
         .toButton { _, _ ->
-            Button.playNeutral(player)
-            player.closeInventory()
-            RejoinCommand.onRejoin(player, null)
+            Button.playNeutral(this)
+            this.closeInventory()
+            RejoinCommand.onRejoin(this, null)
                 .exceptionally { throwable ->
                     if (throwable is ConditionFailedException)
                     {
-                        player.sendMessage("${CC.RED}${throwable.message}")
+                        this.sendMessage("${CC.RED}${throwable.message}")
                     }
                     return@exceptionally null
                 }

@@ -48,7 +48,7 @@ fun Player.resetAttributes()
 
 fun Player.configureFlight()
 {
-    val basicsProfile = BasicsProfileService.find(player)
+    val basicsProfile = BasicsProfileService.find(this)
         ?: return
 
     if (
@@ -56,14 +56,14 @@ fun Player.configureFlight()
             "tropicprac:lobby-flight",
             StateSettingValue.ENABLED
         ) == StateSettingValue.ENABLED &&
-        player.hasPermission("practice.spawn-flight")
+        this.hasPermission("practice.spawn-flight")
     )
     {
-        player.allowFlight = true
-        player.isFlying = true
+        this.allowFlight = true
+        this.isFlying = true
     } else
     {
-        player.isFlying = false
-        player.allowFlight = false
+        this.isFlying = false
+        this.allowFlight = false
     }
 }

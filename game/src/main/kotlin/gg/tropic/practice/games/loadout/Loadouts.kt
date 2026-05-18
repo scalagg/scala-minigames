@@ -14,18 +14,18 @@ fun Player.fixInventoryBasedOnRBTeamColor()
     val game = GameService.byPlayer(this)
     if (game != null)
     {
-        val team = game.getTeamOf(player)
+        val team = game.getTeamOf(player!!)
         if (game.flag(FeatureFlag.RedBlueTeams))
         {
             val teamSide = team.teamIdentifier.toRBTeamSide()
-            player.inventory.contents.indices.forEach { index ->
-                val itemStack = player.inventory.contents[index]
+            player!!.inventory.contents.indices.forEach { index ->
+                val itemStack = player!!.inventory.contents[index]
                     ?: return@forEach
 
                 if (itemStack.type == XMaterial.WHITE_WOOL.parseMaterial() ||
                     itemStack.type == XMaterial.BLACK_TERRACOTTA.parseMaterial())
                 {
-                    player.inventory.setItem(
+                    player!!.inventory.setItem(
                         index,
                         ItemBuilder
                             .copyOf(itemStack)
@@ -36,8 +36,8 @@ fun Player.fixInventoryBasedOnRBTeamColor()
             }
 
             val newArrayOfContents = arrayOf<ItemStack?>(null, null, null, null)
-            player.inventory.armorContents.indices.forEach { index ->
-                val itemStack = player.inventory.armorContents[index]
+            player!!.inventory.armorContents.indices.forEach { index ->
+                val itemStack = player!!.inventory.armorContents[index]
                     ?: return@forEach
 
                 if (!itemStack.type.name.contains("LEATHER"))
@@ -52,7 +52,7 @@ fun Player.fixInventoryBasedOnRBTeamColor()
                     .build()
             }
 
-            player.inventory.armorContents = newArrayOfContents
+            player!!.inventory.armorContents = newArrayOfContents
         }
     }
 }

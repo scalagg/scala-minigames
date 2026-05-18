@@ -52,14 +52,14 @@ enum class DuelsCosmeticGroup(
             "§7Equip banner patterns on shields",
             "§7for your duel loadouts."
         ),
-        iconMaterial = Material.matchMaterial("SHIELD") ?: Material.BANNER,
+        iconMaterial = Material.matchMaterial("SHIELD") ?: Material.WHITE_BANNER,
         menuSlot = 24,
         cosmeticEntries = DuelsCosmeticRegistry.shieldBannerCosmetics.map { entry ->
             DuelsCosmeticItem(
                 id = entry.id,
                 displayName = entry.displayName,
                 description = entry.description,
-                material = Material.matchMaterial("SHIELD") ?: Material.BANNER,
+                material = Material.matchMaterial("SHIELD") ?: Material.WHITE_BANNER,
                 rarityDisplayName = entry.rarity.displayName,
                 rarityColorCode = entry.rarity.colorCode,
                 raritySortOrder = entry.rarity.sortOrder,

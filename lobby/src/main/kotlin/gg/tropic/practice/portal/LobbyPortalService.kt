@@ -82,7 +82,7 @@ object LobbyPortalService : DataSyncService<LobbyPortalContainer>()
 
                     player.addPotionEffect(
                         PotionEffect(
-                            PotionEffectType.CONFUSION,
+                            PotionEffectType.NAUSEA,
                             5 * 20,
                             1
                         )

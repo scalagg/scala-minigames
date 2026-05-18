@@ -56,8 +56,7 @@ class EditLoadoutContentsMenu(
             }
 
         buttons[13] = ItemBuilder
-            .of(Material.WOOL)
-            .data(4)
+            .of(Material.YELLOW_WOOL)
             .name("${CC.B_YELLOW}Reset Loadout")
             .addToLore(
                 "${CC.WHITE}Reset the loadout to it's",
@@ -68,7 +67,7 @@ class EditLoadoutContentsMenu(
             .toButton { _, _ ->
 
                 val deepClone = kit.contents.deepClone()
-                player.openInventory.cursor = ItemStack(Material.AIR)
+                player.setItemOnCursor(ItemStack(Material.AIR))
                 player.inventory.contents = deepClone
                 player.updateInventory()
 
@@ -86,8 +85,7 @@ class EditLoadoutContentsMenu(
             }
 
         buttons[15] = ItemBuilder
-            .of(Material.WOOL)
-            .data(14)
+            .of(Material.RED_WOOL)
             .name("${CC.B_RED}Cancel Edit")
             .addToLore(
                 "${CC.WHITE}Cancel the loadout editing",

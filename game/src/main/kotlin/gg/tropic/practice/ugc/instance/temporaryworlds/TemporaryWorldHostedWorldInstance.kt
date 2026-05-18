@@ -37,9 +37,6 @@ class TemporaryWorldHostedWorldInstance(
         val configuration = request.configuration as TemporaryWorldVisitConfiguration
         val baseBlock = XMaterial.valueOf(configuration.blockType).parseMaterial()!!
 
-        
-        bukkitWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = false
-
         CompletableFuture
             .supplyAsync {
                 getCylinderBlocks(
@@ -68,9 +65,6 @@ class TemporaryWorldHostedWorldInstance(
             }
             .thenComposeAsync { locations ->
                 BlockChanger.setBlocksAsync(bukkitWorld, locations)
-            }
-            .thenRun {
-                bukkitWorld.custom().worldConfig.FEATURES_LIGHTING_ENABLED = true
             }
             .exceptionally { throwable ->
                 throwable.printStackTrace()

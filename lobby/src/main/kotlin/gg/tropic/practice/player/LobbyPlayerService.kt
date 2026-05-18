@@ -47,8 +47,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
+import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.EntityPortalEnterEvent
-import org.bukkit.event.player.PlayerInitialSpawnEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -89,10 +89,18 @@ object LobbyPlayerService
         Bukkit.getWorlds()
             .forEach { world ->
                 world.setGameRuleValue("doDaylightCycle", "false")
+                world.setGameRuleValue("doMobSpawning", "false")
                 world.setStorm(false)
                 world.isThundering = false
                 world.weatherDuration = Int.MAX_VALUE
             }
+
+        Events
+            .subscribe(CreatureSpawnEvent::class.java, EventPriority.HIGHEST)
+            .handler {
+                it.isCancelled = true
+            }
+            .bindWith(plugin)
 
         Schedulers
             .sync()

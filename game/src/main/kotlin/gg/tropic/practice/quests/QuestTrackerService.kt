@@ -59,7 +59,7 @@ object QuestTrackerService
 
                                         bukkitPlayer.playSound(
                                             bukkitPlayer.location,
-                                            XSound.ENTITY_PLAYER_LEVELUP.parseSound(),
+                                            XSound.ENTITY_PLAYER_LEVELUP.parseSound()!!,
                                             1.0f, 1.0f
                                         )
                                     }

@@ -89,7 +89,7 @@ object LobbyHotbarService
             .addFlags(
                 ItemFlag.HIDE_ATTRIBUTES,
                 ItemFlag.HIDE_ENCHANTS,
-                ItemFlag.HIDE_POTION_EFFECTS
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP
             )
             .apply {
                 if (lore.isNotEmpty()) {
@@ -247,7 +247,7 @@ object LobbyHotbarService
                             .filter { event ->
                                 event.hasItem() &&
                                     event.action.name.contains("RIGHT") &&
-                                    event.item.isSimilar(rematchItem)
+                                    event.item!!.isSimilar(rematchItem)
                             }
                             .handler {
                                 player.chat("/duel $username ${kit.id}")
@@ -527,7 +527,7 @@ object LobbyHotbarService
 
         val leaveParty = StaticHotbarPresetEntry(
             hotbarItem(
-                material = Material.matchMaterial("BARRIER") ?: XMaterial.RED_DYE.parseMaterial() ?: Material.INK_SACK,
+                material = Material.matchMaterial("BARRIER") ?: XMaterial.RED_DYE.parseMaterial() ?: Material.INK_SAC,
                 title = modernName("Leave Party", "#ff7a7a", "#ffc3c3", "${CC.RED}Leave Party"),
                 lore = arrayOf(
                     "${CC.GRAY}Leave your current party and",
@@ -587,7 +587,7 @@ object LobbyHotbarService
         val inPartyMemberPreset = HotbarPreset()
         inPartyMemberPreset.addSlot(4, StaticHotbarPresetEntry(
             hotbarItem(
-                material = Material.matchMaterial("PLAYER_HEAD") ?: Material.SKULL_ITEM,
+                material = Material.matchMaterial("PLAYER_HEAD") ?: Material.PLAYER_HEAD,
                 title = modernName("Party Info", "#8ea7ff", "#e1e7ff", "${CC.AQUA}Party Info"),
                 lore = arrayOf(
                     "${CC.GRAY}View your current party status",

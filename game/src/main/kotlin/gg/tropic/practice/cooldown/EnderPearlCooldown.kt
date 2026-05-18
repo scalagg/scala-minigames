@@ -87,7 +87,7 @@ object EnderPearlCooldown : PlayerStaticCooldown(
             .filter {
                 it.hasItem()
                     && it.action.name.contains("RIGHT")
-                    && it.item.type == XMaterial.ENDER_PEARL.get()
+                    && it.item!!.type == XMaterial.ENDER_PEARL.get()
             }
             .handler {
                 val player = it.player

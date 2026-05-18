@@ -83,7 +83,7 @@ class PlayerRespawnTask(
                 Bukkit.getPluginManager().callEvent(PlayerRespawnEvent(game, player))
 
                 player.sendMessage("${CC.GREEN}You have respawned!")
-                player.playSound(player.location, XSound.BLOCK_NOTE_BLOCK_PLING.parseSound(), 1.0f, 1.0f)
+                player.playSound(player.location, XSound.BLOCK_NOTE_BLOCK_PLING.parseSound()!!, 1.0f, 1.0f)
 
                 task.closeAndReportException()
             } else
@@ -116,7 +116,7 @@ class PlayerRespawnTask(
         if (game.shouldBroadcastRespawnChatMsg)
         {
             player.sendMessage(respawnMessage)
-            player.playSound(player.location, XSound.BLOCK_NOTE_BLOCK_HAT.parseSound(), 1.0f, 1.0f)
+            player.playSound(player.location, XSound.BLOCK_NOTE_BLOCK_HAT.parseSound()!!, 1.0f, 1.0f)
         }
 
         tick -= 1

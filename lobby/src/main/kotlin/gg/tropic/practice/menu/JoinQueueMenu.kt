@@ -66,9 +66,9 @@ class JoinQueueMenu(
     override fun getGlobalButtons(player: Player): Map<Int, Button>
     {
         val buttons = mutableMapOf<Int, Button>()
-        val inactivePane = XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial() ?: Material.STAINED_GLASS_PANE
-        val activePane = XMaterial.LIME_STAINED_GLASS_PANE.parseMaterial() ?: Material.STAINED_GLASS_PANE
-        val noFavoriteKitIcon = XMaterial.RED_STAINED_GLASS_PANE.parseMaterial() ?: Material.STAINED_GLASS_PANE
+        val inactivePane = XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial() ?: Material.GRAY_STAINED_GLASS_PANE
+        val activePane = XMaterial.LIME_STAINED_GLASS_PANE.parseMaterial() ?: Material.LIME_STAINED_GLASS_PANE
+        val noFavoriteKitIcon = XMaterial.RED_STAINED_GLASS_PANE.parseMaterial() ?: Material.RED_STAINED_GLASS_PANE
 
         for (slot in 9..17)
         {
@@ -110,7 +110,7 @@ class JoinQueueMenu(
                 .addFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
                     ItemFlag.HIDE_ENCHANTS,
-                    ItemFlag.HIDE_POTION_EFFECTS
+                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
                 )
                 .addToLore(
                     *favoritesItemDescriptionOf(player, kit)
@@ -144,7 +144,7 @@ class JoinQueueMenu(
 
         buttons[i] = ItemBuilder(Material.EMERALD)
             .name("${CC.YELLOW}All Kits")
-            .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
+            .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
             .addToLore(
                 "${CC.GRAY}Browse every available duel kit.",
                 "",
@@ -187,7 +187,7 @@ class JoinQueueMenu(
                     .addFlags(
                         ItemFlag.HIDE_ATTRIBUTES,
                         ItemFlag.HIDE_ENCHANTS,
-                        ItemFlag.HIDE_POTION_EFFECTS
+                        ItemFlag.HIDE_ADDITIONAL_TOOLTIP
                     )
                     .setLore(kitCategory.description.map { "${CC.GRAY}$it" })
                     .addToLore(

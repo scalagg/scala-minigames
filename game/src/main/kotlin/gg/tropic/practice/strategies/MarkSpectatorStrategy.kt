@@ -57,7 +57,7 @@ object MarkSpectatorStrategy
             .filter {
                 it.hasItem() &&
                     (it.action == Action.RIGHT_CLICK_BLOCK || it.action == Action.RIGHT_CLICK_AIR) &&
-                    it.item.isSimilar(playAgainItem)
+                    it.item!!.isSimilar(playAgainItem)
             }
             .handler {
                 playAgain(it.player)

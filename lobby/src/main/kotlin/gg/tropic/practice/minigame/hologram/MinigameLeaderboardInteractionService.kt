@@ -63,9 +63,9 @@ object MinigameLeaderboardInteractionService : PacketListenerAbstract()
             return
         }
 
-        Bukkit.getScheduler().runTask(ScalaCommonsSpigot.instance) {
+        Bukkit.getScheduler().runTask(ScalaCommonsSpigot.instance, Runnable {
             tryOpenSettings(player, entityId)
-        }
+        })
     }
 
     private fun tryOpenSettings(player: Player, entityId: Int): Boolean

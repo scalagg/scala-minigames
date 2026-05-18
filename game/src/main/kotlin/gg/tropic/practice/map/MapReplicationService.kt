@@ -32,7 +32,6 @@ import gg.tropic.practice.replication.generation.rpc.GenerationResult
 import gg.tropic.practice.versioned.Versioned
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.ServerVersion
-import net.minecraft.server.v1_8_R3.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.metadata.FixedMetadataValue
@@ -422,13 +421,7 @@ object MapReplicationService
         }
     }
 
-    private fun versionedCurrentTickProvider() = if (ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9))
-    {
-        MinecraftServer.currentTick
-    } else
-    {
-        ModernAccess.currentTick()
-    }
+    private fun versionedCurrentTickProvider() = ModernAccess.currentTick()
 
     fun startWorldRequestThread() = thread(isDaemon = true) {
         var lastRecordedTick = versionedCurrentTickProvider()
@@ -500,7 +493,7 @@ object MapReplicationService
             .forEach {
                 for (block in it.bounds.utility(world))
                 {
-                    block.type = XMaterial.END_PORTAL.get()
+                    block.type = XMaterial.END_PORTAL.get()!!
                     block.setMetadata(
                         "tropicportal",
                         FixedMetadataValue(plugin, it.id)

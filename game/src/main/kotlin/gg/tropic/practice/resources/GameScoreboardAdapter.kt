@@ -344,7 +344,7 @@ object GameScoreboardAdapter : ScoreboardAdapter()
                                 board += "${CC.PRI}${Constants.THIN_VERTICAL_LINE} ${CC.SEC}Them: ${CC.RED}${
                                     if (Bukkit.getPlayer(opponentPlayer) != null)
                                         MinecraftReflection.getPing(
-                                            Bukkit.getPlayer(opponentPlayer)
+                                            Bukkit.getPlayer(opponentPlayer)!!
                                         ) else "0"
                                 }ms"
                             }
@@ -408,7 +408,7 @@ object GameScoreboardAdapter : ScoreboardAdapter()
                                         "${CC.PRI}${Constants.THIN_VERTICAL_LINE} ${CC.SEC}Them: ${CC.RED}${
                                             if (Bukkit.getPlayer(opponentPlayer) != null)
                                                 MinecraftReflection.getPing(
-                                                    Bukkit.getPlayer(opponentPlayer)
+                                                    Bukkit.getPlayer(opponentPlayer)!!
                                                 ) else "0"
                                         }ms"
                                     } else

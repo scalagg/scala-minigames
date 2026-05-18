@@ -58,7 +58,7 @@ import net.evilblock.cubed.util.text.TextUtil
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import kotlin.concurrent.withLock
-import org.apache.commons.lang.RandomStringUtils
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.time.DurationFormatUtils
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -627,7 +627,7 @@ open class GameImpl(
                                 {
                                     it.playSound(
                                         it.location,
-                                        XSound.ENTITY_EXPERIENCE_ORB_PICKUP.parseSound(),
+                                        XSound.ENTITY_EXPERIENCE_ORB_PICKUP.parseSound()!!,
                                         1F, 1F
                                     )
                                 }

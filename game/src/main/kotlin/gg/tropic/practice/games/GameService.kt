@@ -73,15 +73,13 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-import net.minecraft.server.v1_8_R3.EntityTNTPrimed
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.Tag
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftTNTPrimed
 import org.bukkit.entity.*
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
@@ -141,10 +139,11 @@ object GameService
 
     fun Player.killedBy(): Entity?
     {
+        val lastDamage = lastDamageCause
         if (
-            lastDamageCause != null &&
-            !lastDamageCause.isCancelled &&
-            lastDamageCause is EntityDamageByEntityEvent
+            lastDamage != null &&
+            !lastDamage.isCancelled &&
+            lastDamage is EntityDamageByEntityEvent
         )
         {
             val damager = (lastDamageCause as EntityDamageByEntityEvent).damager
@@ -372,7 +371,7 @@ object GameService
 
             finalKillerPlayer.playSound(
                 finalKillerPlayer.location,
-                XSound.BLOCK_NOTE_BLOCK_PLING.parseSound(),
+                XSound.BLOCK_NOTE_BLOCK_PLING.parseSound()!!,
                 1.0f,
                 3.0f
             )
@@ -754,7 +753,7 @@ object GameService
                     val newHealth = min(it.player.health + 7.0, 20.0)
 
                     it.player.health = newHealth
-                    it.player.itemInHand.type = XMaterial.BOWL.parseMaterial()
+                    it.player.inventory.itemInMainHand.type = XMaterial.BOWL.parseMaterial()!!
                     it.player.updateInventory()
                 }
             }
@@ -784,7 +783,7 @@ object GameService
                         return@sync
                     }
 
-                    it.player.itemInHand = ItemStack(Material.AIR)
+                    it.player.inventory.setItemInMainHand(ItemStack(Material.AIR))
                     it.player.updateInventory()
                 }
             }
@@ -794,7 +793,7 @@ object GameService
             .handler {
                 val fishingHook = it.entity
 
-                if (it.entityType == EntityType.FISHING_HOOK)
+                if (it.entityType == EntityType.FISHING_BOBBER)
                 {
                     fishingHook.velocity = fishingHook
                         .velocity.multiply(1.17)
@@ -830,11 +829,11 @@ object GameService
 
                                     player.playSound(
                                         player.location,
-                                        XSound.ENTITY_ITEM_PICKUP.parseSound(),
+                                        XSound.ENTITY_ITEM_PICKUP.parseSound()!!,
                                         1.0f, 1.0f
                                     )
 
-                                    player.inventory.addItem(XMaterial.ARROW.parseItem())
+                                    player.inventory.addItem(XMaterial.ARROW.parseItem()!!)
                                     player.updateInventory()
                                 },
                                 game
@@ -885,7 +884,7 @@ object GameService
             }
             .handler {
                 it.player.playSound(
-                    it.player.location, XSound.ENTITY_GENERIC_EAT.parseSound(), 10f, 1f
+                    it.player.location, XSound.ENTITY_GENERIC_EAT.parseSound()!!, 10f, 1f
                 )
 
                 it.player.removePotionEffect(PotionEffectType.ABSORPTION)
@@ -1006,7 +1005,7 @@ object GameService
                             it.isCancelled = true
                             it.player.sendMessage("${CC.RED}You cannot drop your sword!")
                         }
-                    } else if (it.itemDrop.itemStack.type == Material.FIREBALL)
+                    } else if (it.itemDrop.itemStack.type == Material.FIRE_CHARGE)
                     {
                         it.isCancelled = true
                         it.player.sendMessage("${CC.RED}You cannot drop fireballs in this match!")
@@ -1096,7 +1095,7 @@ object GameService
                 if (game.ensurePlaying())
                 {
                     if (
-                        it.to.block.type == Material.ENDER_PORTAL &&
+                        it.to.block.type == Material.END_PORTAL &&
                         game.flag(FeatureFlag.StartNewRoundOnPortalEnter)
                     )
                     {
@@ -1207,7 +1206,7 @@ object GameService
                                             setting = !setting
                                             it.player.playSound(
                                                 it.player.location,
-                                                XSound.BLOCK_NOTE_BLOCK_PLING.parseSound(),
+                                                XSound.BLOCK_NOTE_BLOCK_PLING.parseSound()!!,
                                                 0.75f,
                                                 if (!setting) 1.5f else 0.75f
                                             )
@@ -1334,7 +1333,7 @@ object GameService
                     val counter = game.counter(shooter)
                     val intensity = it.getIntensity(shooter)
                     val effect = it.potion.effects
-                        .firstOrNull { effect -> effect.type == PotionEffectType.HEAL }
+                        .firstOrNull { effect -> effect.type == PotionEffectType.INSTANT_HEALTH }
                         ?: return@handler
 
                     counter.increment("totalPots")
@@ -1496,11 +1495,12 @@ object GameService
                 val game = byPlayerOrSpectator(event.player.uniqueId)
                     ?: return@handler
 
-                event.respawnLocation = (game.map
+                (game.map
                     .findSpawnLocationMatchingSpec()
                     ?: game.map
                         .findSpawnLocationMatchingTeam(TeamIdentifier.A))
                     ?.toLocation(event.player.location.world)
+                    ?.also { event.respawnLocation = it }
             }
 
         Schedulers
@@ -1895,8 +1895,8 @@ object GameService
                     return@handler
                 }
 
-                val isFireball = it.entityType == EntityType.FIREBALL 
-                val isTNT = it.entityType == EntityType.PRIMED_TNT 
+                val isFireball = it.entityType == EntityType.FIREBALL
+                val isTNT = it.entityType == EntityType.TNT
 
                 it.blockList()
                     .removeIf { block ->
@@ -1921,90 +1921,51 @@ object GameService
 
                         if (isFireball)
                         {
-                            if (game.miniGameLifecycle != null)
+                            val type = block.type
+                            val protected = if (game.miniGameLifecycle != null)
                             {
-                                when (block.type)
-                                {
-                                    Material.WOOD, Material.LOG, Material.LOG_2, Material.WOOD_STEP,
-                                    Material.WOOD_DOUBLE_STEP, Material.WOODEN_DOOR, Material.TRAP_DOOR,
-                                    Material.FENCE, Material.FENCE_GATE, Material.WOOD_STAIRS,
-                                    Material.BIRCH_WOOD_STAIRS, Material.SPRUCE_WOOD_STAIRS,
-                                    Material.JUNGLE_WOOD_STAIRS, Material.ACACIA_STAIRS,
-                                    Material.DARK_OAK_STAIRS, Material.WOOL ->
-                                    {
-
-                                        return@removeIf false
-                                    }
-
-                                    else ->
-                                    {
-
-                                        return@removeIf true
-                                    }
-                                }
+                                Tag.PLANKS.isTagged(type) ||
+                                    Tag.LOGS.isTagged(type) ||
+                                    Tag.WOODEN_SLABS.isTagged(type) ||
+                                    Tag.WOODEN_DOORS.isTagged(type) ||
+                                    Tag.WOODEN_TRAPDOORS.isTagged(type) ||
+                                    Tag.FENCES.isTagged(type) ||
+                                    Tag.FENCE_GATES.isTagged(type) ||
+                                    Tag.WOODEN_STAIRS.isTagged(type) ||
+                                    Tag.WOOL.isTagged(type)
                             } else
                             {
-                                when (block.type)
-                                {
-                                    Material.WOOD, Material.WOOL ->
-                                    {
-
-                                        return@removeIf false
-                                    }
-
-                                    else ->
-                                    {
-
-                                        return@removeIf true
-                                    }
-                                }
+                                Tag.PLANKS.isTagged(type) || Tag.WOOL.isTagged(type)
                             }
-
+                            return@removeIf !protected
                         }
 
                         if (isTNT)
                         {
-                            if (game.miniGameLifecycle != null)
+                            val type = block.type
+                            val typeName = type.name
+                            val isTerracotta = type == Material.TERRACOTTA || typeName.endsWith("_TERRACOTTA")
+                            val protected = if (game.miniGameLifecycle != null)
                             {
-                                when (block.type)
-                                {
-                                    Material.ENDER_STONE, Material.WOOL,
-                                    Material.WOOD, Material.LOG, Material.LOG_2, Material.WOOD_STEP,
-                                    Material.WOOD_DOUBLE_STEP, Material.WOODEN_DOOR, Material.TRAP_DOOR,
-                                    Material.FENCE, Material.FENCE_GATE, Material.WOOD_STAIRS,
-                                    Material.BIRCH_WOOD_STAIRS, Material.SPRUCE_WOOD_STAIRS,
-                                    Material.JUNGLE_WOOD_STAIRS, Material.ACACIA_STAIRS,
-                                    Material.DARK_OAK_STAIRS,
-                                    Material.CLAY, Material.STAINED_CLAY, Material.HARD_CLAY ->
-                                    {
-
-                                        return@removeIf false
-                                    }
-
-                                    else ->
-                                    {
-
-                                        return@removeIf true
-                                    }
-                                }
+                                type == Material.END_STONE ||
+                                    type == Material.CLAY ||
+                                    isTerracotta ||
+                                    Tag.PLANKS.isTagged(type) ||
+                                    Tag.LOGS.isTagged(type) ||
+                                    Tag.WOODEN_SLABS.isTagged(type) ||
+                                    Tag.WOODEN_DOORS.isTagged(type) ||
+                                    Tag.WOODEN_TRAPDOORS.isTagged(type) ||
+                                    Tag.FENCES.isTagged(type) ||
+                                    Tag.FENCE_GATES.isTagged(type) ||
+                                    Tag.WOODEN_STAIRS.isTagged(type) ||
+                                    Tag.WOOL.isTagged(type)
                             } else
                             {
-                                when (block.type)
-                                {
-                                    Material.ENDER_STONE, Material.WOOL,
-                                    Material.WOOD ->
-                                    {
-
-                                        return@removeIf false
-                                    }
-
-                                    else ->
-                                    {
-
-                                        return@removeIf true
-                                    }
-                                }
+                                type == Material.END_STONE ||
+                                    Tag.WOOL.isTagged(type) ||
+                                    Tag.PLANKS.isTagged(type)
                             }
+                            return@removeIf !protected
                         }
 
                         if (game.flag(FeatureFlag.BreakSpecificBlockTypes))
@@ -2014,7 +1975,8 @@ object GameService
                                 return@removeIf false
                             }
 
-                            return@removeIf game.kit.allowedBlockTypeMappings.get()[block.type]?.toByte() != block.data
+                            // Modern Bukkit dropped legacy byte data; allowedBlockTypeMappings's Byte payload is no longer meaningful — gate on Material membership only.
+                            return@removeIf game.kit.allowedBlockTypeMappings.get()[block.type] == null
                         }
 
                         return@removeIf true
@@ -2044,7 +2006,7 @@ object GameService
                         .getPlayer(meta.value() as UUID)
                         ?: return@let
 
-                    player.inventory.addItem(ItemStack(block.type, 1, block.data.toShort()))
+                    player.inventory.addItem(ItemStack(block.type, 1))
                 }
             }
         }
@@ -2204,7 +2166,7 @@ object GameService
 
                 if (game.kit.allowedBlockTypeMappings.isPresent)
                 {
-                    if (game.kit.allowedBlockTypeMappings.get()[it.block.type]?.toByte() == it.block.data)
+                    if (game.kit.allowedBlockTypeMappings.get()[it.block.type] != null)
                     {
                         if (it.block.type == Material.SNOW_BLOCK)
                         {
@@ -2457,18 +2419,18 @@ object GameService
             .bindWith(plugin)
     }
 
-    fun byPlayer(player: Player) =
+    fun byPlayer(player: Player): GameImpl? =
         playerToGameMappings[player.uniqueId]
 
-    fun byPlayer(player: UUID) =
+    fun byPlayer(player: UUID): GameImpl? =
         playerToGameMappings[player]
 
-    fun byWorld(world: World) = gameMappings.values.firstOrNull { world.name == it.arenaWorld.name }
+    fun byWorld(world: World): GameImpl? = gameMappings.values.firstOrNull { world.name == it.arenaWorld.name }
 
     fun bySpectator(player: UUID) =
         spectatorToGameMappings[player]
 
-    fun byPlayerOrSpectator(player: UUID) =
+    fun byPlayerOrSpectator(player: UUID): GameImpl? =
         playerToGameMappings[player]
             ?: spectatorToGameMappings[player]
 
@@ -2483,16 +2445,7 @@ object GameService
 
     fun setSource(tnt: TNTPrimed, owner: Player)
     {
-        val nmsEntityLiving = ((owner as CraftLivingEntity).handle)
-        val nmsTNT = ((tnt as CraftTNTPrimed).handle)
-        try
-        {
-            val sourceField: Field = EntityTNTPrimed::class.java.getDeclaredField("source")
-            sourceField.setAccessible(true)
-            sourceField.set(nmsTNT, nmsEntityLiving)
-        } catch (ex: Exception)
-        {
-            ex.printStackTrace()
-        }
+        // Legacy 1.8 NMS reflection stripped during 1.21 migration; modern Paper exposes TNTPrimed.setSource(LivingEntity) directly.
+        tnt.source = owner
     }
 }

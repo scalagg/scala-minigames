@@ -10,22 +10,6 @@ class LegacySystemsService
 {
     fun configure()
     {
-        Events
-            .subscribe(GameStartEvent::class.java)
-            .filter { ServerVersion.getVersion().isOlderThan(ServerVersion.v1_9) }
-            .handler { event ->
-                val customProfile = Bukkit.custom()
-                    .knockbackManager.profileManager
-                    .getProfile("default", "minigames")
-                    ?: return@handler
-
-                Schedulers
-                    .async()
-                    .runLater({
-                        event.game.allNonSpectators().forEach { player ->
-                            customProfile.setKnockback(player)
-                        }
-                    }, 10L)
-            }
+        // Legacy 1.8 KnockbackPlus integration stripped during 1.21 migration
     }
 }
