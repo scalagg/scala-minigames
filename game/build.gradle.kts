@@ -10,7 +10,7 @@ dependencies {
     api(project(":versioned:generics"))
     api(project(":versioned:modern"))
 
-    compileOnly(project(":services:application:shared"))
+    compileOnly(project(":services:application:api"))
     compileOnly(project(":parties"))
 
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")

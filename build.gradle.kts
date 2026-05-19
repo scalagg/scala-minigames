@@ -13,6 +13,11 @@ plugins {
 
 var currentBranch: String = "master"
 
+val legacy18Paths = setOf(
+    ":minigames:skywars", ":minigames:skywars-lobby", ":minigames:skywars-shared",
+    ":minigames:bedwars", ":minigames:bedwars-lobby", ":minigames:bedwars-shared",
+)
+
 allprojects {
     group = "gg.scala.minigames"
     version = "1.7.0"
@@ -57,9 +62,14 @@ subprojects {
         compileOnly("gg.scala.basics.plugin:scala-basics-plugin:1.1.8")
         compileOnly("gg.scala.game.extensions:scala-core-game-extensions:1.5.5")
 
-        // Dropped legacy 1.8 baseline (gg.scala.spigot:Spigot-API/Server:1.5.4) — modern Paper 1.21 only.
-        compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
-        compileOnly("it.unimi.dsi:fastutil:8.5.13")
+        // Default to modern Paper 1.21; skywars/bedwars modules stay on the legacy 1.8 baseline so they still compile.
+        if (project.path in legacy18Paths) {
+            compileOnly("gg.scala.spigot:Spigot-API:1.5.4")
+            compileOnly("gg.scala.spigot:Spigot-Server:1.5.4")
+        } else {
+            compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+            compileOnly("it.unimi.dsi:fastutil:8.5.13")
+        }
         compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
         compileOnly("com.github.retrooper:packetevents-api:2.11.2")
         compileOnly("gg.scala.lemon:bukkit:2.1.5")

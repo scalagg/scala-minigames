@@ -109,6 +109,38 @@ class CentralSubscribablePlayerQueueHolder : Runnable
                 playersInGame.toString()
             )
         }
+
+        var rankedQueued = 0
+        var casualQueued = 0
+        playerQueues.values.forEach { queue ->
+            // Only real-player duel queues — exclude robot/bot queues and minigame queues
+            if (queue !is SubscribableDuelPlayerQueue) return@forEach
+            when (queue.toQueueIDComponents()?.queueType)
+            {
+                QueueType.Ranked -> rankedQueued += queue.internalQueue.size()
+                QueueType.Casual -> casualQueued += queue.internalQueue.size()
+                else -> Unit
+            }
+        }
+
+        var rankedMatches = 0
+        var casualMatches = 0
+        games.forEach { game ->
+            // Only standard duel matches — minigames have a non-null miniGameType
+            if (game.miniGameType != null) return@forEach
+            val type = runCatching { game.queueId?.toQueueIDComponents()?.queueType }.getOrNull()
+            when (type)
+            {
+                QueueType.Ranked -> rankedMatches += 1
+                QueueType.Casual -> casualMatches += 1
+                else -> Unit
+            }
+        }
+
+        Metadata.writer().write("duel:queue-total:ranked", rankedQueued.toString())
+        Metadata.writer().write("duel:queue-total:unranked", casualQueued.toString())
+        Metadata.writer().write("duel:matches-total:ranked", rankedMatches.toString())
+        Metadata.writer().write("duel:matches-total:unranked", casualMatches.toString())
     }
 
     fun onExpansionUpdate()

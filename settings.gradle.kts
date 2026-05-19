@@ -35,7 +35,7 @@ include(
     "services:metadata",
     "services:hosted-world-gateway",
 
-    "services:application:shared",
+    "services:application:api",
     "services:games:game-manager",
 
     "minigames:skywars",

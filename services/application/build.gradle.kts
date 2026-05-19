@@ -4,13 +4,12 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-
+    implementation(project(":services:application:api"))
     implementation(project(":services:games:game-manager"))
     implementation(project(":services:replications"))
     implementation(project(":shared"))
     implementation(project(":services:queue"))
     implementation(project(":services:hosted-world-gateway"))
-    implementation(project(":services:application:shared"))
 
     implementation(project(":minigames:skywars-shared"))
 //    implementation(project(":minigames:miniwalls-shared"))

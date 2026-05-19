@@ -47,6 +47,32 @@ fun String.toTemplatePlayerCounts() = template { key, data ->
             )
         }
 
+        // Aggregate duel-queue stats (sum across all kits/team sizes). NPCs that open
+        // the kit-select menu use these because they cannot reference a single kit.
+        "duelqueue" ->
+        {
+            Numbers.format(
+                when (data)
+                {
+                    "ranked" -> SystemMetadataService.getTotalRankedQueuePlayers()
+                    "unranked", "casual" -> SystemMetadataService.getTotalUnrankedQueuePlayers()
+                    else -> 0
+                }
+            )
+        }
+
+        "duelmatches" ->
+        {
+            Numbers.format(
+                when (data)
+                {
+                    "ranked" -> SystemMetadataService.getActiveRankedMatches()
+                    "unranked", "casual" -> SystemMetadataService.getActiveUnrankedMatches()
+                    else -> 0
+                }
+            )
+        }
+
         else -> ""
     }
 }

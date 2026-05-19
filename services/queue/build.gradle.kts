@@ -1,6 +1,6 @@
 dependencies {
     compileOnly(project(":shared"))
-    compileOnly(project(":services:application:shared"))
+    compileOnly(project(":services:application:api"))
     compileOnly(project(":services:replications"))
     compileOnly(project(":services:games:game-manager"))
 

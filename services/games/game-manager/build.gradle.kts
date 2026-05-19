@@ -1,4 +1,4 @@
 dependencies {
     compileOnly(project(":shared"))
-    compileOnly(project(":services:application:shared"))
+    compileOnly(project(":services:application:api"))
 }

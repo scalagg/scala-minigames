@@ -69,6 +69,22 @@ object SystemMetadataService
         .read("queue:users-playing:$queueId")
         ?.toInt() ?: 0
 
+    fun getTotalRankedQueuePlayers() = Metadata.reader()
+        .read("duel:queue-total:ranked")
+        ?.toIntOrNull() ?: 0
+
+    fun getTotalUnrankedQueuePlayers() = Metadata.reader()
+        .read("duel:queue-total:unranked")
+        ?.toIntOrNull() ?: 0
+
+    fun getActiveRankedMatches() = Metadata.reader()
+        .read("duel:matches-total:ranked")
+        ?.toIntOrNull() ?: 0
+
+    fun getActiveUnrankedMatches() = Metadata.reader()
+        .read("duel:matches-total:unranked")
+        ?.toIntOrNull() ?: 0
+
     @Configure
     fun configure()
     {
